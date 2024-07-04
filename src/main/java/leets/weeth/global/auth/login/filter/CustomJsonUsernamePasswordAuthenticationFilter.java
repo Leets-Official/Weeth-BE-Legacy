@@ -20,7 +20,7 @@ public class CustomJsonUsernamePasswordAuthenticationFilter extends AbstractAuth
     private static final String DEFAULT_LOGIN_REQUEST_URL = "/login";
     private static final String HTTP_METHOD = "POST";
     private static final String CONTENT_TYPE = "application/json";
-    private static final String USERNAME_KEY = "email";
+    private static final String USERNAME_KEY = "username";
     private static final String PASSWORD_KEY = "password";
     private static final AntPathRequestMatcher DEFAULT_LOGIN_PATH_REQUEST_MATCHER =
             new AntPathRequestMatcher(DEFAULT_LOGIN_REQUEST_URL, HTTP_METHOD);
@@ -42,10 +42,10 @@ public class CustomJsonUsernamePasswordAuthenticationFilter extends AbstractAuth
 
         Map<String, String> usernamePasswordMap = objectMapper.readValue(messageBody, Map.class);
 
-        String email = usernamePasswordMap.get(USERNAME_KEY);
+        String username = usernamePasswordMap.get(USERNAME_KEY);
         String password = usernamePasswordMap.get(PASSWORD_KEY);
 
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(email, password);
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
 
         return this.getAuthenticationManager().authenticate(authRequest);
     }
