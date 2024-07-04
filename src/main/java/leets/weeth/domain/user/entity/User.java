@@ -1,7 +1,7 @@
-package leets.weeth.domain.entity;
+package leets.weeth.domain.user.entity;
 
 import jakarta.persistence.*;
-import leets.weeth.domain.entity.enums.Role;
+import leets.weeth.domain.user.entity.enums.Role;
 import leets.weeth.global.common.entity.BaseEntity;
 import lombok.*;
 

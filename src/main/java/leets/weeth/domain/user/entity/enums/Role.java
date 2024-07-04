@@ -1,4 +1,4 @@
-package leets.weeth.domain.entity.enums;
+package leets.weeth.domain.user.entity.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

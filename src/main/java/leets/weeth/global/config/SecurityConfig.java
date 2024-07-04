@@ -1,7 +1,7 @@
 package leets.weeth.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import leets.weeth.domain.user.UserRepository;
+import leets.weeth.domain.user.repository.UserRepository;
 import leets.weeth.global.auth.jwt.filter.JwtAuthenticationProcessingFilter;
 import leets.weeth.global.auth.jwt.service.JwtService;
 import leets.weeth.global.auth.login.filter.CustomJsonUsernamePasswordAuthenticationFilter;

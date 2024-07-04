@@ -1,6 +1,6 @@
-package leets.weeth.domain.user;
+package leets.weeth.domain.user.repository;
 
-import leets.weeth.domain.entity.User;
+import leets.weeth.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

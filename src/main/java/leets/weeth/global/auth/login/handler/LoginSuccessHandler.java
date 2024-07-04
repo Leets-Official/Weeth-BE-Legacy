@@ -2,8 +2,8 @@ package leets.weeth.global.auth.login.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import leets.weeth.domain.entity.User;
-import leets.weeth.domain.user.UserRepository;
+import leets.weeth.domain.user.entity.User;
+import leets.weeth.domain.user.repository.UserRepository;
 import leets.weeth.global.auth.jwt.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
