@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/weeth
+    username: admin
+    password: Weeth1234!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+# MySQL 유저 생성 및 스키마 생성 터미널 명령어
+#   터미널 혹은 프로그램으로 루트 사용자 접속 후,
+#     1. CREATE DATABASE weeth
+#     2. CREATE USER 'admin'@'%' identified by 'Weeth1234!'
+#     3. GRANT ALL PRIVILEGES ON *.* 'admin'@'%';
+
+
+
