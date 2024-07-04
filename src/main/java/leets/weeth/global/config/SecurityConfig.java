@@ -55,8 +55,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorize ->
                                 authorize
-                                        .requestMatchers("/user/sign-up").permitAll()
-                                        .requestMatchers(HttpMethod.POST, "/oauth2/token").permitAll()
+                                        .requestMatchers("/users/sign-up").permitAll()
                                         .anyRequest().authenticated()
                 )
 
