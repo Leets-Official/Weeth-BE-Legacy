@@ -80,9 +80,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     public void saveAuthentication(User myUser) {
         String password = myUser.getPassword();
-//        if (password == null) { // 소셜 로그인 유저의 비밀번호 임의로 설정 하여 소셜 로그인 유저도 인증 되도록 설정
-//            password = PasswordUtil.generateRandomPassword();
-//        }
 
         UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
                 .username(myUser.getUsername())
