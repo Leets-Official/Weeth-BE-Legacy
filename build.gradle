@@ -52,3 +52,7 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+//도커 실행 중 plain jar 파일의 생성을 방지
+jar {
+	enabled = false
+}
