@@ -1,0 +1,69 @@
+name: Weeth-BE CICD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # gradle caching
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*gradle*','**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # gradle 빌드
+      - name: Build with Gradle Wrapper
+        run: ./gradlew build
+
+      # 도커 이미지 생성 후 이미지 push
+      - name: Docker build & push to dev
+        run: |
+          docker login -u ${{ secrets.DOCKER_USER_EMAIL }} -p ${{ secrets.DOCKER_USER_PW }}
+          docker build -t ${{ secrets.DOCKER_USER_NAME }}/weeth .
+          docker push ${{ secrets.DOCKER_USER_NAME }}/weeth
+
+      # EC2 ssh 연결 후 이미지 pull
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_SECRET_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SECRET_PEM }}
+          envs: GITHUB_SHA
+          script: |
+            EXISTING_CONTAINER_ID=$(sudo docker ps -q -f "publish=8080" -f "status=running")
+            if [ ! -z "$EXISTING_CONTAINER_ID" ]; then
+              sudo docker stop $EXISTING_CONTAINER_ID
+              sudo docker rm $EXISTING_CONTAINER_ID
+            fi
+
+            EXISTING_CONTAINER_ID=$(sudo docker ps -q -f "publish=8080" -f "status=exited")
+            if [ ! -z "$EXISTING_CONTAINER_ID" ]; then
+              sudo docker rm $EXISTING_CONTAINER_ID
+            fi
+            
+            sudo docker pull ${{ secrets.DOCKER_USER_NAME }}/weeth
+            sudo docker run --name spring -d -p 8080:8080 -e RDS_USER_NAME=${{ secrets.RDS_USER_NAME }} -e RDS_USER_PW=${{ secrets.RDS_USER_PW }} ${{ secrets.DOCKER_USER_NAME }}/weeth
+            sudo docker image prune -a -f
