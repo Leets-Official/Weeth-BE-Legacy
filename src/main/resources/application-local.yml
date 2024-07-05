@@ -22,8 +22,8 @@ weeth:
   jwt:
     key: f825f47437e5088c37e9e1fcd93fbc61dbb06d54b34471e47e9475e6f607d35f
     access:
-      expiration: 3600000 # 1시간
-      header: Authorization
+      expiration: ${ACCESS_EXP}
+      header: ${ACCESS_HEAD}
     refresh:
-      expiration: 1209600000 # 2주
-      header: Authorization-refresh
+      expiration: ${REFRESH_EXP}
+      header: ${REFRESH_HEAD}

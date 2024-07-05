@@ -15,8 +15,8 @@ weeth:
   jwt:
     key: ${JWT_KEY}
     access:
-      expiration: 3600000 # 1시간
-      header: Authorization
+      expiration: ${ACCESS_EXP}
+      header: ${ACCESS_HEAD}
     refresh:
-      expiration: 1209600000 # 2주
-      header: Authorization-refresh
+      expiration: ${REFRESH_EXP}
+      header: ${REFRESH_HEAD}
