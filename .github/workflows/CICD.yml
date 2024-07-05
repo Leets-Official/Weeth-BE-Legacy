@@ -65,5 +65,5 @@ jobs:
             fi
             
             sudo docker pull ${{ secrets.DOCKER_USER_NAME }}/weeth
-            sudo docker run --name spring -d -p 8080:8080 -e RDS_USER_NAME=${{ secrets.RDS_USER_NAME }} -e RDS_USER_PW=${{ secrets.RDS_USER_PW }} ${{ secrets.DOCKER_USER_NAME }}/weeth
+            sudo docker run --name spring -d -p 8080:8080 --env-file ./weeth.env ${{ secrets.DOCKER_USER_NAME }}/weeth
             sudo docker image prune -a -f
