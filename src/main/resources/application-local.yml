@@ -4,6 +4,13 @@ spring:
     username: admin
     password: Weeth1234!
     driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
 
 # MySQL 유저 생성 및 스키마 생성 터미널 명령어
 #   터미널 혹은 프로그램으로 루트 사용자 접속 후,
@@ -11,5 +18,12 @@ spring:
 #     2. CREATE USER 'admin'@'%' identified by 'Weeth1234!'
 #     3. GRANT ALL PRIVILEGES ON *.* 'admin'@'%';
 
-
-
+weeth:
+  jwt:
+    key: f825f47437e5088c37e9e1fcd93fbc61dbb06d54b34471e47e9475e6f607d35f
+    access:
+      expiration: 3600000 # 1시간
+      header: Authorization
+    refresh:
+      expiration: 1209600000 # 2주
+      header: Authorization-refresh
