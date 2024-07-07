@@ -3,7 +3,7 @@ package leets.weeth.domain.user.service;
 import jakarta.persistence.EntityExistsException;
 import leets.weeth.domain.user.dto.UserDTO;
 import leets.weeth.domain.user.entity.User;
-import leets.weeth.domain.user.entity.enums.Role;
+import leets.weeth.domain.user.mapper.UserMapper;
 import leets.weeth.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper mapper = UserMapper.INStANCE;
     private final PasswordEncoder passwordEncoder;
 
     public void signUp(UserDTO.SignUp requestDto) {
@@ -23,12 +24,7 @@ public class UserService {
 
         // 수정: 아이디 이외 중복 처리
 
-        User user = User.builder()
-                .email(requestDto.getEmail())
-                .password(passwordEncoder.encode(requestDto.getPassword()))
-                .role(Role.USER)
-                .build();
-
+        User user = mapper.from(requestDto, passwordEncoder);
         userRepository.save(user);
     }
 
