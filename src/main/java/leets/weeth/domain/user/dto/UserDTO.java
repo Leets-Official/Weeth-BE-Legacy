@@ -10,7 +10,7 @@ public class UserDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SignUp {
-        private String username;
+        private String email;
         private String password;
     }
 }
