@@ -27,10 +27,10 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) {
-        String username = extractUsername(authentication); // 인증 정보에서 Username(username) 추출
-        Optional<User> optionalUser = userRepository.findByUsername(username);
+        String email = extractEmail(authentication); // 인증 정보에서 email 추출
+        Optional<User> optionalUser = userRepository.findByEmail(email);
 
-        String accessToken = jwtService.createAccessToken(optionalUser.get().getId(), username); // JwtService의 createAccessToken을 사용하여 AccessToken 발급
+        String accessToken = jwtService.createAccessToken(optionalUser.get().getId(), email); // JwtService의 createAccessToken을 사용하여 AccessToken 발급
         String refreshToken = jwtService.createRefreshToken(); // JwtService의 createRefreshToken을 사용하여 RefreshToken 발급
 
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken); // 응답 헤더에 AccessToken, RefreshToken 실어서 응답
@@ -41,12 +41,12 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                     userRepository.saveAndFlush(user);
                 });
 
-        log.info("로그인에 성공하였습니다. 아이디 : {}", username);
+        log.info("로그인에 성공하였습니다. 아이디 : {}", email);
         log.info("로그인에 성공하였습니다. AccessToken : {}", accessToken);
         log.info("발급된 AccessToken 만료 기간 : {}", accessTokenExpiration);
     }
 
-    private String extractUsername(Authentication authentication) {
+    private String extractEmail(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return userDetails.getUsername();
     }
