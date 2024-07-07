@@ -2,6 +2,7 @@ package leets.weeth.domain.user.entity;
 
 import jakarta.persistence.*;
 import leets.weeth.domain.user.entity.enums.Role;
+import leets.weeth.domain.user.entity.enums.Status;
 import leets.weeth.global.common.entity.BaseEntity;
 import lombok.*;
 
@@ -18,7 +19,7 @@ public class User extends BaseEntity {
     @Column(name = "user_id")
     private Long id;
 
-    private String username;
+    private String email;
 
     private String password;
 
@@ -27,7 +28,14 @@ public class User extends BaseEntity {
 
     private String refreshToken;
 
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     public void updateRefreshToken(String updatedToken) {
         this.refreshToken = updatedToken;
+    }
+
+    public void leave() {
+        this.status = Status.LEFT;
     }
 }
