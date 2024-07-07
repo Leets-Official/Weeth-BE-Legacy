@@ -3,6 +3,7 @@ package leets.weeth.domain.user.controller;
 import jakarta.validation.Valid;
 import leets.weeth.domain.user.dto.UserDTO;
 import leets.weeth.domain.user.service.UserService;
+import leets.weeth.global.common.exception.BusinessLogicException;
 import leets.weeth.global.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,8 +17,8 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/sign-up")
-    public CommonResponse<String> signUp(@RequestBody @Valid UserDTO.SignUp requestDto) {
+    @PostMapping("/apply")
+    public CommonResponse<String> apply(@RequestBody @Valid UserDTO.SignUp requestDto) {
         userService.signUp(requestDto);
         return CommonResponse.createSuccess();
     }
@@ -28,8 +29,8 @@ public class UserController {
         return CommonResponse.createSuccess();
     }
 
-    @PostMapping("/sign-up/{cardinal}")
-    public CommonResponse<String> applyOB(@AuthenticationPrincipal User user, @PathVariable Integer cardinal) {
+    @PostMapping("/apply/{cardinal}")
+    public CommonResponse<String> applyOB(@AuthenticationPrincipal User user, @PathVariable Integer cardinal) throws BusinessLogicException {
         userService.applyOB(user.getUsername(), cardinal);
         return CommonResponse.createSuccess();
     }
