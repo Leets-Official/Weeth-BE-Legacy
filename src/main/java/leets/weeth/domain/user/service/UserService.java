@@ -1,6 +1,7 @@
 package leets.weeth.domain.user.service;
 
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import leets.weeth.domain.user.dto.UserDTO;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.mapper.UserMapper;
@@ -33,4 +34,13 @@ public class UserService {
         userRepository.findByEmail(email)
                 .ifPresent(User::leave);
     }
+
+    @Transactional
+    public void applyOB(String email, Integer cardinal) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자입니다."));
+
+        user.applyOB(cardinal);
+    }
+
 }

@@ -62,4 +62,8 @@ public class User extends BaseEntity {
     public void leave() {
         this.status = Status.LEFT;
     }
+
+    public void applyOB(Integer cardinal) {
+        this.cardinals.add(cardinal);
+    }
 }

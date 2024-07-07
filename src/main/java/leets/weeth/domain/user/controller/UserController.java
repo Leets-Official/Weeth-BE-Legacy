@@ -27,4 +27,10 @@ public class UserController {
         userService.delete(user.getUsername());
         return CommonResponse.createSuccess();
     }
+
+    @PostMapping("/sign-up/{cardinal}")
+    public CommonResponse<String> applyOB(@AuthenticationPrincipal User user, @PathVariable Integer cardinal) {
+        userService.applyOB(user.getUsername(), cardinal);
+        return CommonResponse.createSuccess();
+    }
 }
