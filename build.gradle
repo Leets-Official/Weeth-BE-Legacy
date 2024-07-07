@@ -41,6 +41,12 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 	implementation 'com.auth0:java-jwt:4.2.1'
 
+	// mapStruct
+	implementation 'org.mapstruct:mapstruct:1.5.3.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+	testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+
 	// MySQL
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
