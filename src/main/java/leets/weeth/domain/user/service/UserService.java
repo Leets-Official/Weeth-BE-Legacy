@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final UserMapper mapper = UserMapper.INStANCE;
+    private final UserMapper mapper = UserMapper.INSTANCE;
     private final PasswordEncoder passwordEncoder;
 
     public void signUp(UserDTO.SignUp requestDto) {
