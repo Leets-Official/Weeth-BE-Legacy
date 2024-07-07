@@ -51,7 +51,7 @@ public class User extends BaseEntity {
 
     @PrePersist
     public void init() {
-        status = Status.ACTIVE;
+        status = Status.WAITING;
         role = Role.USER;
     }
 
