@@ -1,12 +1,13 @@
 package leets.weeth.domain.user.dto;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Service
+@Setter
 public class RequestEvent {
     private String title;
 
