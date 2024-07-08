@@ -16,7 +16,7 @@ public class EventService {
     private final EventMapper eventMapper;
 
     @Transactional
-    public void saveEvent(RequestEvent requestEvent) {
+    public void createEvent(RequestEvent requestEvent) {
         Event event = eventMapper.fromDto(requestEvent);
         eventRepository.save(event);
     }
