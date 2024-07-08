@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    List<Event> findByStartDateBetween(LocalDateTime startDate, LocalDateTime endDate);
+    List<Event> findByStartDateTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
 
-    Optional<Event> findByEventId(Long eventId);
+    Optional<Event> findById(Long id);
 }
