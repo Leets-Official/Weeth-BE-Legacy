@@ -48,17 +48,11 @@ public class EventService {
 
     // 일정 수정
     @Transactional
-    public void updateEvent(Long id, RequestEvent requestEvent) {
+    public void updateEvent(Long id, RequestEvent updatedEvent) {
         Event oldEvent = eventRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(EVENT_NOT_FOUND.getMessage()));
 
-        oldEvent.update(
-                requestEvent.getTitle(),
-                requestEvent.getContent(),
-                requestEvent.getLocation(),
-                requestEvent.getStartDateTime(),
-                requestEvent.getEndDateTime()
-        );
+        oldEvent.update(updatedEvent);
     }
 
     // 일정 삭제
