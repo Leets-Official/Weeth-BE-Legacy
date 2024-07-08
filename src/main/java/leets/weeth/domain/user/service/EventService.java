@@ -49,7 +49,7 @@ public class EventService {
     @Transactional
     public void updateEvent(Long id, RequestEvent requestEvent) {
         Event oldEvent = eventRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("id에 해당하는 일정이 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("id에 해당하는 일정이 존재하지 않습니다."));
 
         oldEvent.update(
                 requestEvent.getTitle(),
@@ -58,5 +58,13 @@ public class EventService {
                 requestEvent.getStartDateTime(),
                 requestEvent.getEndDateTime()
         );
+    }
+
+    // 일정 삭제
+    public void deleteEvent(Long id) {
+        if (!eventRepository.existsById(id)) {
+            throw new EntityNotFoundException("id에 해당하는 일정이 존재하지 않습니다.");
+        }
+        eventRepository.deleteById(id);
     }
 }
