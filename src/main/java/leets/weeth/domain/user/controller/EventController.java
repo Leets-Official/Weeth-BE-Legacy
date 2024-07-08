@@ -21,7 +21,7 @@ public class EventController {
     @PostMapping("/create")
     public CommonResponse<String> createEvent(@RequestBody RequestEvent requestEvent) {
         eventService.createEvent(requestEvent);
-        return CommonResponse.createSuccess();
+        return CommonResponse.createSuccess("일정 생성 성공.");
     }
 
     // 일정 상세 조회
@@ -45,14 +45,14 @@ public class EventController {
     @PatchMapping("/update/{id}")
     public CommonResponse<String> updateEvent(@PathVariable Long id, @RequestBody RequestEvent requestEvent) {
         eventService.updateEvent(id, requestEvent);
-        return CommonResponse.createSuccess();
+        return CommonResponse.createSuccess("id: " + id + " 일정 수정 성공");
     }
 
     // 일정 삭제
     @DeleteMapping("/{id}")
     public CommonResponse<String> deleteEvent(@PathVariable Long id) {
         eventService.deleteEvent(id);
-        return CommonResponse.createSuccess();
+        return CommonResponse.createSuccess("id: " + id + " 일정 삭제 성공");
     }
 
 }
