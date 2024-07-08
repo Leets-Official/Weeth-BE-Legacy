@@ -1,6 +1,7 @@
 package leets.weeth.domain.event.entity;
 
 import jakarta.persistence.*;
+import leets.weeth.domain.event.dto.RequestEvent;
 import leets.weeth.global.common.entity.BaseEntity;
 import lombok.*;
 
@@ -30,11 +31,11 @@ public class Event extends BaseEntity {
     private LocalDateTime endDateTime;
 
     // 일정 수정을 위한 메소드
-    public void update(String title, String content, String location, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        this.title = title;
-        this.content = content;
-        this.location = location;
-        this.startDateTime = startDateTime;
-        this.endDateTime = endDateTime;
+    public void update(RequestEvent requestEvent) {
+        this.title = requestEvent.getTitle();
+        this.content = requestEvent.getContent();
+        this.location = requestEvent.getLocation();
+        this.startDateTime = requestEvent.getStartDateTime();
+        this.endDateTime = requestEvent.getEndDateTime();
     }
 }
