@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static leets.weeth.domain.event.entity.enums.ResponseMessage.*;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/events")
@@ -21,7 +23,7 @@ public class EventController {
     @PostMapping("/create")
     public CommonResponse<String> createEvent(@RequestBody RequestEvent requestEvent) {
         eventService.createEvent(requestEvent);
-        return CommonResponse.createSuccess("일정 생성 성공.");
+        return CommonResponse.createSuccess(EVENT_CREATED_SUCCESS.getMessage());
     }
 
     // 일정 상세 조회
@@ -45,14 +47,14 @@ public class EventController {
     @PatchMapping("/update/{id}")
     public CommonResponse<String> updateEvent(@PathVariable Long id, @RequestBody RequestEvent requestEvent) {
         eventService.updateEvent(id, requestEvent);
-        return CommonResponse.createSuccess("id: " + id + " 일정 수정 성공");
+        return CommonResponse.createSuccess(EVENT_UPDATED_SUCCESS.getMessage());
     }
 
     // 일정 삭제
     @DeleteMapping("/{id}")
     public CommonResponse<String> deleteEvent(@PathVariable Long id) {
         eventService.deleteEvent(id);
-        return CommonResponse.createSuccess("id: " + id + " 일정 삭제 성공");
+        return CommonResponse.createSuccess(EVENT_DELETED_SUCCESS.getMessage());
     }
 
 }
