@@ -42,7 +42,7 @@ public class EventService {
         List<Event> events = eventRepository.findByStartDateTimeBetween(startDate, endDate);
         return events.stream()
                 .map(eventMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // 일정 수정
