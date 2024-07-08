@@ -42,4 +42,12 @@ public class EventController {
         List<ResponseEvent> responseEvents = eventService.getEventsBetweenDate(startDate, endDate);
         return CommonResponse.createSuccess(responseEvents);
     }
+
+    // 일정 수정
+    @PatchMapping("update/{id}")
+    public CommonResponse<String> updateEvent(@PathVariable Long id, @RequestBody RequestEvent requestEvent) {
+        eventService.updateEvent(id, requestEvent);
+        return CommonResponse.createSuccess();
+    }
+
 }
