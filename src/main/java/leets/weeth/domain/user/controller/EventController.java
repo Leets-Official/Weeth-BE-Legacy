@@ -2,10 +2,8 @@ package leets.weeth.domain.user.controller;
 
 import leets.weeth.domain.user.dto.RequestEvent;
 import leets.weeth.domain.user.dto.ResponseEvent;
-import leets.weeth.domain.user.entity.Event;
 import leets.weeth.domain.user.service.EventService;
 import leets.weeth.global.common.response.CommonResponse;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/event")
+@RequestMapping("/events")
 public class EventController {
     private final EventService eventService;
 
@@ -44,9 +42,16 @@ public class EventController {
     }
 
     // 일정 수정
-    @PatchMapping("update/{id}")
+    @PatchMapping("/update/{id}")
     public CommonResponse<String> updateEvent(@PathVariable Long id, @RequestBody RequestEvent requestEvent) {
         eventService.updateEvent(id, requestEvent);
+        return CommonResponse.createSuccess();
+    }
+
+    // 일정 삭제
+    @DeleteMapping("/{id}")
+    public CommonResponse<String> deleteEvent(@PathVariable Long id) {
+        eventService.deleteEvent(id);
         return CommonResponse.createSuccess();
     }
 
