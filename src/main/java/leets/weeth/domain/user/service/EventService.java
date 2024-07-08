@@ -29,17 +29,34 @@ public class EventService {
     }
 
     // 일정 상세 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEvent getEventById(Long id) {
-        Event event = eventRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("id에 해당하는 일정이 존재하지 않습니다"));
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("id에 해당하는 일정이 존재하지 않습니다."));
         return eventMapper.toDto(event);
     }
 
     // 기간 별 일정 조회
+    @Transactional(readOnly = true)
     public List<ResponseEvent> getEventsBetweenDate(LocalDateTime startDate, LocalDateTime endDate) {
         List<Event> events = eventRepository.findByStartDateTimeBetween(startDate, endDate);
         return events.stream()
                 .map(eventMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    // 일정 수정
+    @Transactional
+    public void updateEvent(Long id, RequestEvent requestEvent) {
+        Event oldEvent = eventRepository.findById(id)
+                .orElseThrow(()-> new EntityNotFoundException("id에 해당하는 일정이 존재하지 않습니다."));
+
+        oldEvent.update(
+                requestEvent.getTitle(),
+                requestEvent.getContent(),
+                requestEvent.getLocation(),
+                requestEvent.getStartDateTime(),
+                requestEvent.getEndDateTime()
+        );
     }
 }
