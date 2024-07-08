@@ -27,7 +27,7 @@ public class EventService {
     // 일정 상세 조회
     @Transactional
     public ResponseEvent getEventById(Long id) {
-        Event event = eventRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Event event = eventRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("id에 해당하는 일정이 존재하지 않습니다"));
         return eventMapper.toDto(event);
     }
 }
