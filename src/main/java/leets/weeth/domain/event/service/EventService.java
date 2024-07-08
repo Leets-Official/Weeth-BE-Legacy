@@ -12,7 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static leets.weeth.domain.event.entity.enums.ErrorMessage.EVENT_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class EventService {
     @Transactional(readOnly = true)
     public ResponseEvent getEventById(Long id) {
         Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("id에 해당하는 일정이 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException(EVENT_NOT_FOUND.getMessage()));
         return eventMapper.toDto(event);
     }
 
@@ -49,7 +50,7 @@ public class EventService {
     @Transactional
     public void updateEvent(Long id, RequestEvent requestEvent) {
         Event oldEvent = eventRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("id에 해당하는 일정이 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException(EVENT_NOT_FOUND.getMessage()));
 
         oldEvent.update(
                 requestEvent.getTitle(),
@@ -63,7 +64,7 @@ public class EventService {
     // 일정 삭제
     public void deleteEvent(Long id) {
         if (!eventRepository.existsById(id)) {
-            throw new EntityNotFoundException("id에 해당하는 일정이 존재하지 않습니다.");
+            throw new EntityNotFoundException(EVENT_NOT_FOUND.getMessage());
         }
         eventRepository.deleteById(id);
     }
