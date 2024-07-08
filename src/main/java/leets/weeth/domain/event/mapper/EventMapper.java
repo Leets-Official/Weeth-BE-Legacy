@@ -1,8 +1,8 @@
-package leets.weeth.domain.user.mapper;
+package leets.weeth.domain.event.mapper;
 
-import leets.weeth.domain.user.dto.RequestEvent;
-import leets.weeth.domain.user.dto.ResponseEvent;
-import leets.weeth.domain.user.entity.Event;
+import leets.weeth.domain.event.dto.RequestEvent;
+import leets.weeth.domain.event.dto.ResponseEvent;
+import leets.weeth.domain.event.entity.Event;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

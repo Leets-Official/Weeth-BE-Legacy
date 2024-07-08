@@ -1,8 +1,8 @@
-package leets.weeth.domain.user.controller;
+package leets.weeth.domain.event.controller;
 
-import leets.weeth.domain.user.dto.RequestEvent;
-import leets.weeth.domain.user.dto.ResponseEvent;
-import leets.weeth.domain.user.service.EventService;
+import leets.weeth.domain.event.dto.RequestEvent;
+import leets.weeth.domain.event.dto.ResponseEvent;
+import leets.weeth.domain.event.service.EventService;
 import leets.weeth.global.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;

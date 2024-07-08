@@ -1,4 +1,4 @@
-package leets.weeth.domain.user.dto;
+package leets.weeth.domain.event.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,9 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class ResponseEvent {
-    private Long id;
-
+public class RequestEvent {
     private String title;
 
     private String content;

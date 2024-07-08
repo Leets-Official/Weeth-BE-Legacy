@@ -1,11 +1,11 @@
-package leets.weeth.domain.user.service;
+package leets.weeth.domain.event.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import leets.weeth.domain.user.dto.RequestEvent;
-import leets.weeth.domain.user.dto.ResponseEvent;
-import leets.weeth.domain.user.entity.Event;
-import leets.weeth.domain.user.mapper.EventMapper;
-import leets.weeth.domain.user.repository.EventRepository;
+import leets.weeth.domain.event.dto.RequestEvent;
+import leets.weeth.domain.event.dto.ResponseEvent;
+import leets.weeth.domain.event.entity.Event;
+import leets.weeth.domain.event.mapper.EventMapper;
+import leets.weeth.domain.event.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

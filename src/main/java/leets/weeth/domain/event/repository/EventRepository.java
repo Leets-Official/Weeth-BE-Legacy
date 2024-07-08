@@ -1,6 +1,6 @@
-package leets.weeth.domain.user.repository;
+package leets.weeth.domain.event.repository;
 
-import leets.weeth.domain.user.entity.Event;
+import leets.weeth.domain.event.entity.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;

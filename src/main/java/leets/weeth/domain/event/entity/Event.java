@@ -1,4 +1,4 @@
-package leets.weeth.domain.user.entity;
+package leets.weeth.domain.event.entity;
 
 import jakarta.persistence.*;
 import leets.weeth.global.common.entity.BaseEntity;
