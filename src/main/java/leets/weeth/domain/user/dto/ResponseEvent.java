@@ -12,6 +12,8 @@ public class ResponseEvent {
 
     private String content;
 
+    private String location;
+
     private LocalDateTime startDateTime;
 
     private LocalDateTime endDateTime;

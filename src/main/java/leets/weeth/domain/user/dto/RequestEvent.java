@@ -13,6 +13,8 @@ public class RequestEvent {
 
     private String content;
 
+    private String location;
+
     private LocalDateTime startDateTime;
 
     private LocalDateTime endDateTime;
