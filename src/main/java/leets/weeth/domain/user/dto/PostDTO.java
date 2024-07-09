@@ -17,7 +17,7 @@ public class PostDTO {
     @NotBlank
     private String content;
 
-    public PostDTO createPostDTO(Post post) {
+    public static PostDTO createPostDTO(Post post) {
         return new PostDTO(post.getId(), post.getTitle(), post.getContent());
     }
 
