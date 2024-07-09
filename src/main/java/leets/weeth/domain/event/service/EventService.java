@@ -52,7 +52,7 @@ public class EventService {
         Event oldEvent = eventRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(EVENT_NOT_FOUND.getMessage()));
 
-        oldEvent.update(updatedEvent);
+        oldEvent.updateFromDto(updatedEvent);
     }
 
     // 일정 삭제
