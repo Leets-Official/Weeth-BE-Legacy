@@ -39,12 +39,19 @@ public class PostService {
     @Transactional
     public PostDTO update(Long postid, PostDTO dto) {
         Post target = postRepository.findById(postid)
-                .orElseThrow(()->new IllegalArgumentException("failed to edit the comment. so such comment."));
+                .orElseThrow(()->new IllegalArgumentException("failed to edit the Post. so such post."));
         target.patch(dto);
         // 2. post 수정
         Post updated = postRepository.save(target);
         // 3. DB로 갱신
         return PostDTO.createPostDTO(updated);
 
+    }
+    @Transactional
+    public PostDTO delete(Long postid) {
+        Post target = postRepository.findById(postid)
+                .orElseThrow(()->new IllegalArgumentException("no such post"));
+        postRepository.delete(target);
+        return  PostDTO.createPostDTO(target);
     }
 }
