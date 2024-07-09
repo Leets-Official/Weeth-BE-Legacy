@@ -31,7 +31,7 @@ public class EventController {
         return CommonResponse.createSuccess(EVENT_CREATED_SUCCESS.getMessage());
     }
 
-    // 일정 상세 조회
+
     @Operation(summary = "일정 상세 조회", description = "사용자가 일정의 세부사항을 조회합니다.")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @GetMapping("/{id}")
@@ -40,7 +40,7 @@ public class EventController {
         return CommonResponse.createSuccess(responseEvent);
     }
 
-    // 기간 별 일정 조회
+
     @Operation(summary = "기간 일정 조회", description = "사용자가 일정 기간의 세부사항을 조회합니다.")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @GetMapping("")
@@ -52,7 +52,7 @@ public class EventController {
         return CommonResponse.createSuccess(responseEvents);
     }
 
-    // 일정 수정
+
     @Operation(summary = "일정 수정", description = "관리자가 일정을 수정합니다.")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PatchMapping("/update/{id}")
@@ -61,7 +61,7 @@ public class EventController {
         return CommonResponse.createSuccess(EVENT_UPDATED_SUCCESS.getMessage());
     }
 
-    // 일정 삭제
+
     @Operation(summary = "일정 삭제", description = "관리자가 일정을 삭제합니다.")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
