@@ -2,6 +2,7 @@ package leets.weeth.domain.event.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import leets.weeth.domain.event.dto.RequestEvent;
 import leets.weeth.domain.event.dto.ResponseEvent;
 import leets.weeth.domain.event.service.EventService;
@@ -26,7 +27,7 @@ public class EventController {
     @Operation(summary = "일정 생성", description = "관리자가 일정을 등록합니다.")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PostMapping("/create")
-    public CommonResponse<String> createEvent(@RequestBody RequestEvent requestEvent) {
+    public CommonResponse<String> createEvent(@RequestBody @Valid RequestEvent requestEvent) {
         eventService.createEvent(requestEvent);
         return CommonResponse.createSuccess(EVENT_CREATED_SUCCESS.getMessage());
     }
