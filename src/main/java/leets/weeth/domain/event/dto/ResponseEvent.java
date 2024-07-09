@@ -3,23 +3,16 @@ package leets.weeth.domain.event.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Getter
-@AllArgsConstructor
+
 @Builder
-public class ResponseEvent {
-    private Long id;
-
-    private String title;
-
-    private String content;
-
-    private String location;
-
-    private LocalDateTime startDateTime;
-
-    private LocalDateTime endDateTime;
-}
+public record ResponseEvent (
+        Long id,
+        String title,
+        String content,
+        String location,
+        LocalDateTime startDateTime,
+        LocalDateTime endDateTime
+) {}
