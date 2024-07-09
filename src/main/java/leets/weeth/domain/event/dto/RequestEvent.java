@@ -1,13 +1,15 @@
 package leets.weeth.domain.event.dto;
 
-import lombok.Getter;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
 public record RequestEvent (
-     String title,
-     String content,
+     @NotBlank String title,
+     @NotBlank String content,
      String location,
-     LocalDateTime startDateTime,
-     LocalDateTime endDateTime
+     @NotNull boolean isAllDay,
+     @NotNull LocalDateTime startDateTime,
+     @NotNull LocalDateTime endDateTime
 ) {}

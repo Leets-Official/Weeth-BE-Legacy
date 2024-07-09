@@ -1,8 +1,6 @@
 package leets.weeth.domain.event.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +11,7 @@ public record ResponseEvent (
         String title,
         String content,
         String location,
+        boolean isAllDay,
         LocalDateTime startDateTime,
         LocalDateTime endDateTime
 ) {}
