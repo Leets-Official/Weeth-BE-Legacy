@@ -55,7 +55,7 @@ public class EventController {
 
     @Operation(summary = "일정 수정", description = "관리자가 일정을 수정합니다.")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-    @PatchMapping("/update/{id}")
+    @PatchMapping("/{id}")
     public CommonResponse<String> updateEvent(@PathVariable Long id, @RequestBody RequestEvent requestEvent) {
         eventService.updateEvent(id, requestEvent);
         return CommonResponse.createSuccess(EVENT_UPDATED_SUCCESS.getMessage());
