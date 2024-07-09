@@ -32,10 +32,6 @@ public class Event extends BaseEntity {
     private LocalDateTime startDateTime;
 
     private LocalDateTime endDateTime;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
 
     // 일정 수정을 위한 메소드
     public void updateFromDto(RequestEvent dto) {
