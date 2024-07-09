@@ -11,5 +11,4 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findByStartDateTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
 
-    Optional<Event> findById(Long id);
 }
