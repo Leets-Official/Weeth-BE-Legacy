@@ -26,7 +26,7 @@ public class SwaggerConfig {
         SecurityRequirement securityRequirement = getSecurityRequireMent();
 
         return new OpenAPI()
-                .components(new Components().addSecuritySchemes("JWT", securityScheme))
+                .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
                 .security(List.of(securityRequirement));
     }
 
