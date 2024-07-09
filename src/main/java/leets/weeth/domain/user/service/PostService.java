@@ -27,7 +27,7 @@ public class PostService {
 
     public Post create(String userEmail, PostDTO dto) {
         User user = userRepository.findByEmail(userEmail).orElseThrow(()->new
-                IllegalArgumentException("failed to add comments! no such article"));
+                IllegalArgumentException("failed to add post! no such user"));
         Post post = Post.createPost(dto, user);
         if(post.getId()!=null){
             return null;    //post 객체에 id가 존재한다면
