@@ -34,10 +34,6 @@ public class Post extends BaseEntity {
     private String content;
 
     public static Post createPost(PostDTO dto, User user){
-        //exception occurs
-        if (dto.getId() != null)
-            throw new IllegalArgumentException("failed to add post. it should not have an id");
-
         return new Post(
                 dto.getId(),
                 user,
@@ -48,13 +44,10 @@ public class Post extends BaseEntity {
 
 
     public void patch(PostDTO dto) {
-        if (this.id != dto.getId())
-            throw new IllegalArgumentException("failed to edit the comment. wrong id");
-        // 예외 발생
+
         if (dto.getTitle()!= null)   //수정할 제목 데이터가 있다면
             this.title = dto.getTitle();
         if (dto.getContent() != null)  //수정할 본문 데이터가 있다면
             this.content = dto.getContent();
-        // 객체 갱신
     }
 }
