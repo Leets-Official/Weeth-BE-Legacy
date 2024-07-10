@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import leets.weeth.domain.post.dto.PostDTO;
 import leets.weeth.domain.user.entity.User;
+import leets.weeth.global.common.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import lombok.ToString;
 @Entity
 @Getter
 @Table(name = "posts")
-public class Post {
+public class Post extends BaseEntity {
     @Id //엔티티의 대푯값 지정
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
