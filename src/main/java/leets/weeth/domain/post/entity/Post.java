@@ -20,7 +20,6 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

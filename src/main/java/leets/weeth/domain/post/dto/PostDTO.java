@@ -4,9 +4,11 @@ import jakarta.validation.constraints.NotBlank;
 import leets.weeth.domain.post.entity.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @ToString
 public class PostDTO {
