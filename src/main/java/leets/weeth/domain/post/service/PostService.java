@@ -1,10 +1,10 @@
-package leets.weeth.domain.user.service;
+package leets.weeth.domain.post.service;
 
 import jakarta.transaction.Transactional;
-import leets.weeth.domain.user.dto.PostDTO;
-import leets.weeth.domain.user.entity.Post;
+import leets.weeth.domain.post.dto.PostDTO;
+import leets.weeth.domain.post.entity.Post;
 import leets.weeth.domain.user.entity.User;
-import leets.weeth.domain.user.repository.PostRepository;
+import leets.weeth.domain.post.repository.PostRepository;
 import leets.weeth.domain.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +29,6 @@ public class PostService {
         User user = userRepository.findByEmail(userEmail).orElseThrow(()->new
                 IllegalArgumentException("failed to add post! no such user"));
         Post post = Post.createPost(dto, user);
-        if(post.getId()!=null){
-            return null;    //post 객체에 id가 존재한다면
-        }
         Post created = postRepository.save(post);
         return created;
     }

@@ -1,6 +1,6 @@
-package leets.weeth.domain.user.repository;
+package leets.weeth.domain.post.repository;
 
-import leets.weeth.domain.user.entity.Post;
+import leets.weeth.domain.post.entity.Post;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.ArrayList;

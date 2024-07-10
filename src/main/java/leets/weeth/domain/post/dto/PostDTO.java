@@ -1,7 +1,7 @@
-package leets.weeth.domain.user.dto;
+package leets.weeth.domain.post.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import leets.weeth.domain.user.entity.Post;
+import leets.weeth.domain.post.entity.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -10,7 +10,7 @@ import lombok.ToString;
 @Getter
 @ToString
 public class PostDTO {
-    @NotBlank
+
     private Long id;
     @NotBlank
     private String title;

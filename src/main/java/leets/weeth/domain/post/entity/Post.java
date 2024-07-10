@@ -1,8 +1,9 @@
-package leets.weeth.domain.user.entity;
+package leets.weeth.domain.post.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import leets.weeth.domain.user.dto.PostDTO;
+import leets.weeth.domain.post.dto.PostDTO;
+import leets.weeth.domain.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,7 +36,7 @@ public class Post {
     public static Post createPost(PostDTO dto, User user){
         //exception occurs
         if (dto.getId() != null)
-            throw new IllegalArgumentException("failed to add comments. it should not have an id");
+            throw new IllegalArgumentException("failed to add post. it should not have an id");
 
         return new Post(
                 dto.getId(),
