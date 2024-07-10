@@ -11,7 +11,6 @@ public record ResponseEvent (
         String title,
         String content,
         String location,
-        boolean isAllDay,
         LocalDateTime startDateTime,
         LocalDateTime endDateTime
 ) {}

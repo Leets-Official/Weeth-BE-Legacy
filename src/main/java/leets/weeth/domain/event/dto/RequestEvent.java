@@ -11,7 +11,6 @@ public record RequestEvent (
      @NotBlank String title,
      @NotBlank String content,
      String location,
-     @NotNull boolean isAllDay,
      @NotNull LocalDateTime startDateTime,
      @NotNull LocalDateTime endDateTime
 ) {}
