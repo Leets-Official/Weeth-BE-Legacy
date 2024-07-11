@@ -33,7 +33,7 @@ public class Event extends BaseEntity {
     private LocalDateTime endDateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
+    @JoinColumn(name="user_id", nullable=false)
     private User user;
 
     // 정적 팩토리 메서드
