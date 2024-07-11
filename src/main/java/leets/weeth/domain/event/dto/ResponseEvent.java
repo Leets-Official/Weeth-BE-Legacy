@@ -12,5 +12,6 @@ public record ResponseEvent (
         String content,
         String location,
         LocalDateTime startDateTime,
-        LocalDateTime endDateTime
+        LocalDateTime endDateTime,
+        String userName
 ) {}
