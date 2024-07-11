@@ -48,7 +48,10 @@ public class EventService {
 
     // 기간 별 일정 조회
     @Transactional(readOnly = true)
-    public List<ResponseEvent> getEventsBetweenDate(LocalDateTime startDate, LocalDateTime endDate) {
+    public List<ResponseEvent> getEventsBetweenDate(LocalDateTime startDate, LocalDateTime endDate) throws BusinessLogicException {
+        if(startDate.isAfter(endDate)) {
+            throw new BusinessLogicException(INVALID_DATE.getMessage());
+        }
         List<Event> events = eventRepository.findByStartDateTimeBetween(startDate, endDate);
         return events.stream()
                 .map(eventMapper::toDto)
