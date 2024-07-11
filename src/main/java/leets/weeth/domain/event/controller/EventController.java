@@ -10,6 +10,8 @@ import leets.weeth.global.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -27,8 +29,8 @@ public class EventController {
     @Operation(summary = "일정 생성", description = "관리자가 일정을 등록합니다.")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PostMapping("/create")
-    public CommonResponse<String> createEvent(@RequestBody @Valid RequestEvent requestEvent) {
-        eventService.createEvent(requestEvent);
+    public CommonResponse<String> createEvent(@RequestBody @Valid RequestEvent requestEvent, @AuthenticationPrincipal User user) {
+        eventService.createEvent(requestEvent, user.getUsername());
         return CommonResponse.createSuccess(EVENT_CREATED_SUCCESS.getMessage());
     }
 
