@@ -6,7 +6,10 @@ import leets.weeth.domain.event.dto.ResponseEvent;
 import leets.weeth.domain.event.entity.Event;
 import leets.weeth.domain.event.mapper.EventMapper;
 import leets.weeth.domain.event.repository.EventRepository;
+import leets.weeth.domain.user.entity.User;
+import leets.weeth.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,16 +20,21 @@ import static leets.weeth.domain.event.entity.enums.ErrorMessage.EVENT_NOT_FOUND
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EventService {
     private final EventRepository eventRepository;
+
+    private final UserRepository userRepository;
 
     private final EventMapper eventMapper;
 
     // 일정 생성
     @Transactional
-    public void createEvent(RequestEvent requestEvent) {
-        Event event = eventMapper.fromDto(requestEvent);
-        eventRepository.save(event);
+    public void createEvent(RequestEvent requestEvent, String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자입니다."));
+        // 유저 정보 저장을 위해 매퍼를 제거하고 정적 팩토리 메서드 사용
+        eventRepository.save(Event.fromDto(requestEvent, user));
     }
 
     // 일정 상세 조회
