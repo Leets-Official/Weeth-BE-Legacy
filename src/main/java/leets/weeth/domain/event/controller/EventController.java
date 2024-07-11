@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import leets.weeth.domain.event.dto.RequestEvent;
 import leets.weeth.domain.event.dto.ResponseEvent;
 import leets.weeth.domain.event.service.EventService;
+import leets.weeth.global.common.exception.BusinessLogicException;
 import leets.weeth.global.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -59,8 +60,8 @@ public class EventController {
     @Operation(summary = "일정 수정", description = "관리자가 일정을 수정합니다.")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PatchMapping("/{id}")
-    public CommonResponse<String> updateEvent(@PathVariable Long id, @RequestBody RequestEvent requestEvent) {
-        eventService.updateEvent(id, requestEvent);
+    public CommonResponse<String> updateEvent(@PathVariable Long id, @RequestBody RequestEvent requestEvent, @AuthenticationPrincipal User user) throws BusinessLogicException {
+        eventService.updateEvent(id, requestEvent, user.getUsername());
         return CommonResponse.createSuccess(EVENT_UPDATED_SUCCESS.getMessage());
     }
 
@@ -68,8 +69,8 @@ public class EventController {
     @Operation(summary = "일정 삭제", description = "관리자가 일정을 삭제합니다.")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
-    public CommonResponse<String> deleteEvent(@PathVariable Long id) {
-        eventService.deleteEvent(id);
+    public CommonResponse<String> deleteEvent(@PathVariable Long id, @AuthenticationPrincipal User user) throws BusinessLogicException {
+        eventService.deleteEvent(id, user.getUsername());
         return CommonResponse.createSuccess(EVENT_DELETED_SUCCESS.getMessage());
     }
 
