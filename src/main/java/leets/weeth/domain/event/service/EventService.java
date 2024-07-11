@@ -8,8 +8,8 @@ import leets.weeth.domain.event.mapper.EventMapper;
 import leets.weeth.domain.event.repository.EventRepository;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
+import leets.weeth.global.common.exception.BusinessLogicException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +20,6 @@ import static leets.weeth.domain.event.entity.enums.ErrorMessage.EVENT_NOT_FOUND
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class EventService {
     private final EventRepository eventRepository;
 
@@ -56,18 +55,28 @@ public class EventService {
 
     // 일정 수정
     @Transactional
-    public void updateEvent(Long id, RequestEvent updatedEvent) {
+    public void updateEvent(Long id, RequestEvent updatedEvent, String userEmail) throws BusinessLogicException {
         Event oldEvent = eventRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(EVENT_NOT_FOUND.getMessage()));
-
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자입니다."));
+        if(!user.getId().equals(oldEvent.getUser().getId())){
+            throw new BusinessLogicException("일정을 작성한 사용자만 수정할 수 있습니다.");
+        }
         oldEvent.updateFromDto(updatedEvent);
     }
 
     // 일정 삭제
-    public void deleteEvent(Long id) {
-        if (!eventRepository.existsById(id)) {
-            throw new EntityNotFoundException(EVENT_NOT_FOUND.getMessage());
+    public void deleteEvent(Long eventId, String userEmail) throws BusinessLogicException {
+
+        Event oldEvent = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EntityNotFoundException(EVENT_NOT_FOUND.getMessage()));
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자입니다."));
+        if(!user.getId().equals(oldEvent.getUser().getId())){
+            throw new BusinessLogicException("일정을 작성한 사용자만 삭제할 수 있습니다.");
         }
-        eventRepository.deleteById(id);
+        eventRepository.deleteByIdAndUserId(eventId, user.getId());
+
     }
 }
