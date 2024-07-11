@@ -30,7 +30,7 @@ public class EventController {
     @Operation(summary = "일정 생성", description = "관리자가 일정을 등록합니다.")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PostMapping("/create")
-    public CommonResponse<String> createEvent(@RequestBody @Valid RequestEvent requestEvent, @AuthenticationPrincipal User user) {
+    public CommonResponse<String> createEvent(@RequestBody @Valid RequestEvent requestEvent, @AuthenticationPrincipal User user) throws BusinessLogicException {
         eventService.createEvent(requestEvent, user.getUsername());
         return CommonResponse.createSuccess(EVENT_CREATED_SUCCESS.getMessage());
     }
