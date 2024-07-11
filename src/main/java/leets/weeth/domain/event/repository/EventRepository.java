@@ -11,4 +11,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findByStartDateTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
 
+    void deleteByIdAndUserId(Long id, Long userId);
+
+    // 유저가 작성한 일정 리스트 반환. 필요하다면 사용
+//    Optional<Event> findByIdAndUserId(Long eventId, Long userId);
 }
