@@ -67,6 +67,7 @@ public class EventService {
     }
 
     // 일정 삭제
+    @Transactional
     public void deleteEvent(Long eventId, String userEmail) throws BusinessLogicException {
 
         Event oldEvent = eventRepository.findById(eventId)
