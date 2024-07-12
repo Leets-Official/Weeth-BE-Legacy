@@ -32,14 +32,14 @@ public class UserService {
     }
 
     @Transactional
-    public void delete(String email) {
-        userRepository.findByEmail(email)
+    public void delete(Long userId) {
+        userRepository.findById(userId)
                 .ifPresent(User::leave);
     }
 
     @Transactional
-    public void applyOB(String email, Integer cardinal) throws BusinessLogicException {
-        User user = userRepository.findByEmail(email)
+    public void applyOB(Long userId, Integer cardinal) throws BusinessLogicException {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자입니다."));
 
         if(!user.getStatus().equals(Status.ACTIVE))
