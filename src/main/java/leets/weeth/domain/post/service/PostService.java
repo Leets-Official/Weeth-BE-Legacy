@@ -8,6 +8,7 @@ import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -24,8 +25,9 @@ public class PostService {
     @Autowired
     private UserRepository userRepository;
 
+    //모든 게시물 가져오기
     public List<PostDTO> index() {
-        List<Post> posts = postRepository.findAll();
+        List<Post> posts = postRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
         return posts.stream()
                 .map(PostDTO::createPostDTO)
                 .collect(Collectors.toList());
@@ -41,31 +43,31 @@ public class PostService {
     public void create(String email, PostDTO dto) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(()->new UsernameNotFoundException("failed to add post! no such user"));
-        Post post = Post.createPost(dto, user);
-        postRepository.save(post);
+        Post newPost = Post.createPost(dto, user);
+        postRepository.save(newPost);
     }
 
     @Transactional
     public void update(Long postId, PostDTO dto, String currentEmail) {
 
-        Post target = postRepository.findById(postId)
+        Post updated = postRepository.findById(postId)
                 .orElseThrow(()->new EntityNotFoundException("Failed to edit the Post. no such post."));
-        if (!target.getUser().getEmail().equals(currentEmail)) {
+        if (!updated.getUser().getEmail().equals(currentEmail)) {
             throw new AccessDeniedException("You do not have permission to edit this post");
         }
-        target.patch(dto);
+        updated.updatePost(dto);
         // 2. post 수정
-        postRepository.save(target);
+        postRepository.save(updated);
         // 3. DB로 갱신
 
     }
     @Transactional
     public void delete(Long postid, String currentEmail) {
-        Post target = postRepository.findById(postid)
+        Post deleted = postRepository.findById(postid)
                 .orElseThrow(()->new EntityNotFoundException("Failed to delete the Post. no such post"));
-        if(!target.getUser().getEmail().equals(currentEmail)){
+        if(!deleted.getUser().getEmail().equals(currentEmail)){
             throw new AccessDeniedException("You do not have permission to delete this post");
         }
-        postRepository.delete(target);
+        postRepository.delete(deleted);
     }
 }
