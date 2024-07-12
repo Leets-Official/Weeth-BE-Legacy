@@ -12,6 +12,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service //서비스 객체 생성
@@ -21,8 +22,11 @@ public class PostService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<Post> index() {
-        return postRepository.findAll();
+    public List<PostDTO> index() {
+        List<Post> posts = postRepository.findAll();
+        return posts.stream()
+                .map(PostDTO::createPostDTO)
+                .collect(Collectors.toList());
     }
 
     public Post show(Long postId) {

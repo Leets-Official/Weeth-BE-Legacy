@@ -28,13 +28,16 @@ public class PostController {
     }
 
     @GetMapping("")
-    public List<Post> index(){
-        return postService.index();
+    public CommonResponse<List<PostDTO>> index(){
+
+        List<PostDTO> posts = postService.index();
+        return CommonResponse.createSuccess(posts);
     }
 
     @GetMapping("/{postId}")
-    public Post show(@PathVariable Long postId){
-        return postService.show(postId);
+    public CommonResponse<Post> show(@PathVariable Long postId){
+        Post newPost = postService.show(postId);
+        return CommonResponse.createSuccess(newPost);
     }
 
     @PatchMapping("/{postId}")
