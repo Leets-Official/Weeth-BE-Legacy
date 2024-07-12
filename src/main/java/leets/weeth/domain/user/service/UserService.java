@@ -7,7 +7,7 @@ import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.entity.enums.Status;
 import leets.weeth.domain.user.mapper.UserMapper;
 import leets.weeth.domain.user.repository.UserRepository;
-import leets.weeth.global.common.exception.BusinessLogicException;
+import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
