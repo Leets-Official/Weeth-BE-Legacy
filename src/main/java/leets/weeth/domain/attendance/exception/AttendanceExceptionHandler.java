@@ -1,4 +1,5 @@
 package leets.weeth.domain.attendance.exception;
+
 import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
