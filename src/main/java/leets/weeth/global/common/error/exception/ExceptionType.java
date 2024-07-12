@@ -1,7 +1,8 @@
-package leets.weeth.global.common.exception;
+package leets.weeth.global.common.error.exception;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

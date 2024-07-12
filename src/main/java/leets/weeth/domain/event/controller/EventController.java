@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 import leets.weeth.domain.event.dto.RequestEvent;
 import leets.weeth.domain.event.dto.ResponseEvent;
 import leets.weeth.domain.event.service.EventService;
-import leets.weeth.global.common.exception.BusinessLogicException;
+import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
 import leets.weeth.global.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
