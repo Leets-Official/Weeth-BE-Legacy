@@ -15,7 +15,7 @@ import lombok.ToString;
 @ToString
 @Entity
 @Getter
-@Table(name = "posts")
+@Table
 public class Post extends BaseEntity {
     @Id //엔티티의 대푯값 지정
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +42,7 @@ public class Post extends BaseEntity {
     }
 
 
-    public void patch(PostDTO dto) {
+    public void updatePost(PostDTO dto) {
 
         if (dto.getTitle()!= null)   //수정할 제목 데이터가 있다면
             this.title = dto.getTitle();
