@@ -30,16 +30,15 @@ public class PostService {
     }
 
 
-    public Post create(String email, PostDTO dto) {
+    public void create(String email, PostDTO dto) {
         User user = userRepository.findByEmail(email).orElseThrow(()->new
                 IllegalArgumentException("failed to add post! no such user"));
         Post post = Post.createPost(dto, user);
-        Post created = postRepository.save(post);
-        return created;
+        postRepository.save(post);
     }
 
     @Transactional
-    public Post update(Long postid, PostDTO dto, String currentEmail) {
+    public void update(Long postid, PostDTO dto, String currentEmail) {
 
         Post target = postRepository.findById(postid)
                 .orElseThrow(()->new IllegalArgumentException("failed to edit the Post. so such post."));
@@ -48,19 +47,17 @@ public class PostService {
         }
         target.patch(dto);
         // 2. post 수정
-        Post updated = postRepository.save(target);
+        postRepository.save(target);
         // 3. DB로 갱신
-        return updated;
 
     }
     @Transactional
-    public Post delete(Long postid, String currentEmail) {
+    public void delete(Long postid, String currentEmail) {
         Post target = postRepository.findById(postid)
                 .orElseThrow(()->new IllegalArgumentException("no such post"));
         if(!target.getUser().getEmail().equals(currentEmail)){
             throw new AccessDeniedException("You do not have permission to delete this post");
         }
         postRepository.delete(target);
-        return  target;
     }
 }
