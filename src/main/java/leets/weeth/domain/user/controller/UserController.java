@@ -3,7 +3,7 @@ package leets.weeth.domain.user.controller;
 import jakarta.validation.Valid;
 import leets.weeth.domain.user.dto.UserDTO;
 import leets.weeth.domain.user.service.UserService;
-import leets.weeth.global.common.exception.BusinessLogicException;
+import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
 import leets.weeth.global.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
