@@ -19,6 +19,7 @@ import lombok.ToString;
 public class Post extends BaseEntity {
     @Id //엔티티의 대푯값 지정
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_id")
     private Long id;
 
     @ManyToOne
@@ -26,11 +27,9 @@ public class Post extends BaseEntity {
     private User user;
 
     @NotEmpty
-    @Column
     private String title;
 
     @NotEmpty
-    @Column //content 필드 선언, DB 테이블의 content와 연결
     private String content;
 
     public static Post createPost(PostDTO dto, User user){
