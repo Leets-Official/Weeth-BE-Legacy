@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/attendance")
+@RequestMapping("/attendance")
 @RequiredArgsConstructor
 public class AttendanceController {
     private final AttendanceService attendanceService;
@@ -37,19 +37,15 @@ public class AttendanceController {
 //        return CommonResponse.createSuccess("출석이 완료되었습니다.");
 //    }
 
-    @GetMapping("/statistics/{userId}")
+    @GetMapping("/statistics/{userId}") //특정 사용자 출석통계
     public CommonResponse<ResponseStatistics> getAttendanceStatistics(@PathVariable Long userId) {
         ResponseStatistics statistics = statisticsService.getAttendanceStatistics(userId);
         return CommonResponse.createSuccess(statistics);
     }
 
     @PostMapping("/penalty")
-    public CommonResponse<String> recordPenalty(@RequestBody @Valid RequestPenalty requestPenalty) throws BusinessLogicException {
-        try {
-            penaltyService.recordPenalty(requestPenalty);
-        } catch (BusinessLogicException e) {
-            throw new RuntimeException(e);
-        }
+    public CommonResponse<String> recordPenalty(@RequestBody @Valid RequestPenalty requestPenalty, @RequestParam String email) {
+        penaltyService.recordPenalty(requestPenalty, email);
         return CommonResponse.createSuccess("패널티가 기록되었습니다.");
     }
 }
