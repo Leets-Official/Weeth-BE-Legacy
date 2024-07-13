@@ -101,6 +101,19 @@ public class JwtService {
         }
     }
 
+    public Optional<Long> extractId(String accessToken) {
+        try {
+            return Optional.ofNullable(JWT.require(Algorithm.HMAC512(key))
+                    .build()
+                    .verify(accessToken)
+                    .getClaim(ID_CLAIM)
+                    .asLong());
+        } catch (Exception e) {
+            log.error("액세스 토큰이 유효하지 않습니다.");
+            return Optional.empty();
+        }
+    }
+
     public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
         response.setHeader(accessHeader, accessToken);
     }
