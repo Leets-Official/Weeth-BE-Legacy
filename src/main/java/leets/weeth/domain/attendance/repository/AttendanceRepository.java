@@ -10,5 +10,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     @Query("SELECT DISTINCT a.week FROM Attendance a")
     List<Integer> findDistinctWeeks();
 
-    long countByUserIdAndAttendTrue(Long userId);
+    long countByUserIdAndIsAttendTrue(Long userId);
+//    Long countByUserIdAndAttendIsTrue(Long userId);
 }

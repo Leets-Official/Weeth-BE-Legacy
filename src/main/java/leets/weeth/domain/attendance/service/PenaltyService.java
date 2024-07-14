@@ -5,7 +5,7 @@ import leets.weeth.domain.attendance.dto.RequestPenalty;
 import leets.weeth.domain.attendance.entity.Penalty;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
-import leets.weeth.global.common.exception.BusinessLogicException;
+import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import leets.weeth.domain.attendance.repository.PenaltyRepository;
