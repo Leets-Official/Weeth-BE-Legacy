@@ -9,12 +9,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ResponseAttendance {
-    @NotNull
     private Long id;
-    @NotNull
     private Long attendanceCodeId;
-    @NotNull
     private boolean isAttend;
-    @NotNull
     private Long userId;
 }

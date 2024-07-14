@@ -14,9 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class WeekDto {
     private Long id;
-    @NotBlank
     private String attendanceCode;
-    @NotBlank
     private LocalDateTime expirationTime;
     private int week;
 }

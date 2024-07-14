@@ -9,7 +9,6 @@ import lombok.Getter;
 public class ResponseMeeting {
     private Long id;
     private String name;
-    @NotBlank
     private String description;
     private String date;
 }
