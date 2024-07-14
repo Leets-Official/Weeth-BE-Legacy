@@ -31,11 +31,11 @@ public class AttendanceController {
         return CommonResponse.createSuccess(meetings);
     }
 
-//    @PostMapping("/check-in")
-//    public CommonResponse<String> checkInAttendance(@RequestBody @Valid RequestAttendance attendanceDTO) {
-//        attendanceService.checkInAttendance(attendanceDTO);
-//        return CommonResponse.createSuccess("출석이 완료되었습니다.");
-//    }
+    @PostMapping("/check-in")
+    public CommonResponse<String> checkInAttendance(@RequestBody @Valid RequestAttendance attendanceDTO, @RequestParam(value = "email") String email) {
+        attendanceService.checkInAttendance(attendanceDTO, email);
+        return CommonResponse.createSuccess("출석이 완료되었습니다.");
+    }
 
     @GetMapping("/statistics/{userId}") //특정 사용자 출석통계
     public CommonResponse<ResponseStatistics> getAttendanceStatistics(@PathVariable Long userId) {

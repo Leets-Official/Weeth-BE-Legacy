@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.WeekFields;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -29,29 +30,32 @@ public class AttendanceService {
     private final AttendanceStatisticsService attendanceStatisticsService;
 
     public void checkInAttendance(RequestAttendance requestAttendance, String currentEmail) {
-        Optional<AttendanceCode> optionalCode = attendanceCodeRepository.findById(requestAttendance.getAttendanceCodeId());
-        if (optionalCode.isPresent()) {
-            AttendanceCode attendanceCode = optionalCode.get(); // 일치하는지 확인
-            if (Objects.equals(attendanceCode.getAttendanceCode(), requestAttendance.getAttendanceCode())) {
-                if (attendanceCode.getExpirationTime().isBefore(LocalDateTime.now())) {  // 코드 만료 시
-                    throw new AttendanceCodeException("출석 코드가 유효기간이 지났습니다.");
-                }
+        LocalDateTime now = LocalDateTime.now();
+        int currentWeek = calculateCurrentWeek(now);
 
-                User user = userRepository.findByEmail(currentEmail) // 이메일로 확인
-                        .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        AttendanceCode attendanceCode = attendanceCodeRepository.findByWeekAndDate(Week.of(currentWeek), now.toLocalDate())
+                .orElseThrow(() -> new ResourceNotFoundException("해당 주차의 출석 코드를 찾을 수 없습니다."));
 
-                Attendance attendance = new Attendance();
-                attendance.setAttend(requestAttendance.isAttend());
-                attendance.setUser(user);
-                attendance.setWeek(attendanceCode.getWeek()); // Week 타입으로 설정
-                attendanceRepository.save(attendance);
-
-                attendanceStatisticsService.updateAttendanceRate(user.getId());
-            } else {
-                throw new AttendanceCodeException("출석 코드가 유효하지 않습니다.");
+        if (Objects.equals(attendanceCode.getAttendanceCode(), requestAttendance.getAttendanceCode())) {
+            if (attendanceCode.getExpirationTime().isBefore(now)) {  //코드 만료시
+                throw new AttendanceCodeException("출석 코드가 유효기간이 지났습니다.");
             }
+
+            User user = userRepository.findByEmail(currentEmail)
+                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+            Attendance attendance = new Attendance();
+            attendance.setAttend(true);
+            attendance.setUser(user);
+            attendance.setWeek(Week.of(currentWeek));
+            attendanceRepository.save(attendance);
+
+            attendanceStatisticsService.updateAttendanceRate(user.getId());
         } else {
-            throw new ResourceNotFoundException("출석 코드를 찾을 수 없습니다.");
+            throw new AttendanceCodeException("출석 코드가 유효하지 않습니다.");
         }
+    }
+    private int calculateCurrentWeek(LocalDateTime now) {
+        return now.get(WeekFields.ISO.weekOfYear());
     }
 }

@@ -5,6 +5,7 @@ import leets.weeth.domain.attendance.entity.enums.Week;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,4 +24,7 @@ public class AttendanceCode {
 
     @Column(nullable = false)
     private Week week;
+
+    @Column(name = "date")
+    private LocalDate date;
 }
