@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.Optional;
 
-@Repository
 public interface AttendanceCodeRepository extends JpaRepository<AttendanceCode, Long> {
     Optional<AttendanceCode> findByWeekAndDate(Week week, LocalDate date);
 }
