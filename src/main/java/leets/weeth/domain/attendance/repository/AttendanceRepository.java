@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     List<Integer> findDistinctWeeks();
-
     long countByUserIdAndIsAttendTrue(Long userId);
 //    Long countByUserIdAndAttendIsTrue(Long userId);
 }
