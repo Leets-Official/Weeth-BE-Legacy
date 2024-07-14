@@ -1,6 +1,7 @@
 package leets.weeth.domain.event.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import leets.weeth.domain.event.dto.RequestEvent;
@@ -29,7 +30,7 @@ public class EventController {
     @Operation(summary = "일정 생성", description = "관리자가 일정을 등록합니다.")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PostMapping("/create")
-    public CommonResponse<String> createEvent(@RequestBody @Valid RequestEvent requestEvent, @CurrentUser Long userId) throws BusinessLogicException {
+    public CommonResponse<String> createEvent(@RequestBody @Valid RequestEvent requestEvent, @Parameter(hidden = true) @CurrentUser Long userId) throws BusinessLogicException {
         eventService.createEvent(requestEvent, userId);
         return CommonResponse.createSuccess(EVENT_CREATED_SUCCESS.getMessage());
     }
@@ -59,7 +60,7 @@ public class EventController {
     @Operation(summary = "일정 수정", description = "관리자가 일정을 수정합니다.")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PatchMapping("/{id}")
-    public CommonResponse<String> updateEvent(@PathVariable Long id, @RequestBody RequestEvent requestEvent, @CurrentUser Long userId) throws BusinessLogicException {
+    public CommonResponse<String> updateEvent(@PathVariable Long id, @RequestBody RequestEvent requestEvent, @Parameter(hidden = true) @CurrentUser Long userId) throws BusinessLogicException {
         eventService.updateEvent(id, requestEvent, userId);
         return CommonResponse.createSuccess(EVENT_UPDATED_SUCCESS.getMessage());
     }
@@ -68,7 +69,7 @@ public class EventController {
     @Operation(summary = "일정 삭제", description = "관리자가 일정을 삭제합니다.")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
-    public CommonResponse<String> deleteEvent(@PathVariable Long id, @CurrentUser Long userId) throws BusinessLogicException {
+    public CommonResponse<String> deleteEvent(@PathVariable Long id, @Parameter(hidden = true) @CurrentUser Long userId) throws BusinessLogicException {
         eventService.deleteEvent(id, userId);
         return CommonResponse.createSuccess(EVENT_DELETED_SUCCESS.getMessage());
     }
