@@ -3,11 +3,10 @@ package leets.weeth.domain.user.controller;
 import jakarta.validation.Valid;
 import leets.weeth.domain.user.dto.UserDTO;
 import leets.weeth.domain.user.service.UserService;
-import leets.weeth.global.common.exception.BusinessLogicException;
+import leets.weeth.global.auth.annotation.CurrentUser;
+import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
 import leets.weeth.global.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,14 +23,14 @@ public class UserController {
     }
 
     @DeleteMapping("")
-    public CommonResponse<String> delete(@AuthenticationPrincipal User user) {
-        userService.delete(user.getUsername());
+    public CommonResponse<String> delete(@CurrentUser Long userId) {
+        userService.delete(userId);
         return CommonResponse.createSuccess();
     }
 
     @PostMapping("/apply/{cardinal}")
-    public CommonResponse<String> applyOB(@AuthenticationPrincipal User user, @PathVariable Integer cardinal) throws BusinessLogicException {
-        userService.applyOB(user.getUsername(), cardinal);
+    public CommonResponse<String> applyOB(@CurrentUser Long userId, @PathVariable Integer cardinal) throws BusinessLogicException {
+        userService.applyOB(userId, cardinal);
         return CommonResponse.createSuccess();
     }
 }

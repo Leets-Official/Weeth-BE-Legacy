@@ -7,7 +7,7 @@ import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.entity.enums.Status;
 import leets.weeth.domain.user.mapper.UserMapper;
 import leets.weeth.domain.user.repository.UserRepository;
-import leets.weeth.global.common.exception.BusinessLogicException;
+import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,14 +32,14 @@ public class UserService {
     }
 
     @Transactional
-    public void delete(String email) {
-        userRepository.findByEmail(email)
+    public void delete(Long userId) {
+        userRepository.findById(userId)
                 .ifPresent(User::leave);
     }
 
     @Transactional
-    public void applyOB(String email, Integer cardinal) throws BusinessLogicException {
-        User user = userRepository.findByEmail(email)
+    public void applyOB(Long userId, Integer cardinal) throws BusinessLogicException {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자입니다."));
 
         if(!user.getStatus().equals(Status.ACTIVE))

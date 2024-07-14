@@ -1,13 +1,16 @@
 package leets.weeth.domain.event.dto;
 
-import lombok.Getter;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 
+@Builder
 public record RequestEvent (
-     String title,
-     String content,
+     @NotBlank String title,
+     @NotBlank String content,
      String location,
-     LocalDateTime startDateTime,
-     LocalDateTime endDateTime
+     @NotNull LocalDateTime startDateTime,
+     @NotNull LocalDateTime endDateTime
 ) {}
