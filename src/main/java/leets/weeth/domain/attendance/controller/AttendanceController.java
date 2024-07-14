@@ -9,7 +9,7 @@ import leets.weeth.domain.attendance.service.AttendanceService;
 import leets.weeth.domain.attendance.service.AttendanceStatisticsService;
 import leets.weeth.domain.attendance.service.MeetingService;
 import leets.weeth.domain.attendance.service.PenaltyService;
-import leets.weeth.global.common.exception.BusinessLogicException;
+import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
 import leets.weeth.global.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

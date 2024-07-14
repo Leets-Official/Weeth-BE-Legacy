@@ -25,7 +25,7 @@ public class AttendanceStatisticsService {
         // 출석 기록에서 주차 목록을 가져옴
         List<Integer> weeks = attendanceRepository.findDistinctWeeks();
         long totalWeeks = weeks.size();
-        long attendedWeeks = attendanceRepository.countByUserIdAndAttendTrue(userId);
+        long attendedWeeks = attendanceRepository.countByUserIdAndIsAttendTrue(userId);
         double attendanceRate = totalWeeks > 0 ? (double) attendedWeeks / totalWeeks * 100 : 0;
 
         ResponseStatistics statistics = new ResponseStatistics();
@@ -43,7 +43,7 @@ public class AttendanceStatisticsService {
         // 출석 기록에서 주차 목록을 가져옴
         List<Integer> weeks = attendanceRepository.findDistinctWeeks();
         long totalWeeks = weeks.size();
-        long attendedWeeks = attendanceRepository.countByUserIdAndAttendTrue(userId);
+        long attendedWeeks = attendanceRepository.countByUserIdAndIsAttendTrue(userId);
         double attendanceRate = totalWeeks > 0 ? (double) attendedWeeks / totalWeeks * 100 : 0;
 
 //        user.setAttendanceRate(attendanceRate);
