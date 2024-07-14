@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class AttendanceCode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long AttendanceCode_id;
 
     @Column(nullable = false)
     private String attendanceCode;

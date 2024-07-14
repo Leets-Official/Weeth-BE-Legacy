@@ -10,7 +10,7 @@ import lombok.Setter;
 public class Penalty {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long Penalty_id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
