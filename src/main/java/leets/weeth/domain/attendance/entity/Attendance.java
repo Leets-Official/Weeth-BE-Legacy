@@ -12,7 +12,7 @@ import lombok.Setter;
 public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long Attendance_id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
