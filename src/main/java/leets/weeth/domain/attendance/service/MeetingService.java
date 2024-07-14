@@ -17,7 +17,7 @@ public class MeetingService {
     public List<ResponseMeeting> getAllMeetings() {
         return meetingRepository.findAll().stream()
                 .map(meeting -> ResponseMeeting.builder()
-                        .id(meeting.getId())
+                        .id(meeting.getMeeting_id())
                         .name(meeting.getName())
                         .build())
                 .collect(Collectors.toList());
