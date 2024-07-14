@@ -44,7 +44,7 @@ public class AttendanceController {
     }
 
     @PostMapping("/penalty")
-    public CommonResponse<String> recordPenalty(@RequestBody @Valid RequestPenalty requestPenalty, @RequestParam String email) {
+    public CommonResponse<String> recordPenalty(@RequestBody @Valid RequestPenalty requestPenalty, @RequestParam(value = "email") String email) {
         penaltyService.recordPenalty(requestPenalty, email);
         return CommonResponse.createSuccess("패널티가 기록되었습니다.");
     }
