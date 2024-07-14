@@ -30,11 +30,11 @@ public class EventService {
 
     // 일정 생성
     @Transactional
-    public void createEvent(RequestEvent requestEvent, String userEmail) throws BusinessLogicException {
+    public void createEvent(RequestEvent requestEvent, Long userId) throws BusinessLogicException {
         // 기간 입력 검증
         validateDateRange(requestEvent.startDateTime(), requestEvent.endDateTime());
 
-        User user = userRepository.findByEmail(userEmail)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND.getMessage()));
         // 유저 정보 저장을 위해 매퍼를 제거하고 정적 팩토리 메서드 사용
         eventRepository.save(Event.fromDto(requestEvent, user));
@@ -62,26 +62,26 @@ public class EventService {
 
     // 일정 수정
     @Transactional
-    public void updateEvent(Long eventId, RequestEvent updatedEvent, String userEmail) throws BusinessLogicException {
+    public void updateEvent(Long eventId, RequestEvent updatedEvent, Long userId) throws BusinessLogicException {
         // 일정을 생성한 사용자인지 확인
-        Event oldEvent = validateEventOwner(eventId, userEmail);
+        Event oldEvent = validateEventOwner(eventId, userId);
         oldEvent.updateFromDto(updatedEvent);
     }
 
     // 일정 삭제
     @Transactional
-    public void deleteEvent(Long eventId, String userEmail) throws BusinessLogicException {
+    public void deleteEvent(Long eventId, Long userId) throws BusinessLogicException {
         // 일정을 생성한 사용자인지 확인
-        Event oldEvent = validateEventOwner(eventId, userEmail);
+        Event oldEvent = validateEventOwner(eventId, userId);
         eventRepository.delete(oldEvent);
     }
 
     // 해당 일정을 생성한 사용자와 같은지 검증
-    private Event validateEventOwner(Long eventId, String userEmail) throws BusinessLogicException {
+    private Event validateEventOwner(Long eventId, Long userId) throws BusinessLogicException {
         Event oldEvent = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException(EVENT_NOT_FOUND.getMessage()));
 
-        User user = userRepository.findByEmail(userEmail)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND.getMessage()));
 
         // 일정을 생성한 사용자와 같은지 확인
