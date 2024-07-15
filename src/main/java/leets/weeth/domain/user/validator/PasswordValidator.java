@@ -14,6 +14,6 @@ public class PasswordValidator implements ConstraintValidator<CheckPassword, Use
 
     @Override
     public boolean isValid(UserDTO.SignUp dto, ConstraintValidatorContext context) {
-        return !dto.password().equals(dto.passwordConfirm());
+        return dto.password().equals(dto.passwordConfirm());
     }
 }

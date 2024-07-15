@@ -9,11 +9,12 @@ import leets.weeth.domain.user.entity.enums.Position;
 
 public class UserDTO {
 
+    @CheckPassword
     public record SignUp (
         @NotBlank        String name,
         @Email @NotBlank String email,
         @NotBlank        String password,
-        @NotBlank @CheckPassword String passwordConfirm,
+        @NotBlank String passwordConfirm,
         @NotBlank        String studentId,
         @NotBlank        String tel,
         @NotNull         Position position,
