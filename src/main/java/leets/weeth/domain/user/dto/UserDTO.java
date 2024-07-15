@@ -5,23 +5,27 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import leets.weeth.domain.user.entity.enums.Department;
 import leets.weeth.domain.user.entity.enums.Position;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 public class UserDTO {
 
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SignUp {
-        @NotBlank        private String name;
-        @Email @NotBlank private String email;
-        @NotBlank        private String password;
-        @NotBlank        private String studentId;
-        @NotBlank        private String phoneNumber;
-        @NotNull         private Position position;
-        @NotNull         private Department department;
-        @NotNull         private Integer cardinal;
-    }
+    public record SignUp (
+        @NotBlank        String name,
+        @Email @NotBlank String email,
+        @NotBlank        String password,
+        @NotBlank        String studentId,
+        @NotBlank        String phoneNumber,
+        @NotNull         Position position,
+        @NotNull         Department department,
+        @NotNull         Integer cardinal
+    ) {}
+
+    public record Response(
+            Integer id,
+            String name,
+            String studentId,
+            Department department,
+            String email,
+            Integer cardinal,
+            Position position
+    ) {}
 }
