@@ -34,10 +34,11 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    public Post show(Long postId) {
+    public ResponsePostDTO show(Long postId) {
         Post target = postRepository.findById(postId)
                 .orElseThrow(()->new EntityNotFoundException("Failed to edit the Post. no such post."));
-        return target;
+
+        return ResponsePostDTO.createResponsePostDTO(target);
     }
 
 

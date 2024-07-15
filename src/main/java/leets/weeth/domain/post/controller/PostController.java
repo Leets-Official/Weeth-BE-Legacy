@@ -33,8 +33,8 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public CommonResponse<Post> show(@PathVariable Long postId){
-        Post newPost = postService.show(postId);
+    public CommonResponse<ResponsePostDTO> show(@PathVariable Long postId){
+        ResponsePostDTO newPost = postService.show(postId);
         return CommonResponse.createSuccess(newPost);
     }
 

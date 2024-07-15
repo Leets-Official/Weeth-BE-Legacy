@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -19,8 +21,11 @@ public class ResponsePostDTO extends BaseEntity {
     private String title;
     @NotBlank
     private String content;
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
 
     public static ResponsePostDTO createResponsePostDTO(Post post) {
-        return new ResponsePostDTO(post.getId(), post.getTitle(), post.getContent());
+        return new ResponsePostDTO(post.getId(), post.getTitle(), post.getContent(),
+                post.getCreatedAt(), post.getModifiedAt());
     }
 }
