@@ -5,6 +5,7 @@ import leets.weeth.global.common.response.CommonResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
 import org.springframework.web.ErrorResponse;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -25,6 +26,13 @@ public class CommonExceptionController {
         log.error("Error", ex);
 
         return CommonResponse.createFailure(status, ex.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)  // BindException == @ModelAttribute 어노테이션으로 받은 파라미터의 @Valid 통해 발생한 Exception
+    public CommonResponse<Void> handle(MethodArgumentNotValidException e) {   // 클라이언트의 오류일 경우
+        int status = 400;   // 파라미터 값 실수이므로 4XX
+        log.error("Error", e);
+        return CommonResponse.createFailure(status, e.getAllErrors().get(0).getDefaultMessage());   // 디폴트 메세지 가져오기
     }
 
     @ExceptionHandler(BindException.class)  // BindException == @ModelAttribute 어노테이션으로 받은 파라미터의 @Valid 통해 발생한 Exception
