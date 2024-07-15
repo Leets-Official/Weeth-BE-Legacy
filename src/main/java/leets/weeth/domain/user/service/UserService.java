@@ -5,8 +5,8 @@ import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.mapper.UserMapper;
 import leets.weeth.domain.user.repository.UserRepository;
 import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
-import leets.weeth.global.common.error.exception.custom.EmailExistsException;
 import leets.weeth.global.common.error.exception.custom.InvalidAccessException;
+import leets.weeth.global.common.error.exception.custom.UserExistsException;
 import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,10 +31,10 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public void signUp(UserDTO.SignUp requestDto) {
-        if (userRepository.findByEmail(requestDto.email()).isPresent())
-            throw new EmailExistsException();
-
-        // 수정: 아이디 이외 중복 처리
+        if(userRepository.existsByEmail(requestDto.email()) ||  // 이메일 중복
+                userRepository.existsByStudentId(requestDto.studentId()) ||     // 학번 중복
+                userRepository.existsByTel(requestDto.tel()))   // 전화번호 중복
+            throw new UserExistsException();
 
         User user = mapper.from(requestDto, passwordEncoder);
         userRepository.save(user);
