@@ -1,7 +1,8 @@
 package leets.weeth.domain.post.service;
 
 import jakarta.transaction.Transactional;
-import leets.weeth.domain.post.dto.PostDTO;
+import leets.weeth.domain.post.dto.RequestPostDTO;
+import leets.weeth.domain.post.dto.ResponsePostDTO;
 import leets.weeth.domain.post.entity.Post;
 import leets.weeth.domain.post.repository.PostRepository;
 import leets.weeth.domain.user.entity.User;
@@ -26,10 +27,10 @@ public class PostService {
     private UserRepository userRepository;
 
     //모든 게시물 가져오기
-    public List<PostDTO> index() {
+    public List<ResponsePostDTO> index() {
         List<Post> posts = postRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
         return posts.stream()
-                .map(PostDTO::createPostDTO)
+                .map(ResponsePostDTO::createResponsePostDTO)
                 .collect(Collectors.toList());
     }
 
@@ -40,22 +41,22 @@ public class PostService {
     }
 
 
-    public void create(String email, PostDTO dto) {
+    public void create(String email, RequestPostDTO requestPostDTO) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(()->new UsernameNotFoundException("failed to add post! no such user"));
-        Post newPost = Post.createPost(dto, user);
+        Post newPost = Post.createPost(requestPostDTO, user);
         postRepository.save(newPost);
     }
 
     @Transactional
-    public void update(Long postId, PostDTO dto, String currentEmail) {
+    public void update(Long postId, RequestPostDTO requestPostDTO, String currentEmail) {
 
         Post updated = postRepository.findById(postId)
                 .orElseThrow(()->new EntityNotFoundException("Failed to edit the Post. no such post."));
         if (!updated.getUser().getEmail().equals(currentEmail)) {
             throw new AccessDeniedException("You do not have permission to edit this post");
         }
-        updated.updatePost(dto);
+        updated.updatePost(requestPostDTO);
         // 2. post 수정
         postRepository.save(updated);
         // 3. DB로 갱신

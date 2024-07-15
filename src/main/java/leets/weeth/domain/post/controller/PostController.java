@@ -1,6 +1,7 @@
 package leets.weeth.domain.post.controller;
 
-import leets.weeth.domain.post.dto.PostDTO;
+import leets.weeth.domain.post.dto.RequestPostDTO;
+import leets.weeth.domain.post.dto.ResponsePostDTO;
 import leets.weeth.domain.post.entity.Post;
 import leets.weeth.domain.post.service.PostService;
 import leets.weeth.global.common.response.CommonResponse;
@@ -19,15 +20,15 @@ public class PostController {
     @Autowired
     private final PostService postService;
     @PostMapping("/new")
-    public CommonResponse<String> create(@RequestBody PostDTO dto, @AuthenticationPrincipal User user){
-        postService.create(user.getUsername(), dto);
+    public CommonResponse<String> create(@RequestBody RequestPostDTO requestPostDTO, @AuthenticationPrincipal User user){
+        postService.create(user.getUsername(), requestPostDTO);
         return CommonResponse.createSuccess();
     }
 
     @GetMapping("")
-    public CommonResponse<List<PostDTO>> index(){
+    public CommonResponse<List<ResponsePostDTO>> index(){
 
-        List<PostDTO> posts = postService.index();
+        List<ResponsePostDTO> posts = postService.index();
         return CommonResponse.createSuccess(posts);
     }
 
@@ -38,8 +39,8 @@ public class PostController {
     }
 
     @PatchMapping("/{postId}")
-    public CommonResponse<String> edit(@PathVariable Long postId,@RequestBody PostDTO dto, @AuthenticationPrincipal User user){
-        postService.update(postId, dto, user.getUsername());
+    public CommonResponse<String> edit(@PathVariable Long postId, @RequestBody RequestPostDTO requestPostDTO, @AuthenticationPrincipal User user){
+        postService.update(postId, requestPostDTO, user.getUsername());
         return CommonResponse.createSuccess();
     }
 

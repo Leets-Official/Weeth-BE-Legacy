@@ -2,7 +2,7 @@ package leets.weeth.domain.post.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import leets.weeth.domain.post.dto.PostDTO;
+import leets.weeth.domain.post.dto.RequestPostDTO;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.global.common.entity.BaseEntity;
 import lombok.AllArgsConstructor;
@@ -32,9 +32,9 @@ public class Post extends BaseEntity {
     @NotEmpty
     private String content;
 
-    public static Post createPost(PostDTO dto, User user){
+    public static Post createPost(RequestPostDTO dto, User user){
         return new Post(
-                dto.getId(),
+                null,
                 user,
                 dto.getTitle(),
                 dto.getContent()
@@ -42,7 +42,7 @@ public class Post extends BaseEntity {
     }
 
 
-    public void updatePost(PostDTO dto) {
+    public void updatePost(RequestPostDTO dto) {
 
         if (dto.getTitle()!= null)   //수정할 제목 데이터가 있다면
             this.title = dto.getTitle();
