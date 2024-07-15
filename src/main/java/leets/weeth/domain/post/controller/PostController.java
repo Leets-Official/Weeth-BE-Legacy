@@ -27,9 +27,14 @@ public class PostController {
 
     @GetMapping("")
     public CommonResponse<List<ResponsePostDTO>> index(){
-
         List<ResponsePostDTO> posts = postService.index();
         return CommonResponse.createSuccess(posts);
+    }
+
+    @GetMapping("/myPosts")
+    public CommonResponse<List<ResponsePostDTO>> show(@AuthenticationPrincipal User user){
+        List<ResponsePostDTO> myPost = postService.myPosts(user.getUsername());
+        return CommonResponse.createSuccess(myPost);
     }
 
     @GetMapping("/{postId}")
@@ -48,7 +53,6 @@ public class PostController {
     public CommonResponse<String> delete(@PathVariable Long postId, @AuthenticationPrincipal User user){
         postService.delete(postId, user.getUsername());
         return CommonResponse.createSuccess();
-
     }
 
 }

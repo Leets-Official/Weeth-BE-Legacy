@@ -41,6 +41,15 @@ public class PostService {
         return ResponsePostDTO.createResponsePostDTO(target);
     }
 
+    public List<ResponsePostDTO> myPosts(String email){
+        List<Post> myPosts = postRepository.findByUserEmail(email, Sort.by(Sort.Direction.ASC, "id"));
+
+        // Post 리스트를 ResponsePostDTO 리스트로 변환
+        return myPosts.stream()
+                .map(ResponsePostDTO::createResponsePostDTO) // Post -> ResponsePostDTO 변환
+                .collect(Collectors.toList());
+    }
+
 
     public void create(String email, RequestPostDTO requestPostDTO) {
         User user = userRepository.findByEmail(email)
