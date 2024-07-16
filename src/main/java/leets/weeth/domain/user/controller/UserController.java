@@ -1,6 +1,7 @@
 package leets.weeth.domain.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import leets.weeth.domain.user.dto.UserDTO;
 import leets.weeth.domain.user.service.UserService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@Tag(name = "UserController", description = "사용자 관련 컨트롤러")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")

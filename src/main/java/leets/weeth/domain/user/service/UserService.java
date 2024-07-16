@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.AbstractMap;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,9 +57,7 @@ public class UserService {
     }
 
     public Map<Integer, List<UserDTO.Response>> findUsers() {
-        return userRepository.findAll().stream()
-                .filter(user -> user.getStatus() == ACTIVE)
-                .sorted(Comparator.comparing(User::getName))    // 이름으로 정렬
+        return userRepository.findAllByStatusOrderByName(ACTIVE).stream()
                 .flatMap(user -> Stream.concat(
                         user.getCardinals().stream()
                                 .map(cardinal -> new AbstractMap.SimpleEntry<>(cardinal, mapper.to(user))), // 기수별 Map
