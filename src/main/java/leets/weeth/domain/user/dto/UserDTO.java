@@ -12,8 +12,9 @@ public class UserDTO {
         @NotBlank        String name,
         @Email @NotBlank String email,
         @NotBlank        String password,
+        @NotBlank String passwordConfirm,
         @NotBlank        String studentId,
-        @NotBlank        String phoneNumber,
+        @NotBlank        String tel,
         @NotNull         Position position,
         @NotNull         Department department,
         @NotNull         Integer cardinal
@@ -23,6 +24,7 @@ public class UserDTO {
             Integer id,
             String name,
             String studentId,
+            String tel,
             Department department,
             String email,
             Integer cardinal,

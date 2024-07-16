@@ -30,7 +30,7 @@ public class User extends BaseEntity {
 
     private String studentId;
 
-    private String phoneNumber;
+    private String tel;
 
     @Enumerated(EnumType.STRING)
     private Position position;
