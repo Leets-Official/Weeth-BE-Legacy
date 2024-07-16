@@ -10,6 +10,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -32,15 +35,29 @@ public class Post extends BaseEntity {
     @NotEmpty
     private String content;
 
+    LocalDateTime time;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OrderBy("id asc")
+    private List<PostImage> postImages;
+
     public static Post createPost(RequestPostDTO dto, User user){
-        return new Post(
+        Post newPost = new Post(
                 null,
                 user,
                 dto.getTitle(),
-                dto.getContent()
+                dto.getContent(),
+                null,
+                null
         );
+        newPost.setTime();
+        return newPost;
+
     }
 
+    public void setTime() {
+        this.time = this.getModifiedAt() == null ? this.getCreatedAt() : this.getModifiedAt();
+    }
 
     public void updatePost(RequestPostDTO dto) {
 
@@ -48,5 +65,6 @@ public class Post extends BaseEntity {
             this.title = dto.getTitle();
         if (dto.getContent() != null)  //수정할 본문 데이터가 있다면
             this.content = dto.getContent();
+        this.setTime();
     }
 }

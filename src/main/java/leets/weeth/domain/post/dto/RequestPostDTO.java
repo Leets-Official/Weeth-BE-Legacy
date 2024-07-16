@@ -12,7 +12,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @ToString
-public class RequestPostDTO extends BaseEntity {
+public class RequestPostDTO {
     @NotBlank
     private String title;
     @NotBlank
