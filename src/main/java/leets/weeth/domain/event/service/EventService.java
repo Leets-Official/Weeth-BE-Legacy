@@ -1,6 +1,8 @@
 package leets.weeth.domain.event.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import leets.weeth.domain.calendar.entity.Calendar;
+import leets.weeth.domain.calendar.service.CalendarService;
 import leets.weeth.domain.event.dto.RequestEvent;
 import leets.weeth.domain.event.dto.ResponseEvent;
 import leets.weeth.domain.event.entity.Event;
@@ -26,6 +28,8 @@ public class EventService {
 
     private final UserRepository userRepository;
 
+    private final CalendarService calendarService;
+
     private final EventMapper eventMapper;
 
     // 일정 생성
@@ -36,8 +40,13 @@ public class EventService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND.getMessage()));
-        // 유저 정보 저장을 위해 매퍼를 제거하고 정적 팩토리 메서드 사용
-        eventRepository.save(Event.fromDto(requestEvent, user));
+
+        // 날짜 정보를 이용해 해당 캘린더와 연결하여 저장
+        int year = requestEvent.startDateTime().getYear();
+        int month = requestEvent.startDateTime().getMonthValue();
+        Calendar calendar = calendarService.getCalendar(year, month);
+
+        eventRepository.save(Event.fromDto(requestEvent, user, calendar));
     }
 
     // 일정 상세 조회
