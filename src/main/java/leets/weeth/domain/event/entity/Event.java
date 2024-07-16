@@ -1,6 +1,7 @@
 package leets.weeth.domain.event.entity;
 
 import jakarta.persistence.*;
+import leets.weeth.domain.calendar.entity.Calendar;
 import leets.weeth.domain.event.dto.RequestEvent;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.global.common.entity.BaseEntity;
@@ -36,15 +37,20 @@ public class Event extends BaseEntity {
     @JoinColumn(name="user_id", nullable=false)
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="calendar_id", nullable=false)
+    private Calendar calendar;
+
     // 정적 팩토리 메서드
-    public static Event fromDto(RequestEvent dto, User user) {
+    public static Event fromDto(RequestEvent dto, User user, Calendar calendar) {
         return Event.builder()
                 .title(dto.title())
                 .content(dto.content())
                 .location(dto.location())
                 .startDateTime(dto.startDateTime())
                 .endDateTime(dto.endDateTime())
-                .user(user).build();
+                .user(user)
+                .calendar(calendar).build();
     }
 
     // 일정 수정을 위한 메소드
