@@ -9,7 +9,6 @@ import leets.weeth.domain.event.dto.ResponseEvent;
 import leets.weeth.domain.event.entity.Event;
 import leets.weeth.domain.event.mapper.EventMapper;
 import leets.weeth.domain.event.repository.EventRepository;
-import leets.weeth.domain.event.service.EventService;
 import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,11 +29,10 @@ public class CalendarService {
     public void initCalendar(){
 
     }
-    // 필요할 때 마다 생성
+    // 캘린더 조회, 없다면 생성, eventService, noticeService에서 사용
     public Calendar getCalendar(int year, int month){
         return calendarRepository.findByYearAndMonth(year, month).orElseGet(()-> {
-            Calendar newCalendar = Calendar.builder().year(year).month(month).build();
-            return calendarRepository.save(newCalendar);
+            return calendarRepository.save(Calendar.fromDate(year, month));
         });
     }
     // 캘린더 조회 (월별)
@@ -58,11 +56,11 @@ public class CalendarService {
                 .map(eventMapper::toDto)
                 .collect(Collectors.groupingBy(responseEvent -> responseEvent.startDateTime().getMonthValue()));
 
+        // 공지사항도 created_at 날짜를 이용해 해당 년도의 공지를 가져와서 필요하면 정렬해서 보내주면 될 듯
         return new ResponseYearCalendar(year, eventsByMonth);
-//        return new ResponseYearCalendar(year, events.stream()
-//                .map(eventMapper::toDto)
-//                .toList());
-        // 해당 년도의 캘린더 테이블을 돌아 ID를 구해서 해당 ID와 매칭되는 events와 notices들을 조회해서 정렬해서 DTO에 담아서 반환
+
+        // 해당 년도의 캘린더 테이블을 돌아 ID를 구해서 해당 ID와 매칭되는 events와 notices들을 조회해서 정렬해서 DTO에 담아서 반환 -> 좀 비효율 적인거 같은데
+
     }
 
 }

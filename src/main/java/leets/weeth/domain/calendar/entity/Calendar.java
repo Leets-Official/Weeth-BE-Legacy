@@ -18,4 +18,11 @@ public class Calendar {
     private Integer year;
 
     private Integer month;
+
+    public static Calendar fromDate(Integer year, Integer month) {
+        return Calendar.builder()
+                .year(year)
+                .month(month)
+                .build();
+    }
 }
