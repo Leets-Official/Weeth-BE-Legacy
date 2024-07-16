@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-    @Override
     ArrayList<Post> findAll();
 
     List<Post> findByUserEmail(String email, Sort sort);
