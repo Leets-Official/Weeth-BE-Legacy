@@ -3,6 +3,8 @@ package leets.weeth.domain.calendar.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -18,6 +20,9 @@ public class Calendar {
     private Integer year;
 
     private Integer month;
+
+    @OneToMany(mappedBy = "calendar")
+    private List<EventCalendar> eventCalendars;
 
     public static Calendar fromDate(Integer year, Integer month) {
         return Calendar.builder()
