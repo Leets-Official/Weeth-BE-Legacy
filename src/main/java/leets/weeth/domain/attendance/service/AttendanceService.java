@@ -38,7 +38,7 @@ public class AttendanceService {
         Event currentEvent = currentEvents.stream()
                 .filter(event -> event.getTitle().equals(requestDto.getAttendanceCode()))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("현재 시간에 해당하는 이벤트가 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("현재 시간에 해당하는 모임이 없습니다."));
 
         if (!currentEvent.getTitle().equals(requestDto.getAttendanceCode())) {
             throw new IllegalArgumentException("잘못된 출석 코드입니다.");
