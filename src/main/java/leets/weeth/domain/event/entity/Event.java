@@ -54,11 +54,14 @@ public class Event extends BaseEntity {
     }
 
     // 일정 수정을 위한 메소드
-    public void updateFromDto(RequestEvent dto) {
+    public void updateFromDto(RequestEvent dto, Calendar updatedCalendar) {
         Optional.ofNullable(dto.title()).ifPresent(title -> this.title = title);
         Optional.ofNullable(dto.content()).ifPresent(content -> this.content = content);
         Optional.ofNullable(dto.location()).ifPresent(location -> this.location = location);
         Optional.ofNullable(dto.startDateTime()).ifPresent(startDateTime -> this.startDateTime = startDateTime);
         Optional.ofNullable(dto.endDateTime()).ifPresent(endDateTime -> this.endDateTime = endDateTime);
+        Optional.ofNullable(updatedCalendar).ifPresent(calendar -> this.calendar = updatedCalendar);
     }
+
+
 }

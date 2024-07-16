@@ -45,7 +45,8 @@ public class EventService {
         int year = requestEvent.startDateTime().getYear();
         int month = requestEvent.startDateTime().getMonthValue();
         Calendar calendar = calendarService.getCalendar(year, month);
-
+        // 일정이 여러달에 걸쳐 있는 경우 어떻게 할지 고민, 이 로직은 수정에도 들어가야함
+        // -> 이론상 몇 달에 걸쳐 있어도 저장되어야 하는데 일정이 캘린더 ID를 지니려면 일정이 여러개가 생성이 되니까 양방향 매핑을 하자
         eventRepository.save(Event.fromDto(requestEvent, user, calendar));
     }
 
@@ -74,7 +75,27 @@ public class EventService {
     public void updateEvent(Long eventId, RequestEvent updatedEvent, Long userId) throws BusinessLogicException {
         // 일정을 생성한 사용자인지 확인
         Event oldEvent = validateEventOwner(eventId, userId);
-        oldEvent.updateFromDto(updatedEvent);
+
+        int oldYear = oldEvent.getStartDateTime().getYear();
+        int oldMonth = oldEvent.getStartDateTime().getMonthValue();
+
+        int updatedYear = updatedEvent.startDateTime().getYear();
+        int updatedMonth = updatedEvent.startDateTime().getMonthValue();
+
+        // 캘린더가 달라졌다면 캘린더 정보를 업데이트
+        if(oldYear != updatedYear || oldMonth != updatedMonth) {
+            Calendar calendar = calendarService.getCalendar(updatedYear, updatedMonth);
+            oldEvent.updateFromDto(updatedEvent, calendar);
+            return;
+        }
+        oldEvent.updateFromDto(updatedEvent, null);
+
+
+        // 조회 쿼리를 빼려면 년도랑 달만 빼서 비교해도 됨
+//        Calendar calendar = calendarService.getCalendar(year, month);
+
+
+
     }
 
     // 일정 삭제
