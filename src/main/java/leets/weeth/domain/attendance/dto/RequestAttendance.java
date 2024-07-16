@@ -1,20 +1,10 @@
 package leets.weeth.domain.attendance.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class RequestAttendance {
-    @NotBlank
-    private Long attendanceCodeId;
-    @Getter
+    @NotBlank(message = "출석 코드는 필수 입력 항목입니다.")
     private String attendanceCode;
-    @NotNull
-    private Long userId;
-    @NotNull
-    private boolean isAttend;
-
 }
