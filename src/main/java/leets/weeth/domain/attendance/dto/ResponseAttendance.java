@@ -1,16 +1,12 @@
 package leets.weeth.domain.attendance.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Data
 public class ResponseAttendance {
-    private Long id;
-    private Long attendanceCodeId;
-    private boolean isAttend;
-    private Long userId;
+    private String scheduleTitle; //일정 제목
+    private String scheduleDateTime; //날짜, 시간
+    private String scheduleLocation; //장소
+    private double attendanceRate; //출석률
+    private double absenceRate; //결석률
 }

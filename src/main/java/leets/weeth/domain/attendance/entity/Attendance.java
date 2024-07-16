@@ -12,14 +12,14 @@ import lombok.Setter;
 public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Attendance_id;
+    private Long attendanceId;;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
     private boolean isAttend;
-
+    private String attendanceCode;
     @Enumerated(EnumType.STRING)
     private Week week;
 }
