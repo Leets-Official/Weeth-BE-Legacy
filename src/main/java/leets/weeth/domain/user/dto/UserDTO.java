@@ -3,13 +3,11 @@ package leets.weeth.domain.user.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import leets.weeth.domain.user.annotation.CheckPassword;
 import leets.weeth.domain.user.entity.enums.Department;
 import leets.weeth.domain.user.entity.enums.Position;
 
 public class UserDTO {
 
-    @CheckPassword
     public record SignUp (
         @NotBlank        String name,
         @Email @NotBlank String email,
