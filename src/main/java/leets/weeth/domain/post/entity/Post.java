@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -39,22 +40,23 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @OrderBy("id asc")
-    private List<PostImage> postImages;
+    private List<PostFile> postFiles;
 
     public static Post createPost(RequestPostDTO dto, User user){
+
         Post newPost = new Post(
                 null,
                 user,
                 dto.getTitle(),
                 dto.getContent(),
                 null,
-                null
+                new ArrayList<>()
         );
-        newPost.setTime();
         return newPost;
-
     }
 
+    @PrePersist
+    @PreUpdate
     public void setTime() {
         this.time = this.getModifiedAt() == null ? this.getCreatedAt() : this.getModifiedAt();
     }

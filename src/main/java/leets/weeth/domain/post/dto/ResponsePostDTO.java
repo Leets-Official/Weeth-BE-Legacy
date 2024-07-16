@@ -2,12 +2,11 @@ package leets.weeth.domain.post.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import leets.weeth.domain.post.entity.Post;
-import leets.weeth.global.common.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import leets.weeth.domain.post.entity.PostImage;
+import leets.weeth.domain.post.entity.PostFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,12 +24,12 @@ public class ResponsePostDTO {
     @NotBlank
     private String content;
     private LocalDateTime time;
-    private List<String> imageUrls;
+    private List<String> fileUrls;
 
     public static ResponsePostDTO createResponsePostDTO(Post post) {
         return new ResponsePostDTO(post.getId(), post.getTitle(), post.getContent(),
-                post.getTime(),  post.getPostImages().stream()
-                .map(PostImage::getUrl)
+                post.getTime(), post.getPostFiles().stream()
+                .map(PostFile::getUrl)
                 .collect(Collectors.toList()));
     }
 }

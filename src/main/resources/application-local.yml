@@ -27,3 +27,5 @@ weeth:
     refresh:
       expiration: ${REFRESH_EXP}
       header: ${REFRESH_HEAD}
+file:
+  upload-dir: ${DIR_ADDRESS}
