@@ -2,6 +2,8 @@ package leets.weeth.domain.event.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import leets.weeth.domain.calendar.entity.Calendar;
+import leets.weeth.domain.calendar.entity.EventCalendar;
+import leets.weeth.domain.calendar.repository.EventCalendarRepository;
 import leets.weeth.domain.calendar.service.CalendarService;
 import leets.weeth.domain.event.dto.RequestEvent;
 import leets.weeth.domain.event.dto.ResponseEvent;
@@ -28,6 +30,8 @@ public class EventService {
 
     private final UserRepository userRepository;
 
+    private final EventCalendarRepository eventCalendarRepository;
+
     private final CalendarService calendarService;
 
     private final EventMapper eventMapper;
@@ -36,18 +40,28 @@ public class EventService {
     @Transactional
     public void createEvent(RequestEvent requestEvent, Long userId) throws BusinessLogicException {
         // 기간 입력 검증
-        validateDateRange(requestEvent.startDateTime(), requestEvent.endDateTime());
+        LocalDateTime start = requestEvent.startDateTime();
+        LocalDateTime end = requestEvent.endDateTime();
+        validateDateRange(start, end);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND.getMessage()));
+        Event event = Event.fromDto(requestEvent, user);
+        eventRepository.save(event);
 
-        // 날짜 정보를 이용해 해당 캘린더와 연결하여 저장
-        int year = requestEvent.startDateTime().getYear();
-        int month = requestEvent.startDateTime().getMonthValue();
-        Calendar calendar = calendarService.getCalendar(year, month);
-        // 일정이 여러달에 걸쳐 있는 경우 어떻게 할지 고민, 이 로직은 수정에도 들어가야함
-        // -> 이론상 몇 달에 걸쳐 있어도 저장되어야 하는데 일정이 캘린더 ID를 지니려면 일정이 여러개가 생성이 되니까 양방향 매핑을 하자
-        eventRepository.save(Event.fromDto(requestEvent, user, calendar));
+        addEventToCalendar(event, start, end);
+    }
+
+    private void addEventToCalendar(Event event, LocalDateTime start, LocalDateTime end) {
+        while(!start.isAfter(end)) {
+            Calendar calendar = calendarService.getCalendar(start.getYear(), start.getMonthValue());
+            EventCalendar eventCalendar = EventCalendar.builder()
+                    .event(event)
+                    .calendar(calendar)
+                    .build();
+            eventCalendarRepository.save(eventCalendar);
+            start = start.plusMonths(1).withDayOfMonth(1);
+        }
     }
 
     // 일정 상세 조회
@@ -76,26 +90,19 @@ public class EventService {
         // 일정을 생성한 사용자인지 확인
         Event oldEvent = validateEventOwner(eventId, userId);
 
+        oldEvent.updateFromDto(updatedEvent);
+
         int oldYear = oldEvent.getStartDateTime().getYear();
         int oldMonth = oldEvent.getStartDateTime().getMonthValue();
 
         int updatedYear = updatedEvent.startDateTime().getYear();
         int updatedMonth = updatedEvent.startDateTime().getMonthValue();
 
-        // 캘린더가 달라졌다면 캘린더 정보를 업데이트
+        // 캘린더가 달라졌다면 캘린더 정보를 업데이트 (년도와 달을 비교)
         if(oldYear != updatedYear || oldMonth != updatedMonth) {
-            Calendar calendar = calendarService.getCalendar(updatedYear, updatedMonth);
-            oldEvent.updateFromDto(updatedEvent, calendar);
-            return;
+            addEventToCalendar(oldEvent, oldEvent.getStartDateTime(), oldEvent.getEndDateTime());
+            return; //나중에 수정
         }
-        oldEvent.updateFromDto(updatedEvent, null);
-
-
-        // 조회 쿼리를 빼려면 년도랑 달만 빼서 비교해도 됨
-//        Calendar calendar = calendarService.getCalendar(year, month);
-
-
-
     }
 
     // 일정 삭제
