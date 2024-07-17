@@ -1,5 +1,6 @@
 package leets.weeth.domain.event.dto;
 
+import leets.weeth.domain.event.entity.enums.Status;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -13,5 +14,6 @@ public record ResponseEvent (
         String location,
         LocalDateTime startDateTime,
         LocalDateTime endDateTime,
-        String userName
+        String userName,
+        Status status
 ) {}
