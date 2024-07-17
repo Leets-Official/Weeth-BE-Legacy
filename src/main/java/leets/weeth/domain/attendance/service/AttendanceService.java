@@ -7,12 +7,8 @@ import leets.weeth.domain.attendance.entity.enums.Week;
 import leets.weeth.domain.attendance.repository.AttendanceRepository;
 import leets.weeth.domain.event.entity.Event;
 import leets.weeth.domain.event.repository.EventRepository;
-import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,10 +23,6 @@ public class AttendanceService {
     private final EventRepository eventRepository;
 
     public ResponseAttendance recordAttendance(RequestAttendance requestDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
         // 현재 시간으로 이벤트 조회
         LocalDateTime now = LocalDateTime.now();
