@@ -1,13 +1,10 @@
 package leets.weeth.domain.event.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import leets.weeth.domain.calendar.entity.Calendar;
-import leets.weeth.domain.calendar.entity.EventCalendar;
-import leets.weeth.domain.calendar.repository.EventCalendarRepository;
-import leets.weeth.domain.calendar.service.CalendarService;
 import leets.weeth.domain.event.dto.RequestEvent;
 import leets.weeth.domain.event.dto.ResponseEvent;
 import leets.weeth.domain.event.entity.Event;
+import leets.weeth.domain.event.entity.enums.Status;
 import leets.weeth.domain.event.mapper.EventMapper;
 import leets.weeth.domain.event.repository.EventRepository;
 import leets.weeth.domain.user.entity.User;
@@ -27,12 +24,7 @@ import static leets.weeth.domain.event.entity.enums.ErrorMessage.*;
 @RequiredArgsConstructor
 public class EventService {
     private final EventRepository eventRepository;
-
     private final UserRepository userRepository;
-
-    private final EventCalendarRepository eventCalendarRepository;
-
-    private final CalendarService calendarService;
 
     private final EventMapper eventMapper;
 
@@ -44,16 +36,21 @@ public class EventService {
         LocalDateTime end = requestEvent.endDateTime();
         validateDateRange(start, end);
 
+        // 이벤트면 이벤트 어탠던스면 어탠던스로 저장
+        Status status = requestEvent.status();
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND.getMessage()));
-        Event event = Event.fromDto(requestEvent, user);
-        eventRepository.save(event);
-        addEventToCalendar(event, start, end);
+
+        eventRepository.save(Event.fromDto(requestEvent, status, user));
     }
+
 
     // 일정 상세 조회
     @Transactional(readOnly = true)
     public ResponseEvent getEventById(Long id) {
+
+        // 일정은 다 반환해도 됨, 캘린더에서 보여아하니
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(EVENT_NOT_FOUND.getMessage()));
         return eventMapper.toDto(event);
@@ -71,64 +68,25 @@ public class EventService {
                 .toList();
     }
 
-//    // 일정 수정 -> 현재 pr 피드백 후 수정할 예정
-//    @Transactional
-//    public void updateEvent(Long eventId, RequestEvent updatedEvent, Long userId) throws BusinessLogicException {
-//        // 일정을 생성한 사용자인지 확인
-//        Event oldEvent = validateEventOwner(eventId, userId);
-//
-//        // 기존 이벤트의 시작 및 종료 날짜
-//        LocalDateTime oldStartDate = oldEvent.getStartDateTime();
-//        LocalDateTime oldEndDate = oldEvent.getEndDateTime();
-//
-//        // 업데이트된 이벤트의 시작 및 종료 날짜
-//        LocalDateTime updatedStartDate = updatedEvent.startDateTime();
-//        LocalDateTime updatedEndDate = updatedEvent.endDateTime();
-//
-//        // 기존 이벤트와 새로운 이벤트의 달 정보가 다른지 확인
-//        boolean dateChanged = !oldStartDate.toLocalDate().equals(updatedStartDate.toLocalDate()) || !oldEndDate.toLocalDate().equals(updatedEndDate.toLocalDate());
-//
-//        // 이벤트 업데이트
-//        oldEvent.updateFromDto(updatedEvent);
-//
-//        // 날짜 정보가 변경되었을 경우, EventCalendar 업데이트
-//        if (dateChanged) {
-//            // 기존 EventCalendar 업데이트
-//            updateEventCalendars(oldEvent, updatedStartDate, updatedEndDate);
-//        }
-//    }
-//
-//    private void updateEventCalendars(Event event, LocalDateTime start, LocalDateTime end) {
-//        List<EventCalendar> eventCalendars = eventCalendarRepository.findByEventId(event.getId());
-//
-//        // 기존 EventCalendar 엔티티들을 순회하며 업데이트
-//        for (EventCalendar eventCalendar : eventCalendars) {
-//            Calendar calendar = calendarService.getCalendar(start.getYear(), start.getMonthValue());
-//            eventCalendar.updateCalendar(calendar);
-//            eventCalendarRepository.save(eventCalendar);
-//
-//            start = start.plusMonths(1).withDayOfMonth(1);
-//            if (start.isAfter(end)) {
-//                break;
-//            }
-//        }
-//
-//        // 남은 날짜에 대해 새로운 EventCalendar 엔티티 생성
-//            addEventToCalendar(event, start, end);
-//
-//        // 날짜가 많았다가 적어진 경우를 체크해서 eventCalendar를 삭제
-//
-//    }
+    // 일정 수정
+    @Transactional
+    public void updateEvent(Long eventId, RequestEvent updatedEvent, Long userId) throws BusinessLogicException {
+        // 일정을 생성한 사용자인지 확인
+        Event oldEvent = validateEventOwner(eventId, userId);
+
+        oldEvent.updateFromDto(updatedEvent);
+    }
+
 
     // 일정 삭제
     @Transactional
     public void deleteEvent(Long eventId, Long userId) throws BusinessLogicException {
         // 일정을 생성한 사용자인지 확인
         Event oldEvent = validateEventOwner(eventId, userId);
-        // 중간 테이블인 eventCalendar의 데이터 먼저 삭제
-        eventCalendarRepository.deleteByEventId(eventId);
+
         eventRepository.deleteById(eventId);
     }
+
 
     // 해당 일정을 생성한 사용자와 같은지 검증
     private Event validateEventOwner(Long eventId, Long userId) throws BusinessLogicException {
@@ -152,16 +110,4 @@ public class EventService {
         }
     }
 
-    // 일정이 저장될 때 달 정보를 매핑하기 위해 캘린더에 저장
-    private void addEventToCalendar(Event event, LocalDateTime start, LocalDateTime end) {
-        while(!start.isAfter(end)) {
-            Calendar calendar = calendarService.getCalendar(start.getYear(), start.getMonthValue());
-            EventCalendar eventCalendar = EventCalendar.builder()
-                    .event(event)
-                    .calendar(calendar)
-                    .build();
-            eventCalendarRepository.save(eventCalendar);
-            start = start.plusMonths(1).withDayOfMonth(1);
-        }
-    }
 }
