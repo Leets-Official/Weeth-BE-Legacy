@@ -1,6 +1,7 @@
 package leets.weeth.domain.post.service;
 
 import jakarta.transaction.Transactional;
+import leets.weeth.domain.post.dto.PostFileUploadDTO;
 import leets.weeth.domain.post.dto.RequestPostDTO;
 import leets.weeth.domain.post.dto.ResponsePostDTO;
 import leets.weeth.domain.post.entity.Post;
@@ -53,7 +54,7 @@ public class PostService {
     }
 
     @Transactional
-    public void create(String email, RequestPostDTO requestPostDTO) {
+    public void create(String email, RequestPostDTO requestPostDTO, PostFileUploadDTO postFileUploadDTO) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(()->new UsernameNotFoundException("failed to add post! no such user"));
         Post newPost = Post.createPost(requestPostDTO, user);

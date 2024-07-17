@@ -38,6 +38,8 @@ public class Post extends BaseEntity {
 
     LocalDateTime time;
 
+    private List<String> url;
+
     public static Post createPost(RequestPostDTO dto, User user){
 
         Post newPost = new Post(
@@ -45,7 +47,8 @@ public class Post extends BaseEntity {
                 user,
                 dto.getTitle(),
                 dto.getContent(),
-                null
+                null,
+                new ArrayList<>()
         );
         return newPost;
     }
