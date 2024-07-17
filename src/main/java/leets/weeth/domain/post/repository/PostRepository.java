@@ -11,6 +11,6 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     ArrayList<Post> findAll();
+    List<Post> findByUserId(Long userId, Sort sort);
 
-    List<Post> findByUserEmail(String email, Sort sort);
 }

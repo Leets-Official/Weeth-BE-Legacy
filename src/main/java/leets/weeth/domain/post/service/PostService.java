@@ -9,6 +9,7 @@ import leets.weeth.domain.post.entity.Post;
 import leets.weeth.domain.post.repository.PostRepository;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
+import leets.weeth.global.common.error.exception.custom.InvalidAccessException;
 import leets.weeth.global.common.error.exception.custom.PostNotFoundException;
 import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -42,13 +44,13 @@ public class PostService {
 
     public ResponsePostDTO show(Long postId) {
         Post target = postRepository.findById(postId)
-                .orElseThrow(()->new EntityNotFoundException("Failed to edit the Post. no such post."));
+                .orElseThrow(EntityNotFoundException::new);
 
         return ResponsePostDTO.createResponsePostDTO(target);
     }
 
-    public List<ResponsePostDTO> myPosts(String email){
-        List<Post> myPosts = postRepository.findByUserEmail(email, Sort.by(Sort.Direction.ASC, "id"));
+    public List<ResponsePostDTO> myPosts(Long userId){
+        List<Post> myPosts = postRepository.findByUserId(userId, Sort.by(Sort.Direction.ASC, "id"));
 
         // Post 리스트를 ResponsePostDTO 리스트로 변환
         return myPosts.stream()
@@ -57,12 +59,16 @@ public class PostService {
     }
 
     @Transactional
-    public void create(Long userId, RequestPostDTO requestPostDTO, List<MultipartFile> files, Long postId) {
+    public void create(Long userId, RequestPostDTO requestPostDTO, List<MultipartFile> files, Long postId) throws InvalidAccessException {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         List<File> fileUrls = fileService.uploadFiles(files);
         Post newPost;
         if(postId!=null){
+            Optional<Post> targetPost = postRepository.findById(postId);
+            if (!targetPost.isPresent()){
+                throw new PostNotFoundException();
+            }
             newPost = Post.updatePost(requestPostDTO, user, fileUrls, postId);
         }
         else {
@@ -73,25 +79,15 @@ public class PostService {
     }
 
     @Transactional
-    public void update(Long postId, RequestPostDTO requestPostDTO, String currentEmail) {
-
-        Post updated = postRepository.findById(postId)
-                .orElseThrow(()->new EntityNotFoundException("Failed to edit the Post. no such post."));
-        if (!updated.getUser().getEmail().equals(currentEmail)) {
-            throw new AccessDeniedException("You do not have permission to edit this post");
+    public void delete(Long postId, Long userId) throws InvalidAccessException {
+        Post deleted = postRepository.findById(postId)
+                .orElseThrow(EntityNotFoundException::new);
+        if(!(deleted.getUser().getId() == userId)){
+            throw new InvalidAccessException();
         }
-        updated.updatePost(requestPostDTO);
-        // 2. post 수정
-        postRepository.save(updated);
-        // 3. DB로 갱신
-
-    }
-    @Transactional
-    public void delete(Long postid, String currentEmail) {
-        Post deleted = postRepository.findById(postid)
-                .orElseThrow(()->new EntityNotFoundException("Failed to delete the Post. no such post"));
-        if(!deleted.getUser().getEmail().equals(currentEmail)){
-            throw new AccessDeniedException("You do not have permission to delete this post");
+        Optional<Post> targetPost = postRepository.findById(postId);
+        if (!targetPost.isPresent()){
+            throw new PostNotFoundException();
         }
         postRepository.delete(deleted);
     }

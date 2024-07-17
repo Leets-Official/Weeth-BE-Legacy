@@ -4,12 +4,11 @@ import leets.weeth.domain.post.dto.RequestPostDTO;
 import leets.weeth.domain.post.dto.ResponsePostDTO;
 import leets.weeth.domain.post.service.PostService;
 import leets.weeth.global.auth.annotation.CurrentUser;
+import leets.weeth.global.common.error.exception.custom.InvalidAccessException;
 import leets.weeth.global.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -23,7 +22,7 @@ public class PostController {
     @PostMapping(value = {"/{postId}",""})
     public CommonResponse<String> createOrUpdate(@RequestPart(value = "requestPostDTO") RequestPostDTO requestPostDTO,
                                          @RequestPart(value = "files", required = false) List<MultipartFile> files,
-                                         @CurrentUser Long userId, @PathVariable(required = false) Long postId){
+                                         @CurrentUser Long userId, @PathVariable(required = false) Long postId) throws InvalidAccessException {
 
         postService.create(userId, requestPostDTO, files, postId);
         return CommonResponse.createSuccess();
@@ -36,26 +35,20 @@ public class PostController {
     }
 
     @GetMapping("/myPosts")
-    public CommonResponse<List<ResponsePostDTO>> show(@AuthenticationPrincipal User user){
-        List<ResponsePostDTO> myPost = postService.myPosts(user.getUsername());
+    public CommonResponse<List<ResponsePostDTO>> showMyPost(@CurrentUser Long userId){
+        List<ResponsePostDTO> myPost = postService.myPosts(userId);
         return CommonResponse.createSuccess(myPost);
     }
 
     @GetMapping("/{postId}")
-    public CommonResponse<ResponsePostDTO> show(@PathVariable Long postId){
+    public CommonResponse<ResponsePostDTO> showPost(@PathVariable Long postId){
         ResponsePostDTO newPost = postService.show(postId);
         return CommonResponse.createSuccess(newPost);
     }
 
-    @PatchMapping("/{postId}")
-    public CommonResponse<String> edit(@PathVariable Long postId, @RequestBody RequestPostDTO requestPostDTO, @AuthenticationPrincipal User user){
-        postService.update(postId, requestPostDTO, user.getUsername());
-        return CommonResponse.createSuccess();
-    }
-
     @DeleteMapping("/{postId}")
-    public CommonResponse<String> delete(@PathVariable Long postId, @AuthenticationPrincipal User user){
-        postService.delete(postId, user.getUsername());
+    public CommonResponse<String> delete(@PathVariable Long postId, @CurrentUser Long userId) throws InvalidAccessException {
+        postService.delete(postId, userId);
         return CommonResponse.createSuccess();
     }
 
