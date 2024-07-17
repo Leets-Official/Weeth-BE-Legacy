@@ -48,20 +48,7 @@ public class EventService {
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND.getMessage()));
         Event event = Event.fromDto(requestEvent, user);
         eventRepository.save(event);
-
         addEventToCalendar(event, start, end);
-    }
-
-    private void addEventToCalendar(Event event, LocalDateTime start, LocalDateTime end) {
-        while(!start.isAfter(end)) {
-            Calendar calendar = calendarService.getCalendar(start.getYear(), start.getMonthValue());
-            EventCalendar eventCalendar = EventCalendar.builder()
-                    .event(event)
-                    .calendar(calendar)
-                    .build();
-            eventCalendarRepository.save(eventCalendar);
-            start = start.plusMonths(1).withDayOfMonth(1);
-        }
     }
 
     // 일정 상세 조회
@@ -132,6 +119,19 @@ public class EventService {
     private void validateDateRange(LocalDateTime start, LocalDateTime end) throws BusinessLogicException {
         if (start.isAfter(end)) {
             throw new BusinessLogicException(INVALID_DATE.getMessage());
+        }
+    }
+
+    // 일정이 저장될 때 달 정보를 매핑하기 위해 캘린더에 저장
+    private void addEventToCalendar(Event event, LocalDateTime start, LocalDateTime end) {
+        while(!start.isAfter(end)) {
+            Calendar calendar = calendarService.getCalendar(start.getYear(), start.getMonthValue());
+            EventCalendar eventCalendar = EventCalendar.builder()
+                    .event(event)
+                    .calendar(calendar)
+                    .build();
+            eventCalendarRepository.save(eventCalendar);
+            start = start.plusMonths(1).withDayOfMonth(1);
         }
     }
 }
