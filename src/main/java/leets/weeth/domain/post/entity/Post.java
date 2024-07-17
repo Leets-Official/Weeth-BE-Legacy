@@ -2,6 +2,7 @@ package leets.weeth.domain.post.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import leets.weeth.domain.file.entity.File;
 import leets.weeth.domain.post.dto.RequestPostDTO;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.global.common.entity.BaseEntity;
@@ -9,9 +10,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.Remove;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -37,10 +38,10 @@ public class Post extends BaseEntity {
     private String content;
 
     LocalDateTime time;
+    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<File> fileUrls;
 
-    private List<String> url;
-
-    public static Post createPost(RequestPostDTO dto, User user){
+    public static Post createPost(RequestPostDTO dto, User user, List<File> urls){
 
         Post newPost = new Post(
                 null,
@@ -48,7 +49,19 @@ public class Post extends BaseEntity {
                 dto.getTitle(),
                 dto.getContent(),
                 null,
-                new ArrayList<>()
+                urls
+        );
+        return newPost;
+    }
+
+    public static Post updatePost(RequestPostDTO dto, User user, List<File> urls, Long postId) {
+        Post newPost = new Post(
+                postId,
+                user,
+                dto.getTitle(),
+                dto.getContent(),
+                null,
+                urls
         );
         return newPost;
     }

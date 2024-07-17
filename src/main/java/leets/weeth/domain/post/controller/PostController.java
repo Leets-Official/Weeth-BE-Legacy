@@ -1,13 +1,12 @@
 package leets.weeth.domain.post.controller;
 
-import leets.weeth.domain.post.dto.PostFileUploadDTO;
 import leets.weeth.domain.post.dto.RequestPostDTO;
 import leets.weeth.domain.post.dto.ResponsePostDTO;
 import leets.weeth.domain.post.service.PostService;
+import leets.weeth.global.auth.annotation.CurrentUser;
 import leets.weeth.global.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.userdetails.User;
@@ -21,13 +20,12 @@ import java.util.List;
 public class PostController {
     @Autowired
     private final PostService postService;
-    @PostMapping("/new")
-    public CommonResponse<String> create(@RequestPart(value = "requestPostDTO") RequestPostDTO requestPostDTO,
+    @PostMapping(value = {"/{postId}",""})
+    public CommonResponse<String> createOrUpdate(@RequestPart(value = "requestPostDTO") RequestPostDTO requestPostDTO,
                                          @RequestPart(value = "files", required = false) List<MultipartFile> files,
-                                         @AuthenticationPrincipal User user){
-        PostFileUploadDTO postFileUploadDTO = new PostFileUploadDTO();
-        postFileUploadDTO.setFiles(files);
-        postService.create(user.getUsername(), requestPostDTO, postFileUploadDTO);
+                                         @CurrentUser Long userId, @PathVariable(required = false) Long postId){
+
+        postService.create(userId, requestPostDTO, files, postId);
         return CommonResponse.createSuccess();
     }
 

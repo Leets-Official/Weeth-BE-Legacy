@@ -1,13 +1,17 @@
 package leets.weeth.domain.post.service;
 
 import jakarta.transaction.Transactional;
-import leets.weeth.domain.post.dto.PostFileUploadDTO;
+import leets.weeth.domain.file.entity.File;
+import leets.weeth.domain.file.service.FileService;
 import leets.weeth.domain.post.dto.RequestPostDTO;
 import leets.weeth.domain.post.dto.ResponsePostDTO;
 import leets.weeth.domain.post.entity.Post;
 import leets.weeth.domain.post.repository.PostRepository;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
+import leets.weeth.global.common.error.exception.custom.PostNotFoundException;
+import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -15,19 +19,18 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@RequiredArgsConstructor
 @Slf4j
 @Service //서비스 객체 생성
 public class PostService {
-    @Autowired
-    private PostRepository postRepository;    // 게시글 레파지터리 객체
-    @Autowired
-    private UserRepository userRepository;
-
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
+    private final FileService fileService;
 
     //모든 게시물 가져오기
     public List<ResponsePostDTO> findAllPosts() {
@@ -54,11 +57,19 @@ public class PostService {
     }
 
     @Transactional
-    public void create(String email, RequestPostDTO requestPostDTO, PostFileUploadDTO postFileUploadDTO) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(()->new UsernameNotFoundException("failed to add post! no such user"));
-        Post newPost = Post.createPost(requestPostDTO, user);
-        postRepository.save(newPost);
+    public void create(Long userId, RequestPostDTO requestPostDTO, List<MultipartFile> files, Long postId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        List<File> fileUrls = fileService.uploadFiles(files);
+        Post newPost;
+        if(postId!=null){
+            newPost = Post.updatePost(requestPostDTO, user, fileUrls, postId);
+        }
+        else {
+            newPost = Post.createPost(requestPostDTO, user, fileUrls);
+        }
+        Post save = postRepository.save(newPost);
+        System.out.println("save.getFileUrls() = " + save.getFileUrls());
     }
 
     @Transactional
