@@ -23,4 +23,8 @@ public class EventCalendar {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
     private Event event;
+
+//    public void updateCalendar(Calendar calendar) {
+//        this.calendar = calendar;
+//    }
 }
