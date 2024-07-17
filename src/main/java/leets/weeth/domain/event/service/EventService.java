@@ -71,33 +71,63 @@ public class EventService {
                 .toList();
     }
 
-    // 일정 수정
-    @Transactional
-    public void updateEvent(Long eventId, RequestEvent updatedEvent, Long userId) throws BusinessLogicException {
-        // 일정을 생성한 사용자인지 확인
-        Event oldEvent = validateEventOwner(eventId, userId);
-
-        oldEvent.updateFromDto(updatedEvent);
-
-        int oldYear = oldEvent.getStartDateTime().getYear();
-        int oldMonth = oldEvent.getStartDateTime().getMonthValue();
-
-        int updatedYear = updatedEvent.startDateTime().getYear();
-        int updatedMonth = updatedEvent.startDateTime().getMonthValue();
-
-        // 캘린더가 달라졌다면 캘린더 정보를 업데이트 (년도와 달을 비교)
-        if(oldYear != updatedYear || oldMonth != updatedMonth) {
-            addEventToCalendar(oldEvent, oldEvent.getStartDateTime(), oldEvent.getEndDateTime());
-            return; //나중에 수정
-        }
-    }
+//    // 일정 수정 -> 현재 pr 피드백 후 수정할 예정
+//    @Transactional
+//    public void updateEvent(Long eventId, RequestEvent updatedEvent, Long userId) throws BusinessLogicException {
+//        // 일정을 생성한 사용자인지 확인
+//        Event oldEvent = validateEventOwner(eventId, userId);
+//
+//        // 기존 이벤트의 시작 및 종료 날짜
+//        LocalDateTime oldStartDate = oldEvent.getStartDateTime();
+//        LocalDateTime oldEndDate = oldEvent.getEndDateTime();
+//
+//        // 업데이트된 이벤트의 시작 및 종료 날짜
+//        LocalDateTime updatedStartDate = updatedEvent.startDateTime();
+//        LocalDateTime updatedEndDate = updatedEvent.endDateTime();
+//
+//        // 기존 이벤트와 새로운 이벤트의 달 정보가 다른지 확인
+//        boolean dateChanged = !oldStartDate.toLocalDate().equals(updatedStartDate.toLocalDate()) || !oldEndDate.toLocalDate().equals(updatedEndDate.toLocalDate());
+//
+//        // 이벤트 업데이트
+//        oldEvent.updateFromDto(updatedEvent);
+//
+//        // 날짜 정보가 변경되었을 경우, EventCalendar 업데이트
+//        if (dateChanged) {
+//            // 기존 EventCalendar 업데이트
+//            updateEventCalendars(oldEvent, updatedStartDate, updatedEndDate);
+//        }
+//    }
+//
+//    private void updateEventCalendars(Event event, LocalDateTime start, LocalDateTime end) {
+//        List<EventCalendar> eventCalendars = eventCalendarRepository.findByEventId(event.getId());
+//
+//        // 기존 EventCalendar 엔티티들을 순회하며 업데이트
+//        for (EventCalendar eventCalendar : eventCalendars) {
+//            Calendar calendar = calendarService.getCalendar(start.getYear(), start.getMonthValue());
+//            eventCalendar.updateCalendar(calendar);
+//            eventCalendarRepository.save(eventCalendar);
+//
+//            start = start.plusMonths(1).withDayOfMonth(1);
+//            if (start.isAfter(end)) {
+//                break;
+//            }
+//        }
+//
+//        // 남은 날짜에 대해 새로운 EventCalendar 엔티티 생성
+//            addEventToCalendar(event, start, end);
+//
+//        // 날짜가 많았다가 적어진 경우를 체크해서 eventCalendar를 삭제
+//
+//    }
 
     // 일정 삭제
     @Transactional
     public void deleteEvent(Long eventId, Long userId) throws BusinessLogicException {
         // 일정을 생성한 사용자인지 확인
         Event oldEvent = validateEventOwner(eventId, userId);
-        eventRepository.delete(oldEvent);
+        // 중간 테이블인 eventCalendar의 데이터 먼저 삭제
+        eventCalendarRepository.deleteByEventId(eventId);
+        eventRepository.deleteById(eventId);
     }
 
     // 해당 일정을 생성한 사용자와 같은지 검증
