@@ -2,8 +2,8 @@ package leets.weeth.domain.calendar.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import leets.weeth.domain.calendar.dto.ResponseMonthCalendar;
-import leets.weeth.domain.calendar.dto.ResponseYearCalendar;
+import leets.weeth.domain.calendar.dto.ResponseMonthData;
+import leets.weeth.domain.calendar.dto.ResponseYearData;
 import leets.weeth.domain.calendar.service.CalendarService;
 import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
 import leets.weeth.global.common.response.CommonResponse;
@@ -24,14 +24,14 @@ public class CalendarController {
     @Operation(summary = "월별 캘린더 조회", description = "사용자가 1달 단위로 캘린더를 조회합니다.")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @GetMapping("")
-    public CommonResponse<ResponseMonthCalendar> getMonthEventByCalendar(@RequestParam int year, @RequestParam int month) {
-        return CommonResponse.createSuccess(calendarService.getData(year, month));
+    public CommonResponse<ResponseMonthData> getMonthData(@RequestParam int year, @RequestParam int month) {
+        return CommonResponse.createSuccess(calendarService.getMonthDataByDate(year, month));
     }
 
     @Operation(summary = "년별 캘린더 조회", description = "사용자가 1년 단위로 캘린더를 조회합니다.")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @GetMapping("/all")
-    public CommonResponse<ResponseYearCalendar> getYearEventByCalendar(@RequestParam int year) throws BusinessLogicException {
-        return CommonResponse.createSuccess(calendarService.getDataYear(year));
+    public CommonResponse<ResponseYearData> getYearData(@RequestParam int year) throws BusinessLogicException {
+        return CommonResponse.createSuccess(calendarService.getYearDataByDate(year));
     }
 }
