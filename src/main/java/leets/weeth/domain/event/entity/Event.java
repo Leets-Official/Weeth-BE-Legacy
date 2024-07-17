@@ -1,7 +1,6 @@
 package leets.weeth.domain.event.entity;
 
 import jakarta.persistence.*;
-import leets.weeth.domain.calendar.entity.Calendar;
 import leets.weeth.domain.calendar.entity.EventCalendar;
 import leets.weeth.domain.event.dto.RequestEvent;
 import leets.weeth.domain.user.entity.User;
