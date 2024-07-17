@@ -4,7 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import leets.weeth.domain.attendance.dto.RequestAttendance;
 import leets.weeth.domain.attendance.dto.ResponseAttendance;
+import leets.weeth.domain.attendance.dto.ResponseAttendanceSummary;
 import leets.weeth.domain.attendance.service.AttendanceService;
+import leets.weeth.domain.user.entity.User;
 import leets.weeth.global.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,5 +30,13 @@ public class AttendanceController {
             @AuthenticationPrincipal Long user) {
         ResponseAttendance response = attendanceService.recordAttendance(requestDto, user);
         return CommonResponse.createSuccess(response);
+    }
+    @Operation(summary = "출석 조회", description = "총 모임, 출석 횟수와 결석 횟수를 조회합니다.")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    @PostMapping("/summary")
+    public CommonResponse<ResponseAttendanceSummary> getAttendanceSummary(
+            @AuthenticationPrincipal User user) {
+        ResponseAttendanceSummary summary = attendanceService.getAttendanceSummary(user);
+        return CommonResponse.createSuccess(summary);
     }
 }
