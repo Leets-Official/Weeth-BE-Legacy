@@ -4,7 +4,7 @@ import leets.weeth.domain.event.dto.ResponseEvent;
 
 import java.util.List;
 
-public record ResponseMonthCalendar(
+public record ResponseMonthData(
         Integer year, Integer month, List<ResponseEvent> responseEvents
 ) {
 }

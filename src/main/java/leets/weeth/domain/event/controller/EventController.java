@@ -23,7 +23,7 @@ import static leets.weeth.domain.event.entity.enums.ResponseMessage.*;
 @Tag(name = "EventController", description = "일정 관련 API입니다.")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/events")
+@RequestMapping("calendar/events")
 public class EventController {
     private final EventService eventService;
 
