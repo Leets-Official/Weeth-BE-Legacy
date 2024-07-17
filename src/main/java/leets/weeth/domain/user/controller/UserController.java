@@ -48,4 +48,10 @@ public class UserController {
     public CommonResponse<Map<Integer, List<UserDTO.Response>>> getUsers() {
         return CommonResponse.createSuccess(userService.findUsers());
     }
+
+    @Operation(summary = "내 정보 조회")
+    @GetMapping
+    public CommonResponse<UserDTO.Response> getUser(@CurrentUser Long userId) {
+        return CommonResponse.createSuccess(userService.find(userId));
+    }
 }

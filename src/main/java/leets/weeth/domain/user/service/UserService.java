@@ -66,4 +66,10 @@ public class UserService {
                 .collect(Collectors.groupingBy(Map.Entry::getKey,   // key = 기수, value = 유저 정보
                         Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
     }
+
+    public UserDTO.Response find(Long userId) {
+        return userRepository.findById(userId)
+                .map(mapper::to)
+                .orElseThrow(UserNotFoundException::new);
+    }
 }
