@@ -10,7 +10,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
 
 # MySQL 유저 생성 및 스키마 생성 터미널 명령어
 #   터미널 혹은 프로그램으로 루트 사용자 접속 후,
