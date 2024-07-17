@@ -1,7 +1,7 @@
 package leets.weeth.domain.attendance.entity;
 
 import jakarta.persistence.*;
-import leets.weeth.domain.attendance.entity.enums.Week;
+import leets.weeth.domain.attendance.entity.enums.WeekEnum;
 import leets.weeth.domain.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +16,7 @@ public class Attendance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long attendanceId;
 
+    @Column(name = "is_attend")
     private boolean isAttend;
 
     @ManyToOne
@@ -23,13 +24,17 @@ public class Attendance {
     private User user;
 
     @Enumerated(EnumType.STRING)
-    private Week week;
+    private WeekEnum week;
+
+    @Column(name = "attendance_code")
+    private String attendanceCode;
 
     @Builder
-    public Attendance(Long attendanceId, User user, Week week) {
+    public Attendance(Long attendanceId, User user, String attendanceCode, boolean isAttend, WeekEnum week) {
         this.attendanceId = attendanceId;
-        this.isAttend = isAttend();
         this.user = user;
+        this.attendanceCode = attendanceCode;
+        this.isAttend = isAttend;
         this.week = week;
     }
 }
