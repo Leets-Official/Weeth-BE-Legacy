@@ -14,12 +14,8 @@ import leets.weeth.global.common.error.exception.custom.PostNotFoundException;
 import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -44,7 +40,7 @@ public class PostService {
 
     public ResponsePostDTO show(Long postId) {
         Post target = postRepository.findById(postId)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(PostNotFoundException::new);
 
         return ResponsePostDTO.createResponsePostDTO(target);
     }
@@ -81,13 +77,9 @@ public class PostService {
     @Transactional
     public void delete(Long postId, Long userId) throws InvalidAccessException {
         Post deleted = postRepository.findById(postId)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(PostNotFoundException::new);
         if(!(deleted.getUser().getId() == userId)){
             throw new InvalidAccessException();
-        }
-        Optional<Post> targetPost = postRepository.findById(postId);
-        if (!targetPost.isPresent()){
-            throw new PostNotFoundException();
         }
         postRepository.delete(deleted);
     }
