@@ -7,7 +7,9 @@ import leets.weeth.domain.attendance.entity.enums.Week;
 import leets.weeth.domain.attendance.repository.AttendanceRepository;
 import leets.weeth.domain.event.entity.Event;
 import leets.weeth.domain.event.repository.EventRepository;
+import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
+import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +24,8 @@ public class AttendanceService {
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
 
-    public ResponseAttendance recordAttendance(RequestAttendance requestDto) {
-
+    public ResponseAttendance recordAttendance(RequestAttendance requestDto, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         // 현재 시간으로 이벤트 조회
         LocalDateTime now = LocalDateTime.now();
         List<Event> currentEvents = eventRepository.findByStartDateTimeBetween(now.minusMinutes(1), now.plusMinutes(1));
