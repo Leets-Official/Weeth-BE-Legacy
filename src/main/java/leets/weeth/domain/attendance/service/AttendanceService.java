@@ -3,7 +3,9 @@ package leets.weeth.domain.attendance.service;
 import leets.weeth.domain.attendance.dto.RequestAttendance;
 import leets.weeth.domain.attendance.dto.ResponseAttendance;
 import leets.weeth.domain.attendance.entity.Attendance;
-import leets.weeth.domain.attendance.entity.enums.Week;
+import leets.weeth.domain.attendance.entity.AttendanceCode;
+import leets.weeth.domain.attendance.entity.enums.WeekEnum;
+import leets.weeth.domain.attendance.repository.AttendanceCodeRepository;
 import leets.weeth.domain.attendance.repository.AttendanceRepository;
 import leets.weeth.domain.event.entity.Event;
 import leets.weeth.domain.event.repository.EventRepository;
@@ -23,10 +25,12 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
+    private final AttendanceCodeRepository attendanceCodeRepository;
 
     public ResponseAttendance recordAttendance(RequestAttendance requestDto, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        // 현재 시간으로 이벤트 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
         LocalDateTime now = LocalDateTime.now();
         List<Event> currentEvents = eventRepository.findByStartDateTimeBetween(now.minusMinutes(1), now.plusMinutes(1));
         Event currentEvent = currentEvents.stream()
@@ -34,39 +38,42 @@ public class AttendanceService {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("현재 시간에 해당하는 모임이 없습니다."));
 
-        if (!currentEvent.getTitle().equals(requestDto.getAttendanceCode())) {
+        AttendanceCode attendanceCode = attendanceCodeRepository.findByWeekAndExpirationTimeAfter(calculateWeek(now), now)
+                .orElseThrow(() -> new IllegalArgumentException("유효한 출석 코드가 없습니다."));
+
+        if (!attendanceCode.getAttendanceCode().equals(requestDto.getAttendanceCode())) {
             throw new IllegalArgumentException("잘못된 출석 코드입니다.");
         }
 
-        //주차 계산 (일단 단순한 예시로 주차를 계산함)
-        Week week = calculateWeek(now);
+        WeekEnum weekEnum = calculateWeek(now);
+        Attendance attendance = attendanceRepository.findByUserAndWeek(user, weekEnum)
+                .orElse(Attendance.builder()
+                        .user(user)
+                        .attendanceCode(requestDto.getAttendanceCode())
+                        .isAttend(true)
+                        .week(weekEnum)
+                        .build());
 
-        //출석 기록 조회 및 업데이트
-        Attendance attendance = attendanceRepository.findByUserAndWeek(user, week)
-                .orElse(new Attendance());
-        attendance.setUser(user);
-        attendance.setAttendanceCode(requestDto.getAttendanceCode());
-        attendance.setAttend(true);
-        attendance.setWeek(week);
         attendanceRepository.save(attendance);
 
-        //응답 DTO 생성
-        ResponseAttendance responseDto = new ResponseAttendance();
-        responseDto.setScheduleTitle(currentEvent.getTitle());
-        responseDto.setScheduleDateTime(currentEvent.getStartDateTime().toString());
-        responseDto.setScheduleLocation(currentEvent.getLocation());
-
-        //출석률 및 결석률 계산
         long totalAttendances = attendanceRepository.countByUserAndIsAttendTrue(user);
-        responseDto.setAttendanceRate(totalAttendances * 100);
-        responseDto.setAbsenceRate((1 - totalAttendances) * 100);
+        long totalAbsences = attendanceRepository.countByUserAndIsAttendFalse(user);
+        long totalRecords = totalAttendances + totalAbsences;
 
-        return responseDto;
+        double attendanceRate = totalRecords > 0 ? (double) totalAttendances / totalRecords * 100 : 0;
+        double absenceRate = totalRecords > 0 ? (double) totalAbsences / totalRecords * 100 : 0;
+
+        return ResponseAttendance.create(
+                currentEvent.getTitle(),
+                currentEvent.getStartDateTime().toString(),
+                currentEvent.getLocation(),
+                attendanceRate,
+                absenceRate
+        );
     }
 
-    private Week calculateWeek(LocalDateTime now) {
-        //주차 계산 로직
-        int weekNumber = now.getDayOfYear() / 7;
-        return Week.of(weekNumber);
+    private WeekEnum calculateWeek(LocalDateTime now) {
+        int weekNumber = (now.getDayOfYear() - 1) / 7;
+        return WeekEnum.values()[weekNumber];
     }
 }
