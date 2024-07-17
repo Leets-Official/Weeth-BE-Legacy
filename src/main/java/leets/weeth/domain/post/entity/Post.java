@@ -38,10 +38,6 @@ public class Post extends BaseEntity {
 
     LocalDateTime time;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    @OrderBy("id asc")
-    private List<PostFile> postFiles;
-
     public static Post createPost(RequestPostDTO dto, User user){
 
         Post newPost = new Post(
@@ -49,8 +45,7 @@ public class Post extends BaseEntity {
                 user,
                 dto.getTitle(),
                 dto.getContent(),
-                null,
-                new ArrayList<>()
+                null
         );
         return newPost;
     }
