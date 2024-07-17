@@ -15,7 +15,7 @@ public class File {
 
     @Id //엔티티의 대푯값 지정
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
+    @Column(name = "file_id")
     private Long id;
 
     private String url;
