@@ -6,14 +6,12 @@ import leets.weeth.domain.file.entity.File;
 import leets.weeth.domain.post.dto.RequestPostDTO;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.global.common.entity.BaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -42,27 +40,21 @@ public class Post extends BaseEntity {
 
     public static Post createPost(RequestPostDTO dto, User user, List<File> urls){
 
-        Post newPost = new Post(
-                null,
-                user,
-                dto.getTitle(),
-                dto.getContent(),
-                null,
-                urls
-        );
-        return newPost;
+        return Post.builder()
+                .id(null)
+                .user(user)
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .time(null)
+                .fileUrls(urls)
+                .build();
     }
 
-    public static Post updatePost(RequestPostDTO dto, User user, List<File> urls, Long postId) {
-        Post newPost = new Post(
-                postId,
-                user,
-                dto.getTitle(),
-                dto.getContent(),
-                null,
-                urls
-        );
-        return newPost;
+    public void updatePost(RequestPostDTO dto, List<File> newUrls) {
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
+        this.fileUrls.clear(); // 기존 파일 제거
+        this.fileUrls.addAll(newUrls); // 새로운 url 추가
     }
 
     @PrePersist
@@ -71,12 +63,4 @@ public class Post extends BaseEntity {
         this.time = this.getModifiedAt() == null ? this.getCreatedAt() : this.getModifiedAt();
     }
 
-    public void updatePost(RequestPostDTO dto) {
-
-        if (dto.getTitle()!= null)   //수정할 제목 데이터가 있다면
-            this.title = dto.getTitle();
-        if (dto.getContent() != null)  //수정할 본문 데이터가 있다면
-            this.content = dto.getContent();
-        this.setTime();
-    }
 }

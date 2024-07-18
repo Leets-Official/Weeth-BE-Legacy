@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,7 +64,8 @@ public class PostService {
             if (!targetPost.isPresent()){
                 throw new PostNotFoundException();
             }
-            newPost = Post.updatePost(requestPostDTO, user, fileUrls, postId);
+            newPost = postRepository.findById(postId).orElse(null);
+            newPost.updatePost(requestPostDTO, fileUrls);
         }
         else {
             newPost = Post.createPost(requestPostDTO, user, fileUrls);
