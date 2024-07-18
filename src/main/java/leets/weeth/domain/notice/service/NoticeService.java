@@ -1,19 +1,14 @@
 package leets.weeth.domain.notice.service;
 
-import jakarta.persistence.EntityNotFoundException;
-import leets.weeth.domain.event.dto.RequestEvent;
 import leets.weeth.domain.event.entity.Event;
-import leets.weeth.domain.event.entity.enums.Status;
+import leets.weeth.domain.event.entity.enums.Type;
+import leets.weeth.domain.event.repository.EventRepository;
 import leets.weeth.domain.notice.dto.RequestNotice;
 import leets.weeth.domain.notice.dto.ResponseNotice;
-import leets.weeth.domain.event.repository.EventRepository;
 import leets.weeth.domain.notice.mapper.NoticeMapper;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
-import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
-import leets.weeth.global.common.error.exception.custom.NoticeNotFoundException;
-import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
-import leets.weeth.global.common.error.exception.custom.UserNotMatchException;
+import leets.weeth.global.common.error.exception.custom.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -21,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static leets.weeth.domain.event.entity.enums.ErrorMessage.*;
 
 @Service
 @RequiredArgsConstructor
@@ -37,14 +30,17 @@ public class NoticeService {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
+        // 일정에 저장시 startDateTime과 endDateTime을 현재 시간으로 저장
         LocalDateTime now = LocalDateTime.now();
-        eventRepository.save(Event.fromNoticeDto(requestNotice, Status.NOTICE, user, now));
+        // 상태는 NOTICE로 저장
+        eventRepository.save(Event.fromNoticeDto(requestNotice, Type.NOTICE, user, now));
     }
 
     // 모든 공지사항 조회
     @Transactional(readOnly = true)
     public List<ResponseNotice> getNotices(){
-        List<Event> events = eventRepository.findAllByStatus(Status.NOTICE, Sort.by(Sort.Direction.ASC, "id"));
+        // 상태가 NOTICE인 모든 공지사항을 ID에 오름차순으로 조회
+        List<Event> events = eventRepository.findAllByType(Type.NOTICE, Sort.by(Sort.Direction.ASC, "id"));
 
         return events.stream()
                 .map(noticeMapper::toDto)
@@ -53,40 +49,41 @@ public class NoticeService {
 
     // 공지 상세 조회
     @Transactional(readOnly = true)
-    public ResponseNotice getNoticeById(Long id) {
+    public ResponseNotice getNoticeById(Long id) throws TypeNotMatchException {
         // getNotice로 온 요청엔 공지사항 게시판에서 온 요청이라 가정. NOTICE만 반환
-        Event event = eventRepository.findByIdAndStatus(id, Status.NOTICE)
-                .orElseThrow(() -> new EntityNotFoundException(EVENT_NOT_FOUND.getMessage()));//예외 수정 statusNotMatch
-
+        Event event = eventRepository.findByIdAndType(id, Type.NOTICE)
+                .orElseThrow(TypeNotMatchException::new);//예외 수정 statusNotMatch
 
         return noticeMapper.toDto(event);
     }
 
     // 공지 수정
     @Transactional
-    public void updateNotice(Long eventId, RequestNotice requestNotice, Long userId) throws BusinessLogicException {
-        // 일정을 생성한 사용자인지 확인
-        Event oldEvent = validateEventOwner(eventId, userId);
+    public void updateNotice(Long noticeId, RequestNotice requestNotice, Long userId) throws BusinessLogicException {
+        // 공지사항을 생성한 사용자인지 확인
+        Event oldEvent = validateEventOwner(noticeId, userId);
 
-        if(oldEvent.getStatus().equals(Status.NOTICE)) {
+        // 해당 일정의 상태가 NOTICE 인지 확인
+        if(oldEvent.getType().equals(Type.NOTICE)) {
             LocalDateTime now = LocalDateTime.now();
-
             oldEvent.updateFromNoticeDto(requestNotice, now);
         } else {
-            System.out.println("공지사항이 아닙니다");
+            throw new TypeNotMatchException();
         }
     }
 
 
     // 공지 삭제
     @Transactional
-    public void deleteNotice(Long noticeId, Long userId) throws UserNotMatchException {
-        // 공지사항이 맞는지 확인
+    public void deleteNotice(Long noticeId, Long userId) throws BusinessLogicException {
+        // 공지사항을 생성한 사용자인지 확인
         Event oldEvent = validateEventOwner(noticeId, userId);
 
-        if(oldEvent.getStatus().equals(Status.NOTICE)) {
+        // 해당 일정의 상태가 NOTICE 인지 확인
+        if(oldEvent.getType().equals(Type.NOTICE)) {
             eventRepository.deleteById(noticeId);
-        } else {//예외처리: 공지사항이 아니라 삭제가 안된다
+        } else {
+            throw new TypeNotMatchException();
         }
     }
 
@@ -105,5 +102,4 @@ public class NoticeService {
         }
         return oldEvent;
     }
-
 }
