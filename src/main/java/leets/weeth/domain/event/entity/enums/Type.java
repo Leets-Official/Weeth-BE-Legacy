@@ -1,6 +1,6 @@
 package leets.weeth.domain.event.entity.enums;
 
-public enum Status {
+public enum Type {
     NOTICE,
     EVENT,
     ATTENDANCE
