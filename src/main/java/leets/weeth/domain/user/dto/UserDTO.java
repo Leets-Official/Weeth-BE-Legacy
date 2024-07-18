@@ -12,12 +12,20 @@ public class UserDTO {
         @NotBlank        String name,
         @Email @NotBlank String email,
         @NotBlank        String password,
-        @NotBlank String passwordConfirm,
         @NotBlank        String studentId,
         @NotBlank        String tel,
         @NotNull         Position position,
         @NotNull         Department department,
         @NotNull         Integer cardinal
+    ) {}
+
+    public record Update (
+            @NotBlank        String name,
+            @Email @NotBlank String email,
+            @NotBlank        String password,
+            @NotBlank        String studentId,
+            @NotBlank        String tel,
+            @NotNull         Department department
     ) {}
 
     public record Response(
