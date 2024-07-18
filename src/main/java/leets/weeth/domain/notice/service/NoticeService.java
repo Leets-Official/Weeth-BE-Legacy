@@ -61,7 +61,7 @@ public class NoticeService {
     @Transactional
     public void updateNotice(Long noticeId, RequestNotice requestNotice, Long userId) throws BusinessLogicException {
         // 공지사항을 생성한 사용자인지 확인
-        Event oldEvent = validateEventOwner(noticeId, userId);
+        Event oldEvent = validateNoticeOwner(noticeId, userId);
 
         // 해당 일정의 상태가 NOTICE 인지 확인
         if(oldEvent.getType().equals(Type.NOTICE)) {
@@ -77,7 +77,7 @@ public class NoticeService {
     @Transactional
     public void deleteNotice(Long noticeId, Long userId) throws BusinessLogicException {
         // 공지사항을 생성한 사용자인지 확인
-        Event oldEvent = validateEventOwner(noticeId, userId);
+        Event oldEvent = validateNoticeOwner(noticeId, userId);
 
         // 해당 일정의 상태가 NOTICE 인지 확인
         if(oldEvent.getType().equals(Type.NOTICE)) {
@@ -88,7 +88,7 @@ public class NoticeService {
     }
 
     // 해당 일정을 생성한 사용자와 같은지 검증
-    private Event validateEventOwner(Long eventId, Long userId) throws UserNotMatchException {
+    private Event validateNoticeOwner(Long eventId, Long userId) throws UserNotMatchException {
         Event oldEvent = eventRepository.findById(eventId)
                 .orElseThrow(NoticeNotFoundException::new);
 
