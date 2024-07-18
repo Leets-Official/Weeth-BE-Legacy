@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 @Builder
 public record RequestNotice(
         @NotBlank String title,
-        @NotBlank String content,
-        LocalDateTime time
+        @NotBlank String content
 ) {
 }

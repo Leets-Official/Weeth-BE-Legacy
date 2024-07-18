@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Builder
 public record ResponseNotice(
+        Long id,
         String title,
         String content,
         LocalDateTime created_at,
