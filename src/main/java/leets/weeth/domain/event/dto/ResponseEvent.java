@@ -14,6 +14,8 @@ public record ResponseEvent (
         String location,
         LocalDateTime startDateTime,
         LocalDateTime endDateTime,
+        LocalDateTime created_at,
+        LocalDateTime modified_at,
         String userName,
         Status status
 ) {}
