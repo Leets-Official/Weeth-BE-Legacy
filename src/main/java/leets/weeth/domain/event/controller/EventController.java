@@ -59,8 +59,8 @@ public class EventController {
 
     @Operation(summary = "년도별 일정 조회", description = "사용자가 1년 단위로 일정을 조회합니다.")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-    @GetMapping("/year/{year}")
-    public CommonResponse<Map<Integer, List<ResponseEvent>>> getYearEvents(@PathVariable int year) throws BusinessLogicException {
+    @GetMapping("/year") //requestParam으로 해보기
+    public CommonResponse<Map<Integer, List<ResponseEvent>>> getYearEvents(@RequestParam int year) throws BusinessLogicException {
         Map<Integer, List<ResponseEvent>> responseEvents = eventService.getEventsOfYear(year);
         return CommonResponse.createSuccess(responseEvents);
     }
