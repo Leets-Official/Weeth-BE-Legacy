@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 
 import static leets.weeth.domain.event.entity.enums.ErrorMessage.*;
 
@@ -68,6 +68,38 @@ public class EventService {
                 .toList();
     }
 
+    // 년도 별 일정 조회
+    public Map<Integer, List<ResponseEvent>> getEventsOfYear(int year) {
+        // 1년치 일정을 모두 조회
+        LocalDateTime start = LocalDateTime.of(year, 1, 1, 0, 0);
+        LocalDateTime end = LocalDateTime.of(year, 12, 31, 23, 59);
+        List<Event> events = eventRepository.findByStartDateTimeBetween(start, end);
+
+        Map<Integer, List<ResponseEvent>> eventsByMonth = new HashMap<>();
+        for (Event event : events) {
+            LocalDateTime eventStart = event.getStartDateTime();
+            LocalDateTime eventEnd = event.getEndDateTime();
+
+            // 각 월을 반복하며 해당 월에 이벤트를 추가
+            while (!eventStart.isAfter(eventEnd)) {
+                int month = eventStart.getMonthValue();
+                eventsByMonth
+                        .computeIfAbsent(month, k -> new ArrayList<>())
+                        .add(eventMapper.toDto(event));
+                // 한달씩 증가
+                eventStart = eventStart.plusMonths(1).withDayOfMonth(1)
+                        .withHour(0).withMinute(0).withSecond(0).withNano(0);
+            }
+        }
+
+        // 각 월의 이벤트를 시작 시간 순서대로 정렬
+        eventsByMonth.values().forEach(eventList ->
+                eventList.sort(Comparator.comparing(ResponseEvent::startDateTime))
+        );
+
+        return eventsByMonth;
+    }
+
     // 일정 수정
     @Transactional
     public void updateEvent(Long eventId, RequestEvent updatedEvent, Long userId) throws BusinessLogicException {
@@ -83,7 +115,10 @@ public class EventService {
     public void deleteEvent(Long eventId, Long userId) throws BusinessLogicException {
         // 일정을 생성한 사용자인지 확인
         Event oldEvent = validateEventOwner(eventId, userId);
-
+        if(oldEvent.getStatus().equals(Status.NOTICE)){
+            //예외처리 공지는 공지사항에서 삭제해주세요
+        }
+        // 이벤트.delete로 온 요청이 공지를 삭제한다면 예외처리, 아니라면 삭제
         eventRepository.deleteById(eventId);
     }
 
@@ -109,5 +144,6 @@ public class EventService {
             throw new BusinessLogicException(INVALID_DATE.getMessage());
         }
     }
+
 
 }

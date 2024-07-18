@@ -17,13 +17,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static leets.weeth.domain.event.entity.enums.ResponseMessage.*;
 
 @Tag(name = "EventController", description = "일정 관련 API입니다.")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("calendar/events")
+@RequestMapping("/events")
 public class EventController {
     private final EventService eventService;
 
@@ -53,6 +54,14 @@ public class EventController {
             @RequestParam(name = "end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) throws BusinessLogicException {
 
         List<ResponseEvent> responseEvents = eventService.getEventsBetweenDate(startDate, endDate);
+        return CommonResponse.createSuccess(responseEvents);
+    }
+
+    @Operation(summary = "년도별 일정 조회", description = "사용자가 1년 단위로 일정을 조회합니다.")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    @GetMapping("/year/{year}")
+    public CommonResponse<Map<Integer, List<ResponseEvent>>> getYearEvents(@PathVariable int year) throws BusinessLogicException {
+        Map<Integer, List<ResponseEvent>> responseEvents = eventService.getEventsOfYear(year);
         return CommonResponse.createSuccess(responseEvents);
     }
 
