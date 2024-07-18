@@ -31,12 +31,14 @@ public class PostService {
 
     //모든 게시물 가져오기
     public List<ResponsePostDTO> findAllPosts() {
+        // 모든 게시물을 id에 대해 오름차순으로 조회
         List<Post> posts = postRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
         return posts.stream()
                 .map(ResponsePostDTO::createResponsePostDTO)
                 .collect(Collectors.toList());
     }
 
+    // 특정 postId의 게시물만 조회
     public ResponsePostDTO show(Long postId) {
         Post target = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
@@ -44,7 +46,9 @@ public class PostService {
         return ResponsePostDTO.createResponsePostDTO(target);
     }
 
+    // 특정 유저(본인)의 게시물만 조회
     public List<ResponsePostDTO> myPosts(Long userId){
+        // 특정 유저의 모든 게시물을 오름차순으로 조회
         List<Post> myPosts = postRepository.findByUserId(userId, Sort.by(Sort.Direction.ASC, "id"));
 
         // Post 리스트를 ResponsePostDTO 리스트로 변환
@@ -55,19 +59,32 @@ public class PostService {
 
     @Transactional
     public void create(Long userId, RequestPostDTO requestPostDTO, List<MultipartFile> files, Long postId) throws InvalidAccessException {
+        // 사용자가 존재하지 않는 경우
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
-        List<File> fileUrls = fileService.uploadFiles(files);
+        //
+        List<File> fileUrls;
         Post newPost;
         if(postId!=null){
-            Optional<Post> targetPost = postRepository.findById(postId);
-            if (!targetPost.isPresent()){
+            Post targetPost = postRepository.findById(postId).orElse(null);
+            // 대상 게시물이 존재하지 않는 경우
+            if (targetPost==null){
                 throw new PostNotFoundException();
             }
+            // 게시글을 수정하려는 유저가 원래의 게시글 작성자와 다를 경우
+            if(!(targetPost.getUser().getId() == userId)){
+                throw new InvalidAccessException();
+            }
+            // 파일 첨부
+            fileUrls = fileService.uploadFiles(files);
             newPost = postRepository.findById(postId).orElse(null);
+            // 게시물 수정
             newPost.updatePost(requestPostDTO, fileUrls);
         }
         else {
+            // 파일 첨부
+            fileUrls = fileService.uploadFiles(files);
+            // 게시물 생성
             newPost = Post.createPost(requestPostDTO, user, fileUrls);
         }
         postRepository.save(newPost);
@@ -75,8 +92,10 @@ public class PostService {
 
     @Transactional
     public void delete(Long postId, Long userId) throws InvalidAccessException {
+        // 대상 게시물이 존재하지 않는 경우
         Post deleted = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
+        // 게시글을 수정하려는 유저가 원래의 게시글 작성자와 다를 경우
         if(!(deleted.getUser().getId() == userId)){
             throw new InvalidAccessException();
         }
