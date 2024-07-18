@@ -8,6 +8,7 @@ import leets.weeth.domain.notice.dto.ResponseNotice;
 import leets.weeth.domain.notice.service.NoticeService;
 import leets.weeth.global.auth.annotation.CurrentUser;
 import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
+import leets.weeth.global.common.error.exception.custom.TypeNotMatchException;
 import leets.weeth.global.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,7 +36,7 @@ public class NoticeController {
     // 공지사항 세부 조회
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @GetMapping("/{id}")
-    public CommonResponse<ResponseNotice> getNotice(@PathVariable Long id) {
+    public CommonResponse<ResponseNotice> getNotice(@PathVariable Long id) throws TypeNotMatchException {
         ResponseNotice responseNotice = noticeService.getNoticeById(id);
         return CommonResponse.createSuccess(responseNotice);
     }
