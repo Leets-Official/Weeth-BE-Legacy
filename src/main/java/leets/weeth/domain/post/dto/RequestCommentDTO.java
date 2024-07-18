@@ -15,5 +15,4 @@ public class RequestCommentDTO {
     @NotBlank
     private String content;
 
-
 }

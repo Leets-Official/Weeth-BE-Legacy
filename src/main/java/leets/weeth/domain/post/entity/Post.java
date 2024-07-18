@@ -10,9 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.Remove;
-
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -39,7 +38,7 @@ public class Post extends BaseEntity {
 
     LocalDateTime time;
     @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<File> fileUrls;
+    private List<File> fileUrls = new ArrayList<>();
 
     public static Post createPost(RequestPostDTO dto, User user, List<File> urls){
 

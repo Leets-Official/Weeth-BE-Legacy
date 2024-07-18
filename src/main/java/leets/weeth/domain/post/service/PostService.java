@@ -70,8 +70,7 @@ public class PostService {
         else {
             newPost = Post.createPost(requestPostDTO, user, fileUrls);
         }
-        Post save = postRepository.save(newPost);
-        System.out.println("save.getFileUrls() = " + save.getFileUrls());
+        postRepository.save(newPost);
     }
 
     @Transactional

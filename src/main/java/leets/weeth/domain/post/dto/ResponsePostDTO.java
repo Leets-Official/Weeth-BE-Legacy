@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,14 +18,16 @@ public class ResponsePostDTO {
 
     private Long id;
     @NotBlank
+    private String name;
+    @NotBlank
     private String title;
     @NotBlank
     private String content;
     private LocalDateTime time;
-    private List<File> fileUrls;
+    private List<File> fileUrls;;
 
     public static ResponsePostDTO createResponsePostDTO(Post post) {
-        return new ResponsePostDTO(post.getId(), post.getTitle(), post.getContent(),
+        return new ResponsePostDTO(post.getId(), post.getUser().getName(), post.getTitle(), post.getContent(),
                 post.getTime(),
                 post.getFileUrls());
     }

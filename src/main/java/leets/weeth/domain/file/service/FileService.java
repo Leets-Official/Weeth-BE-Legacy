@@ -2,9 +2,6 @@ package leets.weeth.domain.file.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.util.IOUtils;
 import leets.weeth.domain.file.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,21 +27,6 @@ public class FileService {
     private String bucketName;
 
     private final AmazonS3 s3Client;
-
-    public String uploadFile(MultipartFile file) {
-
-        if(file == null || file.isEmpty())
-            return "";
-        java.io.File fileObj = convertMultiPartFileToFile(file);
-        String originalFilename = file.getOriginalFilename();
-        String extension = getFileExtension(originalFilename);
-        String fileName = UUID.randomUUID() + "." + extension;
-
-        log.info("uploadFile fileName: {}", fileName);
-        s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
-        fileObj.delete();
-        return s3Client.getUrl(bucketName, fileName).toString();
-    }
 
     public List<File> uploadFiles(List<MultipartFile> files) {
         // 다중 업로드 && 리스트 ","을 기준으로 하나의 문자열 반환
