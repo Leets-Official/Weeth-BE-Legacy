@@ -70,7 +70,7 @@ public class EventController {
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PatchMapping("/{id}")
     public CommonResponse<String> updateEvent(@PathVariable Long id, @RequestBody RequestEvent requestEvent, @Parameter(hidden = true) @CurrentUser Long userId) throws BusinessLogicException {
-//        eventService.updateEvent(id, requestEvent, userId);
+        eventService.updateEvent(id, requestEvent, userId);
         return CommonResponse.createSuccess(EVENT_UPDATED_SUCCESS.getMessage());
     }
 
