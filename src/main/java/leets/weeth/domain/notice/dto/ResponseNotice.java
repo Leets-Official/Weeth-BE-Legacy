@@ -1,6 +1,6 @@
 package leets.weeth.domain.notice.dto;
 
-import leets.weeth.domain.event.entity.enums.Status;
+import leets.weeth.domain.event.entity.enums.Type;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -13,7 +13,7 @@ public record ResponseNotice(
         LocalDateTime created_at,
         LocalDateTime modified_at,
         String userName,
-        Status status
+        Type type
         // 파일관련
 
 ) {

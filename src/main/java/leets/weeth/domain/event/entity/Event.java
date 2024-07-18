@@ -2,7 +2,7 @@ package leets.weeth.domain.event.entity;
 
 import jakarta.persistence.*;
 import leets.weeth.domain.event.dto.RequestEvent;
-import leets.weeth.domain.event.entity.enums.Status;
+import leets.weeth.domain.event.entity.enums.Type;
 import leets.weeth.domain.notice.dto.RequestNotice;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.global.common.entity.BaseEntity;
@@ -35,7 +35,7 @@ public class Event extends BaseEntity {
     private LocalDateTime endDateTime;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Type type;
 
     // 파일관련
 
@@ -43,7 +43,7 @@ public class Event extends BaseEntity {
     @JoinColumn(name="user_id", nullable=false)
     private User user;
 
-    // 정적 팩토리 메서드
+    // 일정 생성을 위한 정적 팩토리 메서드
     public static Event fromEventDto(RequestEvent dto, User user) {
         return Event.builder()
                 .title(dto.title())
@@ -51,19 +51,20 @@ public class Event extends BaseEntity {
                 .location(dto.location())
                 .startDateTime(dto.startDateTime())
                 .endDateTime(dto.endDateTime())
-                .status(dto.status())
+                .type(dto.type())
                 .user(user)
                 .build();
     }
 
-    public static Event fromNoticeDto(RequestNotice dto, Status status, User user, LocalDateTime now) {
+    // 공지사항 생성을 위한 정적 팩토리 메서드
+    public static Event fromNoticeDto(RequestNotice dto, Type type, User user, LocalDateTime now) {
         return Event.builder()
                 .title(dto.title())
                 .content(dto.content())
                 .location(null)
                 .startDateTime(now)
                 .endDateTime(now)
-                .status(status)
+                .type(type)
                 .user(user)
                 .build();
     }
@@ -75,8 +76,7 @@ public class Event extends BaseEntity {
         Optional.ofNullable(dto.location()).ifPresent(location -> this.location = location);
         Optional.ofNullable(dto.startDateTime()).ifPresent(startDateTime -> this.startDateTime = startDateTime);
         Optional.ofNullable(dto.endDateTime()).ifPresent(endDateTime -> this.endDateTime = endDateTime);
-        Optional.ofNullable(dto.status()).ifPresent(status -> this.status = status);
-        // status 수정 공지는 상관없고 출석인지 이벤트인지만
+        Optional.ofNullable(dto.type()).ifPresent(type -> this.type = type);
     }
 
     // 공지 수정을 위한 메소드
