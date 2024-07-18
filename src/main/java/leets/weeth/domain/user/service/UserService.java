@@ -72,4 +72,9 @@ public class UserService {
                 .map(mapper::to)
                 .orElseThrow(UserNotFoundException::new);
     }
+
+    public void update(Long userId, UserDTO.Update dto) {
+        User user = mapper.update(userId, dto);
+        userRepository.save(user);
+    }
 }

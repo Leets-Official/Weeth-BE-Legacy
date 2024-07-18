@@ -15,5 +15,7 @@ public interface UserMapper {
     User from(UserDTO.SignUp dto, @Context PasswordEncoder passwordEncoder);
 
     UserDTO.Response to(User user);
+
+    User update(Long userId, UserDTO.Update dto);
 }
 
