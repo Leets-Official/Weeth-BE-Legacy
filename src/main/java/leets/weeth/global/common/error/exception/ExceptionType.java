@@ -2,7 +2,7 @@ package leets.weeth.global.common.error.exception;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
-import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
+import leets.weeth.global.common.error.exception.custom.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,12 @@ import java.util.Optional;
 public enum ExceptionType {
     ENTITY_NOT_FOUND(HttpStatus.BAD_REQUEST, EntityNotFoundException.class),
     ENTITY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, EntityExistsException.class),
-    BUSINESS_LOGIC_ERROR(HttpStatus.BAD_REQUEST, BusinessLogicException.class);
+    BUSINESS_LOGIC_ERROR(HttpStatus.BAD_REQUEST, BusinessLogicException.class),
+    TYPE_NOT_MATCH(HttpStatus.BAD_REQUEST, TypeNotMatchException.class),
+    USER_NOT_MATCH(HttpStatus.BAD_REQUEST, UserNotMatchException.class),
+    NOTICE_NOT_FOUND(HttpStatus.BAD_REQUEST, NoticeNotFoundException.class),
+    EVENT_NOT_FOUND(HttpStatus.BAD_REQUEST, EventNotFoundException.class),
+    INVALID_INPUT_DATE(HttpStatus.BAD_REQUEST, InvalidInputDateException.class);
 
     private final HttpStatus httpStatus;
     private final Class<? extends Exception> type;
