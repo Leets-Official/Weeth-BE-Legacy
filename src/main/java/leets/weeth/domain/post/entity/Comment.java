@@ -2,17 +2,15 @@ package leets.weeth.domain.post.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import leets.weeth.domain.file.entity.File;
 import leets.weeth.domain.post.dto.RequestCommentDTO;
+import leets.weeth.domain.post.dto.RequestPostDTO;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.global.common.entity.BaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
+import lombok.*;
 import java.time.LocalDateTime;
 
-
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -34,19 +32,21 @@ public class Comment extends BaseEntity {
     private User user;
 
     @NotEmpty
-    @Column
     private String content;
+
     LocalDateTime time;
     public static Comment createComment(RequestCommentDTO dto, Post post, User user){
+        return Comment.builder()
+                .id(null)
+                .post(post)
+                .user(user)
+                .content(dto.getContent())
+                .time(null)
+                .build();
+    }
 
-        Comment newComment = new Comment(
-                null,
-                post,
-                user,
-                dto.getContent(),
-                null
-        );
-        return newComment;
+    public void updateComment(RequestCommentDTO dto) {
+        this.content = dto.getContent();
     }
 
     @PrePersist
@@ -54,6 +54,5 @@ public class Comment extends BaseEntity {
     public void setTime() {
         this.time = this.getModifiedAt() == null ? this.getCreatedAt() : this.getModifiedAt();
     }
-
 
 }
