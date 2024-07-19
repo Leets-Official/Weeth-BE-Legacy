@@ -18,9 +18,9 @@ import java.util.List;
 public class CommentController {
     @Autowired
     private CommentService commentService;
-    @PostMapping()
-    public CommonResponse<String> create(@PathVariable Long postId, @RequestBody RequestCommentDTO dto,
-                                         @CurrentUser Long userId){
+    @PostMapping("")
+    public CommonResponse<String> createComment(@PathVariable Long postId, @RequestBody RequestCommentDTO dto,
+                                         @CurrentUser Long userId) throws InvalidAccessException {
         commentService.create(userId, postId, dto);
         return CommonResponse.createSuccess();
     }
@@ -39,10 +39,9 @@ public class CommentController {
     }
 
     @DeleteMapping("/{commentId}")
-    public CommonResponse<String> delete(@PathVariable Long commentId, @CurrentUser Long userId) throws InvalidAccessException {
+    public CommonResponse<String> deleteComment(@PathVariable Long commentId, @CurrentUser Long userId) throws InvalidAccessException {
         commentService.delete(userId, commentId);
         return CommonResponse.createSuccess();
     }
-
 
 }

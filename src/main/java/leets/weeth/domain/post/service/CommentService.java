@@ -1,6 +1,5 @@
 package leets.weeth.domain.post.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import leets.weeth.domain.post.dto.RequestCommentDTO;
 import leets.weeth.domain.post.dto.ResponseCommentDTO;
 import leets.weeth.domain.post.entity.Comment;
@@ -27,19 +26,39 @@ public class CommentService {
 
     public List<ResponseCommentDTO> getAllCommentsFromPost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
-        return commentRepository.findByPostId(postId)
-                .stream()
+
+        // parent와 child를 포함한 모든 댓글
+        List<Comment> allComments = commentRepository.findByPostId(postId);
+
+        // 부모 댓글만 필터링
+        List<Comment> parentComments = allComments.stream()
+                .filter(comment -> comment.getParent() == null)
+                .collect(Collectors.toList());
+
+        // 부모 댓글을 ResponseCommentDTO로 변환하고, 자식 댓글을 계층적으로 설정
+        return parentComments.stream()
                 .map(ResponseCommentDTO::createResponseCommentDto)
                 .collect(Collectors.toList());
     }
-    //myComments
 
-    public void create(Long userId, Long postId, RequestCommentDTO requestCommentDTO) {
+    public void create(Long userId, Long postId, RequestCommentDTO requestCommentDTO) throws InvalidAccessException {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
-        Post createdPost = postRepository.findById(postId).orElseThrow(()->new EntityNotFoundException("failed to add post! no such post"));
-
+        Post createdPost = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+        
         Comment newComment = Comment.createComment(requestCommentDTO, createdPost, user);
+        Comment parentComment;
+        // child인 경우(부모가 있는 경우)
+        if(requestCommentDTO.getParentId()!=null){
+            parentComment = commentRepository.findById(requestCommentDTO.getParentId())
+                    .orElseThrow(CommentNotFoundException::new);
+            // 부모의 부모는 없어야함(최대 1회만 참조 가능)
+            if(parentComment.getParent()!=null){
+                throw new InvalidAccessException();
+            }
+            //부모 comment 설정
+            newComment.setParentComment(parentComment);
+        }
         commentRepository.save(newComment);
     }
 
@@ -50,6 +69,8 @@ public class CommentService {
                 .orElseThrow(PostNotFoundException::new);
         Comment editedComment = commentRepository.findById(commentId)
                 .orElseThrow(CommentNotFoundException::new);
+        
+        // 댓글을 쓴 유저와 수정하는 유저가 다른 경우
         if(user.getId()!=editedComment.getUser().getId()){
             throw new InvalidAccessException();
         }
@@ -62,9 +83,20 @@ public class CommentService {
                 .orElseThrow(UserNotFoundException::new);
         Comment deletedComment = commentRepository.findById(commentId)
                 .orElseThrow(CommentNotFoundException::new);
+        // 댓글을 쓴 유저와 삭제하는 유저가 다른 경우
         if(user.getId()!=deletedComment.getUser().getId()){
             throw new InvalidAccessException();
         }
-        commentRepository.delete(deletedComment);
+        // child가 있는 부모인 경우
+        if(!deletedComment.getChildren().isEmpty()){
+            // 댓글을 삭제하는 것이 아닌 삭제된 댓글이라고 표시
+            deletedComment.markAsDeleted();
+            commentRepository.save(deletedComment);
+        }
+        else {
+            // child가 없는 부모 또는 child인 경우
+            commentRepository.delete(deletedComment);
+        }
     }
+
 }
