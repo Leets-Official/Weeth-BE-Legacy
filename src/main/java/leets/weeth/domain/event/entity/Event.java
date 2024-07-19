@@ -37,37 +37,11 @@ public class Event extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    // 파일관련
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id", nullable=false)
     private User user;
 
-    // 일정 생성을 위한 정적 팩토리 메서드
-    public static Event fromEventDto(RequestEvent dto, User user) {
-        return Event.builder()
-                .title(dto.title())
-                .content(dto.content())
-                .location(dto.location())
-                .startDateTime(dto.startDateTime())
-                .endDateTime(dto.endDateTime())
-                .type(dto.type())
-                .user(user)
-                .build();
-    }
 
-    // 공지사항 생성을 위한 정적 팩토리 메서드
-    public static Event fromNoticeDto(RequestNotice dto, Type type, User user, LocalDateTime now) {
-        return Event.builder()
-                .title(dto.title())
-                .content(dto.content())
-                .location(null)
-                .startDateTime(now)
-                .endDateTime(now)
-                .type(type)
-                .user(user)
-                .build();
-    }
 
     // 일정 수정을 위한 메소드
     public void updateFromEventDto(RequestEvent dto) {
