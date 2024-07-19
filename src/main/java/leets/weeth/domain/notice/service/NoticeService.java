@@ -3,6 +3,8 @@ package leets.weeth.domain.notice.service;
 import leets.weeth.domain.event.entity.Event;
 import leets.weeth.domain.event.entity.enums.Type;
 import leets.weeth.domain.event.repository.EventRepository;
+import leets.weeth.domain.file.entity.File;
+import leets.weeth.domain.file.service.FileService;
 import leets.weeth.domain.notice.dto.RequestNotice;
 import leets.weeth.domain.notice.dto.ResponseNotice;
 import leets.weeth.domain.notice.mapper.NoticeMapper;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,18 +25,17 @@ import java.util.List;
 public class NoticeService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final FileService fileService;
     private final NoticeMapper noticeMapper;
 
     // 공지생성
     @Transactional
-    public void createNotice(RequestNotice requestNotice, Long userId) {
+    public void createNotice(RequestNotice requestNotice, List<MultipartFile> files, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        // 일정에 저장시 startDateTime과 endDateTime을 현재 시간으로 저장
-        LocalDateTime now = LocalDateTime.now();
-        // 상태는 NOTICE로 저장
-        eventRepository.save(noticeMapper.fromNoticeDto(requestNotice, user));
+        List<File> fileUrls = fileService.uploadFiles(files);
+        eventRepository.save(noticeMapper.fromNoticeDto(requestNotice, fileUrls, user));
     }
 
     // 모든 공지사항 조회
@@ -59,19 +61,19 @@ public class NoticeService {
 
     // 공지 수정
     @Transactional
-    public void updateNotice(Long noticeId, RequestNotice requestNotice, Long userId) throws BusinessLogicException {
+    public void updateNotice(Long noticeId, RequestNotice requestNotice,List<MultipartFile> files, Long userId) throws BusinessLogicException {
         // 공지사항을 생성한 사용자인지 확인
         Event oldEvent = validateNoticeOwner(noticeId, userId);
 
         // 해당 일정의 상태가 NOTICE 인지 확인
         if(oldEvent.getType().equals(Type.NOTICE)) {
             LocalDateTime now = LocalDateTime.now();
-            oldEvent.updateFromNoticeDto(requestNotice, now);
+            List<File> fileUrls = fileService.uploadFiles(files);
+            oldEvent.updateFromNoticeDto(requestNotice, fileUrls, now);
         } else {
             throw new TypeNotMatchException();
         }
     }
-
 
     // 공지 삭제
     @Transactional
