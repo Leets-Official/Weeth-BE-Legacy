@@ -66,4 +66,8 @@ public class User extends BaseEntity {
     public void applyOB(Integer cardinal) {
         this.cardinals.add(cardinal);
     }
+
+    public boolean isInactive() {
+        return this.status != Status.ACTIVE;
+    }
 }

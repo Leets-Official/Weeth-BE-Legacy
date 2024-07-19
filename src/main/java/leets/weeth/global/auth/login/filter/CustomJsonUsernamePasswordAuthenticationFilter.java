@@ -3,6 +3,8 @@ package leets.weeth.global.auth.login.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import leets.weeth.domain.user.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +29,9 @@ public class CustomJsonUsernamePasswordAuthenticationFilter extends AbstractAuth
 
     private final ObjectMapper objectMapper;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public CustomJsonUsernamePasswordAuthenticationFilter(ObjectMapper objectMapper) {
         super(DEFAULT_LOGIN_PATH_REQUEST_MATCHER);
         this.objectMapper = objectMapper;
@@ -44,6 +49,18 @@ public class CustomJsonUsernamePasswordAuthenticationFilter extends AbstractAuth
 
         String email = usernamePasswordMap.get(EMAIL_KEY);
         String password = usernamePasswordMap.get(PASSWORD_KEY);
+
+        userRepository.findByEmail(email)
+                .ifPresentOrElse(
+                        user -> {
+                            if (user.isInactive())
+                                throw new AuthenticationServiceException("가입 승인이 허가되지 않은 사용자입니다.");
+                            },
+                        () -> {
+                            throw new AuthenticationServiceException("존재하지 않는 사용자입니다");
+                        }
+                );
+
 
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(email, password);
 
