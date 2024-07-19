@@ -30,7 +30,6 @@ public class NoticeController {
 
     // 공지사항 생성
     @Operation(summary = "공지 생성", description = "관리자가 공지사항을 등록합니다.")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PostMapping("/create")
     public CommonResponse<String> createNotice(@RequestPart(value = "requestNotice") @Valid RequestNotice requestNotice,
                                                @RequestPart(value = "files", required = false) List<MultipartFile> files,
@@ -41,7 +40,6 @@ public class NoticeController {
 
     // 공지사항 세부 조회
     @Operation(summary = "공지사항 상세 조회", description = "사용자가 공지사항을 조회합니다.")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @GetMapping("/{id}")
     public CommonResponse<ResponseNotice> getNotice(@PathVariable Long id) throws TypeNotMatchException {
         ResponseNotice responseNotice = noticeService.getNoticeById(id);
@@ -50,7 +48,6 @@ public class NoticeController {
 
     // 공지사항 전부
     @Operation(summary = "전체 공지사항 조회", description = "사용자가 전체 공지사항을 조회합니다.")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @GetMapping("/")
     public CommonResponse<List<ResponseNotice>> getAllNotices() {
         List<ResponseNotice> responseNotices = noticeService.getNotices();
@@ -59,7 +56,6 @@ public class NoticeController {
 
     // 공지사항 수정
     @Operation(summary = "공지사항 수정", description = "관리자가 공지사항을 수정합니다.")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PatchMapping("/{id}")
     public CommonResponse<String> updateNotice(@PathVariable Long id,
                                                @RequestPart(value = "requestNotice") @Valid RequestNotice requestNotice,
@@ -71,7 +67,6 @@ public class NoticeController {
 
     // 공지사항 삭제
     @Operation(summary = "공지사항 삭제", description = "관리자가 공지사항을 삭제합니다.")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public CommonResponse<String> deleteNotice(@PathVariable Long id, @Parameter(hidden = true) @CurrentUser Long userId) throws BusinessLogicException {
         noticeService.deleteNotice(id, userId);
