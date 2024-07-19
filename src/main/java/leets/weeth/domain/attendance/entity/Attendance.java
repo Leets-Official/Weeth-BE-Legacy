@@ -1,11 +1,12 @@
 package leets.weeth.domain.attendance.entity;
 
 import jakarta.persistence.*;
-import leets.weeth.domain.attendance.entity.enums.WeekEnum;
 import leets.weeth.domain.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -16,25 +17,29 @@ public class Attendance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long attendanceId;
 
-    @Column(name = "is_attend")
     private boolean isAttend;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Enumerated(EnumType.STRING)
-    private WeekEnum week;
-
-    @Column(name = "attendance_code")
     private String attendanceCode;
 
+    private LocalDateTime startDateTime;
+
+    private LocalDateTime endDateTime;
+
+    private LocalDateTime attendanceDateTime;
+
     @Builder
-    public Attendance(Long attendanceId, User user, String attendanceCode, boolean isAttend, WeekEnum week) {
+    public Attendance(Long attendanceId, User user, String attendanceCode, boolean isAttend,
+                      LocalDateTime startDateTime, LocalDateTime endDateTime, LocalDateTime attendanceDateTime) {
         this.attendanceId = attendanceId;
         this.user = user;
         this.attendanceCode = attendanceCode;
         this.isAttend = isAttend;
-        this.week = week;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.attendanceDateTime = attendanceDateTime;
     }
 }
