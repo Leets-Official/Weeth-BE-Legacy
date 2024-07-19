@@ -10,8 +10,8 @@ public record ResponseNotice(
         Long id,
         String title,
         String content,
-        LocalDateTime created_at,
-        LocalDateTime modified_at,
+        LocalDateTime createdAt,
+        LocalDateTime modifiedAt,
         String userName,
         Type type
         // 파일관련
