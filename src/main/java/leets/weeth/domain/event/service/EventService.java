@@ -22,7 +22,6 @@ import java.util.*;
 public class EventService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
-
     private final EventMapper eventMapper;
 
     // 일정 생성
@@ -36,7 +35,6 @@ public class EventService {
 
         eventRepository.save(eventMapper.fromEventDto(requestEvent, user));
     }
-
 
     // 일정 상세 조회
     @Transactional(readOnly = true)
@@ -95,41 +93,36 @@ public class EventService {
     @Transactional
     public void updateEvent(Long eventId, RequestEvent updatedEvent, Long userId) throws BusinessLogicException {
         // 일정을 생성한 사용자인지 확인
-        Event oldEvent = validateEventOwner(eventId, userId);
-        if(oldEvent.getType().equals(Type.NOTICE)){
-            throw new TypeNotMatchException();
-        }
+        Event oldEvent = eventRepository.findById(eventId)
+                .orElseThrow(EventNotFoundException::new);
+
+        validateEventOwner(oldEvent, userId);
         oldEvent.updateFromEventDto(updatedEvent);
     }
-
 
     // 일정 삭제
     @Transactional
     public void deleteEvent(Long eventId, Long userId) throws BusinessLogicException {
         // 일정을 생성한 사용자인지 확인
-        Event oldEvent = validateEventOwner(eventId, userId);
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(EventNotFoundException::new);
 
-        if(oldEvent.getType().equals(Type.NOTICE)){
-            throw new TypeNotMatchException();
-        }
-        // 이벤트.delete로 온 요청이 공지를 삭제한다면 예외처리, 아니라면 삭제
+        validateEventOwner(event, userId);
         eventRepository.deleteById(eventId);
     }
 
-
-    // 해당 일정을 생성한 사용자와 같은지 검증
-    private Event validateEventOwner(Long eventId, Long userId) throws UserNotMatchException {
-        Event oldEvent = eventRepository.findById(eventId)
-                .orElseThrow(EventNotFoundException::new);
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
-
+    // 검색된 event가 EVENT 인지 확인, 맞으면 생성한 사용자와 현재 사용자가 동일한지 확인
+    private void validateEventOwner(Event event , Long userId) throws BusinessLogicException {
+        // 해당 일정이 EVENT 인지 확인 -> 출석은 이후 따로 구현할 예정
+        // 출석은 여기서 수정해도 되지 않나..? -> 팀원들 얘기 들어보기
+        if(!event.getType().equals(Type.EVENT)){
+            throw new TypeNotMatchException();
+        }
         // 일정을 생성한 사용자와 같은지 확인
-        if(!user.getId().equals(oldEvent.getUser().getId())){
+        // userId는 JWT 토큰에서 추출하므로 굳이 user 객체를 DB에서 조회하지 않고 비교해도 될 것 같다는 판단
+        if(!event.getUser().getId().equals(userId)){
             throw new UserNotMatchException();
         }
-        return oldEvent;
     }
 
     // 시작 날짜가 종료 날짜 보다 느린지 검증
@@ -138,6 +131,4 @@ public class EventService {
             throw new InvalidInputDateException();
         }
     }
-
-
 }

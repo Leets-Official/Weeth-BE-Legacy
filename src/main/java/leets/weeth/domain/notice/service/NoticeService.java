@@ -61,47 +61,36 @@ public class NoticeService {
 
     // 공지 수정
     @Transactional
-    public void updateNotice(Long noticeId, RequestNotice requestNotice,List<MultipartFile> files, Long userId) throws BusinessLogicException {
-        // 공지사항을 생성한 사용자인지 확인
-        Event oldEvent = validateNoticeOwner(noticeId, userId);
+    public void updateNotice(RequestNotice requestNotice,List<MultipartFile> files, Long userId, Long noticeId) throws BusinessLogicException {
+        Event oldNotice = eventRepository.findById(noticeId)
+                .orElseThrow(NoticeNotFoundException::new);
 
-        // 해당 일정의 상태가 NOTICE 인지 확인
-        if(oldEvent.getType().equals(Type.NOTICE)) {
-            LocalDateTime now = LocalDateTime.now();
-            List<File> fileUrls = fileService.uploadFiles(files);
-            oldEvent.updateFromNoticeDto(requestNotice, fileUrls, now);
-        } else {
-            throw new TypeNotMatchException();
-        }
+        validateNoticeOwner(oldNotice, userId);
+        List<File> fileUrls = fileService.uploadFiles(files);
+        LocalDateTime now = LocalDateTime.now();
+
+        oldNotice.updateFromNoticeDto(requestNotice, fileUrls, now);
     }
 
     // 공지 삭제
     @Transactional
     public void deleteNotice(Long noticeId, Long userId) throws BusinessLogicException {
-        // 공지사항을 생성한 사용자인지 확인
-        Event oldEvent = validateNoticeOwner(noticeId, userId);
-
-        // 해당 일정의 상태가 NOTICE 인지 확인
-        if(oldEvent.getType().equals(Type.NOTICE)) {
-            eventRepository.deleteById(noticeId);
-        } else {
-            throw new TypeNotMatchException();
-        }
-    }
-
-    // 해당 일정을 생성한 사용자와 같은지 검증
-    private Event validateNoticeOwner(Long eventId, Long userId) throws UserNotMatchException {
-        Event oldEvent = eventRepository.findById(eventId)
+        Event notice = eventRepository.findById(noticeId)
                 .orElseThrow(NoticeNotFoundException::new);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
-        // -> findByIdAndUserId로 변경 / 중복되긴 하는데 이게 의미상 더 맞는 듯
+        validateNoticeOwner(notice, userId);
+        eventRepository.delete(notice);
+    }
 
-        // 일정을 생성한 사용자와 같은지 확인
-        if(!user.getId().equals(oldEvent.getUser().getId())){
+    // 검색된 event가 notice인지 확인, 맞으면 생성한 사용자와 현재 사용자가 동일한지 확인
+    private void validateNoticeOwner(Event notice, Long userId) throws BusinessLogicException {
+        // 해당 일정이 NOTICE 인지 확인
+        if(!notice.getType().equals(Type.NOTICE)) {
+            throw new TypeNotMatchException();
+        }
+        // 공지사항을 생성한 사용자와 같은지 확인
+        if(!notice.getUser().getId().equals(userId)){
             throw new UserNotMatchException();
         }
-        return oldEvent;
     }
 }
