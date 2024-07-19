@@ -33,7 +33,7 @@ public class NoticeService {
         // 일정에 저장시 startDateTime과 endDateTime을 현재 시간으로 저장
         LocalDateTime now = LocalDateTime.now();
         // 상태는 NOTICE로 저장
-        eventRepository.save(Event.fromNoticeDto(requestNotice, Type.NOTICE, user, now));
+        eventRepository.save(noticeMapper.fromNoticeDto(requestNotice, user));
     }
 
     // 모든 공지사항 조회
@@ -43,7 +43,7 @@ public class NoticeService {
         List<Event> events = eventRepository.findAllByType(Type.NOTICE, Sort.by(Sort.Direction.ASC, "id"));
 
         return events.stream()
-                .map(noticeMapper::toDto)
+                .map(noticeMapper::toNoticeDto)
                 .toList();
     }
 
@@ -54,7 +54,7 @@ public class NoticeService {
         Event event = eventRepository.findByIdAndType(id, Type.NOTICE)
                 .orElseThrow(TypeNotMatchException::new);//예외 수정 statusNotMatch
 
-        return noticeMapper.toDto(event);
+        return noticeMapper.toNoticeDto(event);
     }
 
     // 공지 수정

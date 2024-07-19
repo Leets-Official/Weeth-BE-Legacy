@@ -34,7 +34,7 @@ public class EventService {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        eventRepository.save(Event.fromEventDto(requestEvent, user));
+        eventRepository.save(eventMapper.fromEventDto(requestEvent, user));
     }
 
 
@@ -45,7 +45,7 @@ public class EventService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(EventNotFoundException::new);
 
-        return eventMapper.toDto(event);
+        return eventMapper.toEventDto(event);
     }
 
     // 기간 별 일정 조회
@@ -56,7 +56,7 @@ public class EventService {
 
         List<Event> events = eventRepository.findByStartDateTimeBetween(startDate, endDate);
         return events.stream()
-                .map(eventMapper::toDto)
+                .map(eventMapper::toEventDto)
                 .toList();
     }
 
@@ -78,7 +78,7 @@ public class EventService {
                 int month = eventStart.getMonthValue();
                 eventsByMonth
                         .computeIfAbsent(month, k -> new ArrayList<>())
-                        .add(eventMapper.toDto(event));
+                        .add(eventMapper.toEventDto(event));
                 // 한달씩 증가
                 eventStart = eventStart.plusMonths(1).withDayOfMonth(1)
                         .withHour(0).withMinute(0).withSecond(0).withNano(0);
