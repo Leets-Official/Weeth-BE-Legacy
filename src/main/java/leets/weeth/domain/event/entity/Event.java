@@ -3,12 +3,15 @@ package leets.weeth.domain.event.entity;
 import jakarta.persistence.*;
 import leets.weeth.domain.event.dto.RequestEvent;
 import leets.weeth.domain.event.entity.enums.Type;
+import leets.weeth.domain.file.entity.File;
 import leets.weeth.domain.notice.dto.RequestNotice;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.global.common.entity.BaseEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Entity
@@ -37,11 +40,12 @@ public class Event extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Type type;
 
+    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<File> fileUrls = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id", nullable=false)
     private User user;
-
-
 
     // 일정 수정을 위한 메소드
     public void updateFromEventDto(RequestEvent dto) {
@@ -54,10 +58,14 @@ public class Event extends BaseEntity {
     }
 
     // 공지 수정을 위한 메소드
-    public void updateFromNoticeDto(RequestNotice dto, LocalDateTime now) {
+    public void updateFromNoticeDto(RequestNotice dto, List<File> fileUrlList, LocalDateTime now) {
         Optional.ofNullable(dto.title()).ifPresent(title -> this.title = title);
         Optional.ofNullable(dto.content()).ifPresent(content -> this.content = content);
-        Optional.ofNullable(now).ifPresent(startDateTime -> this.startDateTime = now);
-        Optional.ofNullable(now).ifPresent(endDateTime -> this.endDateTime = now);
+        Optional.ofNullable(fileUrlList).ifPresent(files -> {
+            this.fileUrls.clear();
+            this.fileUrls.addAll(files);
+        });
+        this.startDateTime = now;
+        this.endDateTime = now;
     }
 }
