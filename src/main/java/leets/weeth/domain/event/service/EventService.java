@@ -112,7 +112,7 @@ public class EventService {
     }
 
     // 검색된 event가 EVENT 인지 확인, 맞으면 생성한 사용자와 현재 사용자가 동일한지 확인
-    private void validateEventOwner(Event event , Long userId) throws BusinessLogicException {
+    private void validateEventOwner(Event event, Long userId) throws BusinessLogicException {
         // 해당 일정이 EVENT 인지 확인 -> 출석은 이후 따로 구현할 예정
         // 출석은 여기서 수정해도 되지 않나..? -> 팀원들 얘기 들어보기
         if(!event.getType().equals(Type.EVENT)){
