@@ -51,11 +51,14 @@ public class NoticeService {
 
     // 공지 상세 조회
     @Transactional(readOnly = true)
-    public ResponseNotice getNoticeById(Long id) throws TypeNotMatchException {
-        // getNotice로 온 요청엔 공지사항 게시판에서 온 요청이라 가정. NOTICE만 반환
-        Event event = eventRepository.findByIdAndType(id, Type.NOTICE)
-                .orElseThrow(TypeNotMatchException::new);//예외 수정 statusNotMatch
-
+    public ResponseNotice getNoticeById(Long noticeId) throws TypeNotMatchException {
+        // 해당 일정이 존재하는지 먼저 확인
+        Event event = eventRepository.findById(noticeId)
+                .orElseThrow(NoticeNotFoundException::new);
+        // 존재한다면 type이 NOTICE 인지 확인
+        if(!event.getType().equals(Type.NOTICE)){
+            throw new TypeNotMatchException();
+        }
         return noticeMapper.toNoticeDto(event);
     }
 
