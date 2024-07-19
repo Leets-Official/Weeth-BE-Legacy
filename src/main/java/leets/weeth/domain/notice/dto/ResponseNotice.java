@@ -17,6 +17,5 @@ public record ResponseNotice(
         String userName,
         Type type,
         List<File> fileUrls
-
 ) {
 }
