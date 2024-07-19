@@ -1,10 +1,13 @@
 package leets.weeth.domain.notice.mapper;
 
 import leets.weeth.domain.event.entity.Event;
+import leets.weeth.domain.file.entity.File;
 import leets.weeth.domain.notice.dto.RequestNotice;
 import leets.weeth.domain.notice.dto.ResponseNotice;
 import leets.weeth.domain.user.entity.User;
 import org.mapstruct.*;
+
+import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface NoticeMapper {
@@ -23,5 +26,5 @@ public interface NoticeMapper {
             @Mapping(target = "type", expression = "java( leets.weeth.domain.event.entity.enums.Type.NOTICE)"),
             @Mapping(target = "id", ignore = true)
     })
-    Event fromNoticeDto(RequestNotice dto, User user);
+    Event fromNoticeDto(RequestNotice dto, List<File> fileUrls, User user);
 }
