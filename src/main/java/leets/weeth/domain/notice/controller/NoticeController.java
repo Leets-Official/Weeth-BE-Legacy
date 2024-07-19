@@ -40,9 +40,9 @@ public class NoticeController {
 
     // 공지사항 세부 조회
     @Operation(summary = "공지사항 상세 조회", description = "사용자가 공지사항을 조회합니다.")
-    @GetMapping("/{id}")
-    public CommonResponse<ResponseNotice> getNotice(@PathVariable Long id) throws TypeNotMatchException {
-        ResponseNotice responseNotice = noticeService.getNoticeById(id);
+    @GetMapping("/{noticeId}")
+    public CommonResponse<ResponseNotice> getNotice(@PathVariable Long noticeId) throws TypeNotMatchException {
+        ResponseNotice responseNotice = noticeService.getNoticeById(noticeId);
         return CommonResponse.createSuccess(responseNotice);
     }
 
@@ -56,20 +56,20 @@ public class NoticeController {
 
     // 공지사항 수정
     @Operation(summary = "공지사항 수정", description = "관리자가 공지사항을 수정합니다.")
-    @PatchMapping("/{id}")
-    public CommonResponse<String> updateNotice(@PathVariable Long id,
-                                               @RequestPart(value = "requestNotice") @Valid RequestNotice requestNotice,
+    @PatchMapping("/{noticeId}")
+    public CommonResponse<String> updateNotice(@RequestPart(value = "requestNotice") @Valid RequestNotice requestNotice,
                                                @RequestPart(value = "files", required = false) List<MultipartFile> files,
-                                               @Parameter(hidden = true) @CurrentUser Long userId) throws BusinessLogicException {
-        noticeService.updateNotice(id, requestNotice,files, userId);
+                                               @Parameter(hidden = true) @CurrentUser Long userId,
+                                               @PathVariable Long noticeId) throws BusinessLogicException {
+        noticeService.updateNotice(requestNotice,files, userId, noticeId);
         return CommonResponse.createSuccess(NOTICE_UPDATED_SUCCESS.getMessage());
     }
 
     // 공지사항 삭제
     @Operation(summary = "공지사항 삭제", description = "관리자가 공지사항을 삭제합니다.")
-    @DeleteMapping("/{id}")
-    public CommonResponse<String> deleteNotice(@PathVariable Long id, @Parameter(hidden = true) @CurrentUser Long userId) throws BusinessLogicException {
-        noticeService.deleteNotice(id, userId);
+    @DeleteMapping("/{noticeId}")
+    public CommonResponse<String> deleteNotice(@PathVariable Long noticeId, @Parameter(hidden = true) @CurrentUser Long userId) throws BusinessLogicException {
+        noticeService.deleteNotice(noticeId, userId);
         return CommonResponse.createSuccess(NOTICE_DELETED_SUCCESS.getMessage());
     }
 }
