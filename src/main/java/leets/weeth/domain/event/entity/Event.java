@@ -54,7 +54,6 @@ public class Event extends BaseEntity {
         Optional.ofNullable(dto.location()).ifPresent(location -> this.location = location);
         Optional.ofNullable(dto.startDateTime()).ifPresent(startDateTime -> this.startDateTime = startDateTime);
         Optional.ofNullable(dto.endDateTime()).ifPresent(endDateTime -> this.endDateTime = endDateTime);
-        Optional.ofNullable(dto.type()).ifPresent(type -> this.type = type);
     }
 
     // 공지 수정을 위한 메소드
