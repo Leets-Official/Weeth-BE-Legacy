@@ -20,7 +20,9 @@ public enum ExceptionType {
     USER_NOT_MATCH(HttpStatus.BAD_REQUEST, UserNotMatchException.class),
     NOTICE_NOT_FOUND(HttpStatus.BAD_REQUEST, NoticeNotFoundException.class),
     EVENT_NOT_FOUND(HttpStatus.BAD_REQUEST, EventNotFoundException.class),
-    INVALID_INPUT_DATE(HttpStatus.BAD_REQUEST, InvalidInputDateException.class);
+    INVALID_INPUT_DATE(HttpStatus.BAD_REQUEST, InvalidInputDateException.class),
+    NOTICE_TYPE_NOT_MATCH(HttpStatus.BAD_REQUEST, NoticeTypeNotMatchException.class),
+    ATTENDANCE_EVENT_TYPE_NOT_MATCH(HttpStatus.BAD_REQUEST, AttendanceEventTypeNotMatchException.class);
 
     private final HttpStatus httpStatus;
     private final Class<? extends Exception> type;
