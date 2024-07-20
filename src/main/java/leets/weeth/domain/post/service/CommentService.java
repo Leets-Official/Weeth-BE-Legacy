@@ -92,10 +92,8 @@ public class CommentService {
         postRepository.save(currentPost);
     }
 
-    // 댓글의 부모를 찾는 메서드
+    // 댓글의 부모 찾기
     private Comment findParentComment(Long commentId) {
-        // 부모 댓글을 찾는 로직을 여기에 추가합니다.
-        // 예를 들어, 댓글의 자식 댓글을 모두 로드하여 부모를 찾을 수 있습니다.
         List<Comment> allComments = commentRepository.findAll();
         for (Comment comment : allComments) {
             if (comment.getChildren().stream().anyMatch(child -> child.getId().equals(commentId))) {
