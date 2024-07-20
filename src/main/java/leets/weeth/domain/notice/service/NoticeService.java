@@ -28,6 +28,11 @@ public class NoticeService {
     private final FileService fileService;
     private final NoticeMapper noticeMapper;
 
+    /*
+        * NoticeController로 온 생성 요청 -> TYPE.NOTICE로 생성
+        * 조회, 수정, 삭제 시  TYPE.NOTICE만 가능
+    */
+
     // 공지생성
     @Transactional
     public void createNotice(RequestNotice requestNotice, List<MultipartFile> files, Long userId) {
