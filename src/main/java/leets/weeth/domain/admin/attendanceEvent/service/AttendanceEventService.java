@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AttendanceEventService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
-    private final AttendanceEventMapper attendanceEventMapper;
+    private final AttendanceEventMapper mapper;
 
     /*
          * 수정, 조회, 삭제는 관리자가 직접 수행
@@ -26,10 +26,10 @@ public class AttendanceEventService {
 
     // 출석 일정 생성
     @Transactional
-    public void createAttendanceEvent(RequestAttendanceEvent requestAttendanceEvent, Long userId) {
+    public void createAttendanceEvent(RequestAttendanceEvent requestDto, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        eventRepository.save(attendanceEventMapper.fromAttendanceEventDto(requestAttendanceEvent, user));
+        eventRepository.save(mapper.fromAttendanceEventDto(requestDto, user));
     }
 }
