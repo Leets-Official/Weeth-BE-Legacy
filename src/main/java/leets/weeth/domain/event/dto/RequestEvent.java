@@ -13,7 +13,6 @@ public record RequestEvent (
         @NotBlank String content,
         String location,
         @NotNull LocalDateTime startDateTime,
-        @NotNull LocalDateTime endDateTime,
-        @NotNull Type type //EVENT, ATTENDANCE
+        @NotNull LocalDateTime endDateTime
 ) {
 }
