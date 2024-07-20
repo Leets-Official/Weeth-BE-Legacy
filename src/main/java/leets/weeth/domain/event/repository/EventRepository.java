@@ -16,8 +16,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("SELECT e FROM Event e JOIN FETCH e.user WHERE e.startDateTime BETWEEN :startDate AND :endDate OR e.endDateTime BETWEEN :startDate AND :endDate")
     List<Event> findByStartDateTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
 
-//    Optional<Event> findByIdAndUserId(Long id, Long userId);
-
     // type 맞는 일정 한 개 반환
     @Query("SELECT e FROM Event e JOIN FETCH e.user WHERE e.id = :id AND e.type = :type")
     Optional<Event> findByIdAndType(@Param("id") Long id, @Param("type") Type type);
