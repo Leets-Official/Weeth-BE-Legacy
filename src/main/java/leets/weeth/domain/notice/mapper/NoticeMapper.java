@@ -1,21 +1,30 @@
 package leets.weeth.domain.notice.mapper;
 
 import leets.weeth.domain.event.entity.Event;
+import leets.weeth.domain.file.entity.File;
+import leets.weeth.domain.notice.dto.RequestNotice;
 import leets.weeth.domain.notice.dto.ResponseNotice;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
-import org.mapstruct.factory.Mappers;
+import leets.weeth.domain.user.entity.User;
+import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
+import java.util.List;
+
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface NoticeMapper {
-    NoticeMapper INSTANCE = Mappers.getMapper(NoticeMapper.class);
-
     @Mappings({
             @Mapping(source = "user.name", target = "userName"),
-            @Mapping(source = "createdAt", target = "created_at"),
-            @Mapping(source = "modifiedAt", target = "modified_at"),
+            @Mapping(source = "createdAt", target = "createdAt"),
+            @Mapping(source = "modifiedAt", target = "modifiedAt"),
     })
-    ResponseNotice toDto(Event event);
+    ResponseNotice toNoticeDto(Event event);
 
+    @Mappings({
+            @Mapping(source = "user", target = "user"),
+            @Mapping(target = "location", expression = "java(null)"),
+            @Mapping(target = "startDateTime", expression = "java( java.time.LocalDateTime.now())"),
+            @Mapping(target = "endDateTime", expression = "java( java.time.LocalDateTime.now())"),
+            @Mapping(target = "type", expression = "java( leets.weeth.domain.event.entity.enums.Type.NOTICE)"),
+            @Mapping(target = "id", ignore = true)
+    })
+    Event fromNoticeDto(RequestNotice dto, List<File> fileUrls, User user);
 }
