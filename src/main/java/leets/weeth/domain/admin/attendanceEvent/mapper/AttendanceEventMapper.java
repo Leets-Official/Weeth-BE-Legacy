@@ -10,15 +10,10 @@ public interface AttendanceEventMapper {
 
     /*
         * 어드민/출석일정 controller로 들어온 출석일정 생성 요청
-        * location은 현재 null로 설정 -> 차후 정기모임 장소로 수정 가능
         * 해당 controller로 온 요청은 type을 ATTENDANCE로만 저장하여 타입 침범 예방
-        * 출석은 정기모임에 해당하므로 장소="정기모임장소", 준비물="노트북", 인원="전원"으로 초기화할 지 결정
      */
     @Mappings({
             @Mapping(source = "user", target = "user"),
-            @Mapping(target = "location", expression = "java(null)"),
-            @Mapping(target = "requiredItems", expression = "java(null)"),
-            @Mapping(target = "memberNumber", expression = "java(null)"),
             @Mapping(target = "type", expression = "java( leets.weeth.domain.event.entity.enums.Type.ATTENDANCE)"),
             @Mapping(target = "id", ignore = true)
     })
