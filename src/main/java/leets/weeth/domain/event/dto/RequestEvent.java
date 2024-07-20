@@ -2,7 +2,6 @@ package leets.weeth.domain.event.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import leets.weeth.domain.event.entity.enums.Type;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
