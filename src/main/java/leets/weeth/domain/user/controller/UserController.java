@@ -57,7 +57,7 @@ public class UserController {
 
     @Operation(summary = "내 정보 수정")
     @PatchMapping
-    public CommonResponse<Void> update(@CurrentUser Long userId, @RequestBody UserDTO.Update dto) {
+    public CommonResponse<Void> update(@CurrentUser Long userId, @RequestBody @Valid UserDTO.Update dto) {
         userService.update(userId, dto);
         return CommonResponse.createSuccess();
     }
