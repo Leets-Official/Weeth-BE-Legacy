@@ -12,6 +12,8 @@ public record ResponseEvent (
         String title,
         String content,
         String location,
+        String requiredItems,
+        String memberNumber,
         LocalDateTime startDateTime,
         LocalDateTime endDateTime,
         LocalDateTime createdAt,

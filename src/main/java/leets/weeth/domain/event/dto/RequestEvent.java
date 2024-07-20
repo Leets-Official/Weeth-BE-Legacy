@@ -12,6 +12,8 @@ public record RequestEvent (
         @NotBlank String title,
         @NotBlank String content,
         String location,
+        String requiredItems,
+        String memberNumber,
         @NotNull LocalDateTime startDateTime,
         @NotNull LocalDateTime endDateTime
 ) {
