@@ -9,8 +9,8 @@ import org.mapstruct.*;
 public interface AttendanceEventMapper {
 
     /*
-        * 어드민/출석일정 controller로 들어온 출석일정 생성 요청
-        * 해당 controller로 온 요청은 type을 ATTENDANCE로만 저장하여 타입 침범 예방
+     * 어드민/출석일정 controller로 들어온 출석일정 생성 요청
+     * 해당 controller로 온 요청은 type을 ATTENDANCE로만 저장하여 타입 침범 예방
      */
     @Mappings({
             @Mapping(source = "user", target = "user"),

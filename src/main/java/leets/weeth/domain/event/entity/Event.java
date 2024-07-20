@@ -48,7 +48,7 @@ public class Event extends BaseEntity {
     private List<File> fileUrls = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id", nullable=false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     // 일정 수정을 위한 메소드

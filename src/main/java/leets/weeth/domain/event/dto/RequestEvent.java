@@ -7,7 +7,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record RequestEvent (
+public record RequestEvent(
         @NotBlank String title,
         @NotBlank String content,
         String location,

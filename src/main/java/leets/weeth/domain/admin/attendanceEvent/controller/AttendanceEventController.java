@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static leets.weeth.domain.admin.attendanceEvent.enums.ResponseMessage.*;
+import static leets.weeth.domain.admin.attendanceEvent.enums.ResponseMessage.ATTENDANCE_EVENT_CREATED_SUCCESS;
+
 @Tag(name = "Admin-AttendanceEventController", description = "출석일정을 관리하는 어드민 전용 API입니다.")
 @RestController
 @RequiredArgsConstructor

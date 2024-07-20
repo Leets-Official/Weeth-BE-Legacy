@@ -18,10 +18,10 @@ public class AttendanceEventService {
     private final AttendanceEventMapper mapper;
 
     /*
-         * 수정, 조회, 삭제는 관리자가 직접 수행
-         * 출석일정을 통해 출석정보를 생성하기 때문에 출석일정 수정시 문제가 일어날 가능성 증가
-         * 관리자가 DB 단에서 직접 수정, 삭제할 예정
-         * AttendanceEventController로 온 요청의 경우 TYPE.ATTENDANCE로 생성
+     * 수정, 조회, 삭제는 관리자가 직접 수행
+     * 출석일정을 통해 출석정보를 생성하기 때문에 출석일정 수정시 문제가 일어날 가능성 증가
+     * 관리자가 DB 단에서 직접 수정, 삭제할 예정
+     * AttendanceEventController로 온 요청의 경우 TYPE.ATTENDANCE로 생성
      */
 
     // 출석 일정 생성

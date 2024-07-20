@@ -55,7 +55,7 @@ public class NoticeController {
                                                @RequestPart(value = "files", required = false) List<MultipartFile> files,
                                                @Parameter(hidden = true) @CurrentUser Long userId,
                                                @PathVariable Long noticeId) throws BusinessLogicException {
-        noticeService.updateNotice(noticeId, requestNotice,files, userId);
+        noticeService.updateNotice(noticeId, requestNotice, files, userId);
         return CommonResponse.createSuccess(NOTICE_UPDATED_SUCCESS.getMessage());
     }
 

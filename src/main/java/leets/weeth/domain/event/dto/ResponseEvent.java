@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 
 @Builder
-public record ResponseEvent (
+public record ResponseEvent(
         Long id,
         String title,
         String content,
@@ -20,4 +20,5 @@ public record ResponseEvent (
         LocalDateTime modifiedAt,
         String userName,
         Type type
-) {}
+) {
+}
