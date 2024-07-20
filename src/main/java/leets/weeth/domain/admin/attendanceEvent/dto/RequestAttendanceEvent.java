@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 public record RequestAttendanceEvent(
         @NotBlank String title,
         @NotBlank String content,
+        String location,
+        String requiredItems,
+        String memberNumber,
         @NotNull LocalDateTime startDateTime,
         @NotNull LocalDateTime endDateTime
 ) {
