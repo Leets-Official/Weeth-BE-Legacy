@@ -9,8 +9,10 @@ import leets.weeth.domain.event.entity.enums.Type;
 import leets.weeth.domain.event.repository.EventRepository;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
+import leets.weeth.global.common.error.exception.custom.AttendanceCodeMismatchException;
 import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
 import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
+import leets.weeth.global.common.error.exception.custom.EventNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.data.domain.Sort;
@@ -31,8 +33,8 @@ public class AttendanceService {
     //무작위 4자리 출석코드 생성 메서드
     private String generateRandomAttendanceCode() {
         Random random = new Random();
-        int randomNum = random.nextInt(9000) + 1000; // 1000 이상 9999 이하의 난수 생성
-        return String.format("%04d", randomNum); // 4자리 수로 포맷팅하여 반환
+        int randomNum = random.nextInt(9000) + 1000; //1000 이상 9999 이하의 난수 생성
+        return String.format("%04d", randomNum); //4자리 수로 포맷팅하여 반환
     }
     @SneakyThrows
     public ResponseAttendance recordAttendance(RequestAttendance requestDto, Long userId) {
@@ -47,12 +49,12 @@ public class AttendanceService {
         Event currentEvent = attendanceEvents.stream()
                 .filter(event -> now.isAfter(event.getStartDateTime()) && now.isBefore(event.getEndDateTime()))
                 .findFirst()
-                .orElseThrow(() -> new BusinessLogicException("현재 시간에 해당하는 정기모임이 없습니다."));
+                .orElseThrow(EventNotFoundException::new);
 
         //출석 코드 검증 로직
         String generatedCode = generateRandomAttendanceCode();
         if (!generatedCode.equals(requestDto.getAttendanceCode())) {
-            throw new BusinessLogicException("잘못된 출석 코드입니다.");
+            throw new AttendanceCodeMismatchException();
         }
 
         //isAttend = true 출석 기록 생성
