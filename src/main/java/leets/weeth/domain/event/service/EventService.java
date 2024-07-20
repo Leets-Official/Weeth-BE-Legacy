@@ -24,6 +24,12 @@ public class EventService {
     private final UserRepository userRepository;
     private final EventMapper eventMapper;
 
+    /*
+        *EventController로 온 생성 요청 -> TYPE.EVENT로 생성
+        * 캘린더에는 공지사항, 일정, 출석일정 모두 표시하기 때문에 조회에는 제약이 없음
+        * 캘린더에서 공지사항, 출석일정을 수정, 삭제하면 안되기 떄문에 TYPE.EVENT인 객체만 수정, 삭제 가능
+     */
+
     // 일정 생성
     @Transactional
     public void createEvent(RequestEvent requestEvent, Long userId) throws InvalidInputDateException {
@@ -111,13 +117,20 @@ public class EventService {
         eventRepository.deleteById(eventId);
     }
 
-    // 검색된 event가 EVENT 인지 확인, 맞으면 생성한 사용자와 현재 사용자가 동일한지 확인
+    /*
+        * 타입이 총 3개이기 때문에 검색한 객체가 NOTICE 경우와 ATTENDANCE 인 경우 다른 예외를 던지도록 구현
+     */
     private void validateEventOwner(Event event, Long userId) throws BusinessLogicException {
-        // 해당 일정이 EVENT 인지 확인 -> 출석은 이후 따로 구현할 예정
-        // 출석은 여기서 수정해도 되지 않나..? -> 팀원들 얘기 들어보기
-        if(!event.getType().equals(Type.EVENT)){
-            throw new TypeNotMatchException();
+
+        // 해당 객체가 NOTICE인 경우
+        if(event.getType().equals(Type.NOTICE)){
+            throw new NoticeTypeNotMatchException();
         }
+        // 해당 객체가 ATTENDANCE인 경우
+        if(event.getType().equals(Type.ATTENDANCE)){
+            throw new AttendanceEventTypeNotMatchException();
+        }
+
         // 일정을 생성한 사용자와 같은지 확인
         // userId는 JWT 토큰에서 추출하므로 굳이 user 객체를 DB에서 조회하지 않고 비교해도 될 것 같다는 판단
         if(!event.getUser().getId().equals(userId)){
