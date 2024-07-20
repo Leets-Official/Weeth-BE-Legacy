@@ -63,14 +63,13 @@ public class Event extends BaseEntity {
     }
 
     // 공지 수정을 위한 메소드
-    public void updateFromNoticeDto(RequestNotice dto, List<File> fileUrlList, LocalDateTime now) {
+    public void updateFromNoticeDto(RequestNotice dto, List<File> fileUrlList) {
         Optional.ofNullable(dto.title()).ifPresent(title -> this.title = title);
         Optional.ofNullable(dto.content()).ifPresent(content -> this.content = content);
         Optional.ofNullable(fileUrlList).ifPresent(files -> {
             this.fileUrls.clear();
             this.fileUrls.addAll(files);
         });
-        this.startDateTime = now;
-        this.endDateTime = now;
+        // 시간은 최초 생성한 시간으로 고정
     }
 }
