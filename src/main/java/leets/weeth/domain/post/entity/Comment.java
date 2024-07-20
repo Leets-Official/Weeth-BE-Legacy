@@ -1,7 +1,6 @@
 package leets.weeth.domain.post.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import leets.weeth.domain.post.dto.RequestCommentDTO;
@@ -12,7 +11,6 @@ import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import static jakarta.persistence.FetchType.LAZY;
 
 @Builder
 @AllArgsConstructor
@@ -29,6 +27,7 @@ public class Comment extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name="post_id")
+    @JsonBackReference
     private Post post;
 
     @ManyToOne
@@ -42,13 +41,7 @@ public class Comment extends BaseEntity {
     @Column(nullable = false)
     private Boolean isDeleted;
 
-    @ManyToOne(fetch = LAZY)
-    @JsonManagedReference
-    @JoinColumn(name = "parent_id")
-    private Comment parent; //null일 경우 최상위 댓글
-
-    @JsonBackReference
-    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    @OneToMany
     private List<Comment> children = new ArrayList<>();
 
     LocalDateTime time;
@@ -59,7 +52,6 @@ public class Comment extends BaseEntity {
                 .user(user)
                 .content(dto.getContent())
                 .isDeleted(false)
-                .time(null)
                 .build();
     }
 
@@ -78,7 +70,7 @@ public class Comment extends BaseEntity {
         this.content = "삭제된 댓글입니다.";
     }
 
-    public void setParentComment(Comment parentComment) {
-        this.parent = parentComment;
+    public void addChild(Comment child) {
+        this.children.add(child);
     }
 }

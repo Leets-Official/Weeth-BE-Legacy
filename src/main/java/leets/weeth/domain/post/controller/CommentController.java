@@ -25,12 +25,6 @@ public class CommentController {
         return CommonResponse.createSuccess();
     }
 
-    @GetMapping()
-    public CommonResponse<List<ResponseCommentDTO>> getAllCommentsFromPost(@PathVariable Long postId){
-        List<ResponseCommentDTO> comments = commentService.getAllCommentsFromPost(postId);
-        return CommonResponse.createSuccess(comments);
-    }
-
     @PatchMapping("/{commentId}")
     public CommonResponse<String> updateComment(@PathVariable Long postId, @PathVariable Long commentId, @CurrentUser Long userId,
                                                 @RequestBody RequestCommentDTO dto) throws InvalidAccessException {

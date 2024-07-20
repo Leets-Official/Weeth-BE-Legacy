@@ -1,7 +1,6 @@
 package leets.weeth.domain.post.service;
 
 import leets.weeth.domain.post.dto.RequestCommentDTO;
-import leets.weeth.domain.post.dto.ResponseCommentDTO;
 import leets.weeth.domain.post.entity.Comment;
 import leets.weeth.domain.post.entity.Post;
 import leets.weeth.domain.post.repository.CommentRepository;
@@ -14,8 +13,8 @@ import leets.weeth.global.common.error.exception.custom.PostNotFoundException;
 import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -24,42 +23,27 @@ public class CommentService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
-    public List<ResponseCommentDTO> getAllCommentsFromPost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
-
-        // parent와 child를 포함한 모든 댓글
-        List<Comment> allComments = commentRepository.findByPostId(postId);
-
-        // 부모 댓글만 필터링
-        List<Comment> parentComments = allComments.stream()
-                .filter(comment -> comment.getParent() == null)
-                .collect(Collectors.toList());
-
-        // 부모 댓글을 ResponseCommentDTO로 변환하고, 자식 댓글을 계층적으로 설정
-        return parentComments.stream()
-                .map(ResponseCommentDTO::createResponseCommentDto)
-                .collect(Collectors.toList());
-    }
-
     public void create(Long userId, Long postId, RequestCommentDTO requestCommentDTO) throws InvalidAccessException {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
-        Post createdPost = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+        Post currentPost = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
         
-        Comment newComment = Comment.createComment(requestCommentDTO, createdPost, user);
+        Comment newComment = Comment.createComment(requestCommentDTO, currentPost, user);
         Comment parentComment;
+        commentRepository.save(newComment);
         // child인 경우(부모가 있는 경우)
         if(requestCommentDTO.getParentId()!=null){
             parentComment = commentRepository.findById(requestCommentDTO.getParentId())
                     .orElseThrow(CommentNotFoundException::new);
-            // 부모의 부모는 없어야함(최대 1회만 참조 가능)
-            if(parentComment.getParent()!=null){
-                throw new InvalidAccessException();
-            }
-            //부모 comment 설정
-            newComment.setParentComment(parentComment);
+            parentComment.addChild(newComment);
+            commentRepository.save(parentComment);
         }
-        commentRepository.save(newComment);
+        else{
+            currentPost.addComment(newComment);
+            postRepository.save(currentPost);
+        }
+        currentPost.calculateTotalComments();
+        postRepository.save(currentPost);
     }
 
     public void updateComment(Long userId, Long postId, Long commentId, RequestCommentDTO requestCommentDTO) throws InvalidAccessException {
@@ -87,6 +71,7 @@ public class CommentService {
         if(user.getId()!=deletedComment.getUser().getId()){
             throw new InvalidAccessException();
         }
+        Post currentPost = deletedComment.getPost();
         // child가 있는 부모인 경우
         if(!deletedComment.getChildren().isEmpty()){
             // 댓글을 삭제하는 것이 아닌 삭제된 댓글이라고 표시
@@ -94,9 +79,30 @@ public class CommentService {
             commentRepository.save(deletedComment);
         }
         else {
-            // child가 없는 부모 또는 child인 경우
+            Comment parentComment = findParentComment(deletedComment.getId());
+            // child인 경우
+            if (parentComment != null) {
+                parentComment.getChildren().remove(deletedComment);
+                commentRepository.save(parentComment);
+            }
+            // child인 경우 및 자식이 없는 부모인 경우
             commentRepository.delete(deletedComment);
         }
+        currentPost.calculateTotalComments();
+        postRepository.save(currentPost);
+    }
+
+    // 댓글의 부모를 찾는 메서드
+    private Comment findParentComment(Long commentId) {
+        // 부모 댓글을 찾는 로직을 여기에 추가합니다.
+        // 예를 들어, 댓글의 자식 댓글을 모두 로드하여 부모를 찾을 수 있습니다.
+        List<Comment> allComments = commentRepository.findAll();
+        for (Comment comment : allComments) {
+            if (comment.getChildren().stream().anyMatch(child -> child.getId().equals(commentId))) {
+                return comment;
+            }
+        }
+        return null; // 부모 댓글을 찾지 못한 경우
     }
 
 }
