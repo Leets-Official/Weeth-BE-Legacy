@@ -1,4 +1,4 @@
-package leets.weeth.domain.admin.attendanceEvent.enums;
+package leets.weeth.domain.event.attendanceEvent.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package leets.weeth.domain.admin.attendanceEvent.dto;
+package leets.weeth.domain.event.attendanceEvent.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

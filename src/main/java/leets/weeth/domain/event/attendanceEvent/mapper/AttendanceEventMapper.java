@@ -1,6 +1,6 @@
-package leets.weeth.domain.admin.attendanceEvent.mapper;
+package leets.weeth.domain.event.attendanceEvent.mapper;
 
-import leets.weeth.domain.admin.attendanceEvent.dto.RequestAttendanceEvent;
+import leets.weeth.domain.event.attendanceEvent.dto.RequestAttendanceEvent;
 import leets.weeth.domain.event.entity.Event;
 import leets.weeth.domain.user.entity.User;
 import org.mapstruct.*;

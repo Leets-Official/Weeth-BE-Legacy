@@ -1,7 +1,7 @@
-package leets.weeth.domain.admin.attendanceEvent.service;
+package leets.weeth.domain.event.attendanceEvent.service;
 
-import leets.weeth.domain.admin.attendanceEvent.dto.RequestAttendanceEvent;
-import leets.weeth.domain.admin.attendanceEvent.mapper.AttendanceEventMapper;
+import leets.weeth.domain.event.attendanceEvent.dto.RequestAttendanceEvent;
+import leets.weeth.domain.event.attendanceEvent.mapper.AttendanceEventMapper;
 import leets.weeth.domain.event.repository.EventRepository;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
