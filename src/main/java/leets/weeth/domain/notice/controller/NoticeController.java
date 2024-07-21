@@ -22,12 +22,12 @@ import static leets.weeth.domain.notice.enums.ResponseMessage.*;
 @Tag(name = "NoticeController", description = "공지 관련 API입니다.")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/notice")
+//@RequestMapping("/notice")
 public class NoticeController {
     private final NoticeService noticeService;
 
     @Operation(summary = "공지 생성", description = "관리자가 공지사항을 등록합니다.")
-    @PostMapping("/create")
+    @PostMapping("/admin/notice/create")
     public CommonResponse<String> createNotice(@RequestPart(value = "requestNotice") @Valid RequestNotice requestNotice,
                                                @RequestPart(value = "files", required = false) List<MultipartFile> files,
                                                @Parameter(hidden = true) @CurrentUser Long userId) throws BusinessLogicException {
@@ -36,21 +36,21 @@ public class NoticeController {
     }
 
     @Operation(summary = "공지사항 상세 조회", description = "사용자가 공지사항을 조회합니다.")
-    @GetMapping("/{noticeId}")
+    @GetMapping("/notice/{noticeId}")
     public CommonResponse<ResponseNotice> getNotice(@PathVariable Long noticeId) throws TypeNotMatchException {
         ResponseNotice responseNotice = noticeService.getNoticeById(noticeId);
         return CommonResponse.createSuccess(responseNotice);
     }
 
     @Operation(summary = "전체 공지사항 조회", description = "사용자가 전체 공지사항을 조회합니다.")
-    @GetMapping("/")
+    @GetMapping("/notice/")
     public CommonResponse<List<ResponseNotice>> getAllNotices() {
         List<ResponseNotice> responseNotices = noticeService.getAllNotices();
         return CommonResponse.createSuccess(responseNotices);
     }
 
     @Operation(summary = "공지사항 수정", description = "관리자가 공지사항을 수정합니다.")
-    @PatchMapping("/{noticeId}")
+    @PatchMapping("/admin/notice/{noticeId}")
     public CommonResponse<String> updateNotice(@RequestPart(value = "requestNotice") @Valid RequestNotice requestNotice,
                                                @RequestPart(value = "files", required = false) List<MultipartFile> files,
                                                @Parameter(hidden = true) @CurrentUser Long userId,
@@ -60,7 +60,7 @@ public class NoticeController {
     }
 
     @Operation(summary = "공지사항 삭제", description = "관리자가 공지사항을 삭제합니다.")
-    @DeleteMapping("/{noticeId}")
+    @DeleteMapping("/admin/notice/{noticeId}")
     public CommonResponse<String> deleteNotice(@PathVariable Long noticeId, @Parameter(hidden = true) @CurrentUser Long userId) throws BusinessLogicException {
         noticeService.deleteNotice(noticeId, userId);
         return CommonResponse.createSuccess(NOTICE_DELETED_SUCCESS.getMessage());
