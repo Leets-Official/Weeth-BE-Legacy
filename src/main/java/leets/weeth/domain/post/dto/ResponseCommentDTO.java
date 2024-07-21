@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString
 public class ResponseCommentDTO {
     private Long id;
     @NotBlank

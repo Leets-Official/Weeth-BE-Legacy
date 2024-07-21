@@ -1,7 +1,6 @@
 package leets.weeth.domain.post.controller;
 
 import leets.weeth.domain.post.dto.RequestCommentDTO;
-import leets.weeth.domain.post.dto.ResponseCommentDTO;
 import leets.weeth.domain.post.service.CommentService;
 import leets.weeth.global.auth.annotation.CurrentUser;
 import leets.weeth.global.common.error.exception.custom.InvalidAccessException;
@@ -9,8 +8,6 @@ import leets.weeth.global.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,8 +17,8 @@ public class CommentController {
     private CommentService commentService;
     @PostMapping("")
     public CommonResponse<String> createComment(@PathVariable Long postId, @RequestBody RequestCommentDTO dto,
-                                         @CurrentUser Long userId) throws InvalidAccessException {
-        commentService.create(userId, postId, dto);
+                                         @CurrentUser Long userId) {
+        commentService.createComment(userId, postId, dto);
         return CommonResponse.createSuccess();
     }
 
