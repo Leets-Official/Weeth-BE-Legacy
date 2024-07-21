@@ -40,7 +40,7 @@ public class EventController {
 
     @Operation(summary = "년도별 일정 조회", description = "사용자가 1년 단위로 일정을 조회합니다.")
     @GetMapping("/year")
-    public CommonResponse<Map<Integer, List<ResponseEvent>>> getEventsByYear(@RequestParam int year) throws BusinessLogicException {
+    public CommonResponse<Map<Integer, List<ResponseEvent>>> getEventsByYear(@RequestParam int year) {
         Map<Integer, List<ResponseEvent>> responseEvents = eventService.getEventsByYear(year);
         return CommonResponse.createSuccess(responseEvents);
     }
