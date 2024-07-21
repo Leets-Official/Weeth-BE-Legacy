@@ -41,13 +41,13 @@ public class Comment extends BaseEntity {
     @Column(nullable = false)
     private Boolean isDeleted;
 
-    @OneToMany
+    @OneToMany(orphanRemoval = true)
     private List<Comment> children = new ArrayList<>();
 
     LocalDateTime time;
+
     public static Comment createComment(RequestCommentDTO dto, Post post, User user){
         return Comment.builder()
-                .id(null)
                 .post(post)
                 .user(user)
                 .content(dto.getContent())
