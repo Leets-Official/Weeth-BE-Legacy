@@ -1,10 +1,10 @@
 package leets.weeth.domain.attendance.dto;
 
-import lombok.Data;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-@Data
+@Builder
 public class ResponseAttendance {
     private String scheduleTitle;
     private String scheduleDateTime;
