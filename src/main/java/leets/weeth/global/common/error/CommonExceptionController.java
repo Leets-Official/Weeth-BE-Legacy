@@ -16,7 +16,7 @@ import java.util.Optional;
 @RestControllerAdvice
 public class CommonExceptionController {
 
-    private static final String INPUT_DATE_FORMAT_ERROR_MESSAGE = "날짜 입력 포맷이 올바르지 않습니다.";
+    private static final String INPUT_FORMAT_ERROR_MESSAGE = "입력 포맷이 올바르지 않습니다.";
 
     @ExceptionHandler(Exception.class)  // 모든 Exception 처리
     public CommonResponse<Void> handle(Exception ex) {
@@ -52,6 +52,6 @@ public class CommonExceptionController {
         }
         log.error("Error", e);
 
-        return CommonResponse.createFailure(status, INPUT_DATE_FORMAT_ERROR_MESSAGE);
+        return CommonResponse.createFailure(status, INPUT_FORMAT_ERROR_MESSAGE);
     }
 }
