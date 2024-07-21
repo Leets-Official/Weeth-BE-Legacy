@@ -1,23 +1,23 @@
 package leets.weeth.domain.event.mapper;
 
+import leets.weeth.domain.event.dto.RequestEvent;
 import leets.weeth.domain.event.dto.ResponseEvent;
 import leets.weeth.domain.event.entity.Event;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
-import org.mapstruct.factory.Mappers;
+import leets.weeth.domain.user.entity.User;
+import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
-public interface EventMapper {
-    EventMapper INSTANCE = Mappers.getMapper(EventMapper.class);
-
-//    Event fromDto(RequestEvent requestEvent);
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)public interface EventMapper {
 
     @Mappings({
             @Mapping(source = "user.name", target = "userName"),
-            @Mapping(source = "createdAt", target = "created_at"),
-            @Mapping(source = "modifiedAt", target = "modified_at"),
+            @Mapping(source = "createdAt", target = "createdAt"),
+            @Mapping(source = "modifiedAt", target = "modifiedAt"),
     })
-    ResponseEvent toDto(Event event);
+    ResponseEvent toEventDto(Event event);
 
+    @Mappings({
+            @Mapping(source = "user", target = "user"),
+            @Mapping(target = "id", ignore = true)
+    })
+    Event fromEventDto(RequestEvent dto, User user);
 }

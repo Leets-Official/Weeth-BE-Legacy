@@ -59,7 +59,7 @@ jobs:
               sudo docker rm $EXISTING_CONTAINER_ID
             fi
 
-            EXISTING_CONTAINER_ID=$(sudo docker ps -q -f "publish=8080" -f "status=exited")
+            EXISTING_CONTAINER_ID=$(sudo docker ps -q -f "status=exited")
             if [ ! -z "$EXISTING_CONTAINER_ID" ]; then
               sudo docker rm $EXISTING_CONTAINER_ID
             fi
