@@ -33,6 +33,10 @@ public class Event extends BaseEntity {
 
     private String location;
 
+    private String requiredItems;
+
+    private String memberNumber;
+
     private LocalDateTime startDateTime;
 
     private LocalDateTime endDateTime;
@@ -44,7 +48,7 @@ public class Event extends BaseEntity {
     private List<File> fileUrls = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id", nullable=false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     // 일정 수정을 위한 메소드
@@ -52,20 +56,20 @@ public class Event extends BaseEntity {
         Optional.ofNullable(dto.title()).ifPresent(title -> this.title = title);
         Optional.ofNullable(dto.content()).ifPresent(content -> this.content = content);
         Optional.ofNullable(dto.location()).ifPresent(location -> this.location = location);
+        Optional.ofNullable(dto.requiredItems()).ifPresent(requiredItems -> this.requiredItems = requiredItems);
+        Optional.ofNullable(dto.memberNumber()).ifPresent(memberNumber -> this.memberNumber = memberNumber);
         Optional.ofNullable(dto.startDateTime()).ifPresent(startDateTime -> this.startDateTime = startDateTime);
         Optional.ofNullable(dto.endDateTime()).ifPresent(endDateTime -> this.endDateTime = endDateTime);
-        Optional.ofNullable(dto.type()).ifPresent(type -> this.type = type);
     }
 
     // 공지 수정을 위한 메소드
-    public void updateFromNoticeDto(RequestNotice dto, List<File> fileUrlList, LocalDateTime now) {
+    public void updateFromNoticeDto(RequestNotice dto, List<File> fileUrlList) {
         Optional.ofNullable(dto.title()).ifPresent(title -> this.title = title);
         Optional.ofNullable(dto.content()).ifPresent(content -> this.content = content);
         Optional.ofNullable(fileUrlList).ifPresent(files -> {
             this.fileUrls.clear();
             this.fileUrls.addAll(files);
         });
-        this.startDateTime = now;
-        this.endDateTime = now;
+        // 시간은 최초 생성한 시간으로 고정
     }
 }

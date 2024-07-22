@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -28,7 +27,12 @@ public class NoticeService {
     private final FileService fileService;
     private final NoticeMapper noticeMapper;
 
-    // 공지생성
+    /*
+     * NoticeController로 온 생성 요청 -> TYPE.NOTICE로 생성
+     * 조회, 수정, 삭제 시  TYPE.NOTICE만 가능
+     */
+
+    // 공지 생성
     @Transactional
     public void createNotice(RequestNotice requestNotice, List<MultipartFile> files, Long userId) {
         User user = userRepository.findById(userId)
@@ -38,9 +42,23 @@ public class NoticeService {
         eventRepository.save(noticeMapper.fromNoticeDto(requestNotice, fileUrls, user));
     }
 
+    // 공지 상세 조회
+    @Transactional(readOnly = true)
+    public ResponseNotice getNoticeById(Long noticeId) throws TypeNotMatchException {
+        // 해당 일정이 존재하는지 먼저 확인
+        Event event = eventRepository.findById(noticeId)
+                .orElseThrow(NoticeNotFoundException::new);
+
+        // 존재한다면 type이 NOTICE 인지 확인
+        if (!event.getType().equals(Type.NOTICE)) {
+            throw new TypeNotMatchException();
+        }
+        return noticeMapper.toNoticeDto(event);
+    }
+
     // 모든 공지사항 조회
     @Transactional(readOnly = true)
-    public List<ResponseNotice> getNotices(){
+    public List<ResponseNotice> getAllNotices() {
         // 상태가 NOTICE인 모든 공지사항을 ID에 오름차순으로 조회
         List<Event> events = eventRepository.findAllByType(Type.NOTICE, Sort.by(Sort.Direction.ASC, "id"));
 
@@ -49,30 +67,16 @@ public class NoticeService {
                 .toList();
     }
 
-    // 공지 상세 조회
-    @Transactional(readOnly = true)
-    public ResponseNotice getNoticeById(Long noticeId) throws TypeNotMatchException {
-        // 해당 일정이 존재하는지 먼저 확인
-        Event event = eventRepository.findById(noticeId)
-                .orElseThrow(NoticeNotFoundException::new);
-        // 존재한다면 type이 NOTICE 인지 확인
-        if(!event.getType().equals(Type.NOTICE)){
-            throw new TypeNotMatchException();
-        }
-        return noticeMapper.toNoticeDto(event);
-    }
-
     // 공지 수정
     @Transactional
-    public void updateNotice(RequestNotice requestNotice,List<MultipartFile> files, Long userId, Long noticeId) throws BusinessLogicException {
+    public void updateNotice(Long noticeId, RequestNotice requestNotice, List<MultipartFile> files, Long userId) throws BusinessLogicException {
         Event oldNotice = eventRepository.findById(noticeId)
                 .orElseThrow(NoticeNotFoundException::new);
 
         validateNoticeOwner(oldNotice, userId);
         List<File> fileUrls = fileService.uploadFiles(files);
-        LocalDateTime now = LocalDateTime.now();
 
-        oldNotice.updateFromNoticeDto(requestNotice, fileUrls, now);
+        oldNotice.updateFromNoticeDto(requestNotice, fileUrls);
     }
 
     // 공지 삭제
@@ -82,17 +86,17 @@ public class NoticeService {
                 .orElseThrow(NoticeNotFoundException::new);
 
         validateNoticeOwner(notice, userId);
-        eventRepository.delete(notice);
+        eventRepository.deleteById(noticeId);
     }
 
     // 검색된 event가 notice인지 확인, 맞으면 생성한 사용자와 현재 사용자가 동일한지 확인
     private void validateNoticeOwner(Event notice, Long userId) throws BusinessLogicException {
         // 해당 일정이 NOTICE 인지 확인
-        if(!notice.getType().equals(Type.NOTICE)) {
+        if (!notice.getType().equals(Type.NOTICE)) {
             throw new TypeNotMatchException();
         }
         // 공지사항을 생성한 사용자와 같은지 확인
-        if(!notice.getUser().getId().equals(userId)){
+        if (!notice.getUser().getId().equals(userId)) {
             throw new UserNotMatchException();
         }
     }

@@ -3,16 +3,20 @@ package leets.weeth.global.common.error;
 import leets.weeth.global.common.error.exception.ExceptionType;
 import leets.weeth.global.common.response.CommonResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.validation.BindException;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.Optional;
 
 @Slf4j
 @RestControllerAdvice
 public class CommonExceptionController {
+
+    private static final String INPUT_FORMAT_ERROR_MESSAGE = "입력 포맷이 올바르지 않습니다.";
 
     @ExceptionHandler(Exception.class)  // 모든 Exception 처리
     public CommonResponse<Void> handle(Exception ex) {
@@ -37,5 +41,17 @@ public class CommonExceptionController {
         log.error("Error", e);
 
         return CommonResponse.createFailure(status, e.getFieldError().getField() + " : " + e.getFieldError().getDefaultMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)  // MethodArgumentTypeMismatchException == 클라이언트가 날짜 포맷을 다르게 입력한 경우
+    public CommonResponse<Void> handle(MethodArgumentTypeMismatchException e) {
+        int status = 400;   // 파라미터 값 실수이므로 4XX
+
+        if (e instanceof ErrorResponse) {   // Exception이 ErrorResponse의 인스턴스라면
+            status = ((ErrorResponse) e).getStatusCode().value();   // ErrorResponse에서 상태 값 가져오기
+        }
+        log.error("Error", e);
+
+        return CommonResponse.createFailure(status, INPUT_FORMAT_ERROR_MESSAGE);
     }
 }
