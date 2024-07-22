@@ -73,8 +73,11 @@ public class UserService {
                 .orElseThrow(UserNotFoundException::new);
     }
 
+    @Transactional
     public void update(Long userId, UserDTO.Update dto) {
-        User user = mapper.update(userId, dto);
-        userRepository.save(user);
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        user.update(dto, passwordEncoder);
     }
 }

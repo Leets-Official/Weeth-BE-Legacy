@@ -18,6 +18,9 @@ public enum ExceptionType {
     BUSINESS_LOGIC_ERROR(HttpStatus.BAD_REQUEST, BusinessLogicException.class),
     TYPE_NOT_MATCH(HttpStatus.BAD_REQUEST, TypeNotMatchException.class),
     USER_NOT_MATCH(HttpStatus.BAD_REQUEST, UserNotMatchException.class),
+    USER_NOT_FOUND(HttpStatus.BAD_REQUEST, UserNotFoundException.class),
+    USER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, UserExistsException.class),
+    INVALID_ACCESS_EXCEPTION(HttpStatus.BAD_REQUEST, InvalidAccessException.class),
     NOTICE_NOT_FOUND(HttpStatus.BAD_REQUEST, NoticeNotFoundException.class),
     EVENT_NOT_FOUND(HttpStatus.BAD_REQUEST, EventNotFoundException.class),
     INVALID_INPUT_DATE(HttpStatus.BAD_REQUEST, InvalidInputDateException.class);
