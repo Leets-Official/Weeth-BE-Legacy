@@ -10,7 +10,6 @@ import leets.weeth.domain.event.repository.EventRepository;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
 import leets.weeth.global.common.error.exception.custom.AttendanceCodeMismatchException;
-import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
 import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
 import leets.weeth.global.common.error.exception.custom.EventNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -70,14 +69,14 @@ public class AttendanceService {
         attendanceRepository.save(attendance);
 
         //출석 응답 DTO
-        ResponseAttendance responseDto = new ResponseAttendance();
-        responseDto.setScheduleTitle(currentEvent.getTitle());
-        responseDto.setScheduleDateTime(currentEvent.getStartDateTime().toString());
-        responseDto.setScheduleLocation(currentEvent.getLocation());
-
         long totalAttendances = attendanceRepository.countByUserAndIsAttendTrue(user);
-        responseDto.setAttendanceRate((int) (totalAttendances * 100 / attendanceEvents.size()));
-        responseDto.setAttendanceDate(now);
+        ResponseAttendance responseDto = ResponseAttendance.builder()
+                .scheduleTitle(currentEvent.getTitle())
+                .scheduleDateTime(currentEvent.getStartDateTime().toString())
+                .scheduleLocation(currentEvent.getLocation())
+                .attendanceRate((int) (totalAttendances * 100 / attendanceEvents.size()))
+                .attendanceDate(now)
+                .build();
 
         return responseDto;
     }
