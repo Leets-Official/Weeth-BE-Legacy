@@ -9,6 +9,7 @@ import leets.weeth.domain.user.entity.enums.Role;
 import leets.weeth.domain.user.entity.enums.Status;
 import leets.weeth.global.common.entity.BaseEntity;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -74,10 +75,10 @@ public class User extends BaseEntity {
         return this.status != Status.ACTIVE;
     }
 
-    public void update(UserDTO.Update dto) {
+    public void update(UserDTO.Update dto, PasswordEncoder passwordEncoder) {
         this.name = dto.name();
         this.email = dto.email();
-        this.password = dto.password();
+        this.password = passwordEncoder.encode(dto.password());
         this.studentId = dto.studentId();
         this.tel = dto.tel();
         this.department = dto.department();
