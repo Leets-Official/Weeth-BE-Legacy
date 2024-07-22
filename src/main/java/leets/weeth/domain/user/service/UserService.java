@@ -78,6 +78,6 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        user.update(dto);
+        user.update(dto, passwordEncoder);
     }
 }
