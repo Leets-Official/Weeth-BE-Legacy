@@ -8,10 +8,7 @@ import leets.weeth.domain.post.repository.CommentRepository;
 import leets.weeth.domain.post.repository.PostRepository;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
-import leets.weeth.global.common.error.exception.custom.CommentNotFoundException;
-import leets.weeth.global.common.error.exception.custom.InvalidAccessException;
-import leets.weeth.global.common.error.exception.custom.PostNotFoundException;
-import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
+import leets.weeth.global.common.error.exception.custom.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -32,8 +29,8 @@ public class CommentService {
         Comment parentComment;
         commentRepository.save(newComment);
         // child인 경우(부모가 있는 경우)
-        if(requestCommentDTO.getParentId()!=null){
-            parentComment = commentRepository.findById(requestCommentDTO.getParentId())
+        if(requestCommentDTO.getParentCommentId()!=null){
+            parentComment = commentRepository.findById(requestCommentDTO.getParentCommentId())
                     .orElseThrow(CommentNotFoundException::new);
             parentComment.addChild(newComment);
             commentRepository.save(parentComment);
@@ -47,7 +44,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateComment(Long userId, Long postId, Long commentId, RequestCommentDTO requestCommentDTO) throws InvalidAccessException {
+    public void updateComment(Long userId, Long postId, Long commentId, RequestCommentDTO requestCommentDTO) throws UserMismatchException {
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         Post post = postRepository.findById(postId)
@@ -56,20 +53,21 @@ public class CommentService {
                 .orElseThrow(CommentNotFoundException::new);
 
         // 댓글을 쓴 유저와 수정하는 유저가 같은지 확인
-        isCommentAuthor(currentUser, userId);
+        checkCommentAuthor(currentUser, userId);
 
         commentToEdit.updateComment(requestCommentDTO);
         commentRepository.save(commentToEdit);
     }
 
     @Transactional
-    public void delete(Long userId, Long commentId) throws InvalidAccessException {
+    public void deleteComment(Long userId, Long commentId) throws UserMismatchException {
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         Comment commentToDelete = commentRepository.findById(commentId)
                 .orElseThrow(CommentNotFoundException::new);
+
         // 댓글을 쓴 유저와 삭제하는 유저가 같은지 확인
-        isCommentAuthor(currentUser, userId);
+        checkCommentAuthor(currentUser, userId);
 
         Post currentPost = commentToDelete.getPost();
         // 댓글이 child인 경우
@@ -114,10 +112,10 @@ public class CommentService {
         return null; // 부모 댓글을 찾지 못한 경우
     }
 
-    private void isCommentAuthor(User user, Long userId) throws InvalidAccessException {
+    private void checkCommentAuthor(User user, Long userId) throws UserMismatchException {
         User currentUser = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         if(!user.equals(currentUser)){
-            throw new InvalidAccessException();
+            throw new UserMismatchException();
         }
     }
 
