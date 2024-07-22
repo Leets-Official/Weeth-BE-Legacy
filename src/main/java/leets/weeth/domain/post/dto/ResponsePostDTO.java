@@ -6,6 +6,7 @@ import leets.weeth.domain.post.entity.Post;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Builder
@@ -21,8 +22,13 @@ public class ResponsePostDTO {
     private String title;
     @NotBlank
     private String content;
+    @NotBlank
     private LocalDateTime time;
     private List<File> fileUrls;
+    private List<ResponseCommentDTO> comments;
+    @NotBlank
+    private Long totalComments;
+
 
     public static ResponsePostDTO createResponsePostDTO(Post post) {
         return ResponsePostDTO.builder()
@@ -32,6 +38,11 @@ public class ResponsePostDTO {
                 .content(post.getContent())
                 .time(post.getTime())
                 .fileUrls(post.getFileUrls())
+                .comments(post.getParentComments()
+                        .stream()
+                        .map(ResponseCommentDTO::createResponseCommentDto)
+                        .collect(Collectors.toList()))
+                .totalComments(post.getTotalComments())
                 .build();
     }
 }

@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import leets.weeth.domain.user.entity.enums.Department;
 import leets.weeth.domain.user.entity.enums.Position;
 
+import java.util.List;
+
 public class UserDTO {
 
     public record SignUp (
@@ -35,7 +37,7 @@ public class UserDTO {
             String tel,
             Department department,
             String email,
-            Integer cardinal,
+            List<Integer> cardinals,
             Position position
     ) {}
 }

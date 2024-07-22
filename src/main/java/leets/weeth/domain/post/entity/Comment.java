@@ -1,18 +1,18 @@
 package leets.weeth.domain.post.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import leets.weeth.domain.post.dto.RequestCommentDTO;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.global.common.entity.BaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -27,6 +27,7 @@ public class Comment extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name="post_id")
+    @JsonBackReference
     private Post post;
 
     @ManyToOne
@@ -34,19 +35,28 @@ public class Comment extends BaseEntity {
     private User user;
 
     @NotEmpty
-    @Column
     private String content;
-    LocalDateTime time;
-    public static Comment createComment(RequestCommentDTO dto, Post post, User user){
 
-        Comment newComment = new Comment(
-                null,
-                post,
-                user,
-                dto.getContent(),
-                null
-        );
-        return newComment;
+    @ColumnDefault("FALSE")
+    @Column(nullable = false)
+    private Boolean isDeleted;
+
+    @OneToMany(orphanRemoval = true)
+    private List<Comment> children = new ArrayList<>();
+
+    LocalDateTime time;
+
+    public static Comment createComment(RequestCommentDTO dto, Post post, User user){
+        return Comment.builder()
+                .post(post)
+                .user(user)
+                .content(dto.getContent())
+                .isDeleted(false)
+                .build();
+    }
+
+    public void updateComment(RequestCommentDTO dto) {
+        this.content = dto.getContent();
     }
 
     @PrePersist
@@ -55,5 +65,12 @@ public class Comment extends BaseEntity {
         this.time = this.getModifiedAt() == null ? this.getCreatedAt() : this.getModifiedAt();
     }
 
+    public void markAsDeleted(){
+        this.isDeleted = true;
+        this.content = "삭제된 댓글입니다.";
+    }
 
+    public void addChild(Comment child) {
+        this.children.add(child);
+    }
 }

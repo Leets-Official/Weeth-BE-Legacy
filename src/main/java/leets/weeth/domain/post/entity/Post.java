@@ -1,5 +1,6 @@
 package leets.weeth.domain.post.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import leets.weeth.domain.file.entity.File;
@@ -34,6 +35,13 @@ public class Post extends BaseEntity {
     @NotEmpty
     private String content;
 
+    @OneToMany(orphanRemoval = true)
+    @JsonManagedReference
+    private List<Comment> parentComments = new ArrayList<>();
+
+    // 총 댓글 개수 : 댓글 + 대댓글
+    private Long totalComments = 0L;
+
     LocalDateTime time;
     @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<File> fileUrls = new ArrayList<>();
@@ -41,7 +49,6 @@ public class Post extends BaseEntity {
     public static Post createPost(RequestPostDTO dto, User user, List<File> urls){
 
         return Post.builder()
-                .id(null)
                 .user(user)
                 .title(dto.getTitle())
                 .content(dto.getContent())
@@ -57,10 +64,29 @@ public class Post extends BaseEntity {
         this.fileUrls.addAll(newUrls); // 새로운 url 추가
     }
 
+    public void calculateTotalComments() {
+        Long totalComments = parentComments.stream()
+                .mapToLong(this::countCommentsRecursively)
+                .sum();
+        this.totalComments = totalComments;
+    }
+
+    private Long countCommentsRecursively(Comment comment) {
+        if (comment.getChildren() == null) {
+            return 1L; // 현재 댓글만 카운트
+        }
+        return 1L + comment.getChildren().stream()
+                .mapToLong(this::countCommentsRecursively)
+                .sum();
+    }
+
     @PrePersist
     @PreUpdate
     public void setTime() {
         this.time = this.getModifiedAt() == null ? this.getCreatedAt() : this.getModifiedAt();
     }
 
+    public void addComment(Comment newComment) {
+        this.parentComments.add(newComment);
+    }
 }
