@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Getter
 @Entity
@@ -17,13 +18,13 @@ public class Attendance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long attendanceId;
 
-    private boolean isAttend;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
     private String attendanceCode;
+
+    private boolean isAttend;
 
     private LocalDateTime startDateTime;
 
@@ -31,9 +32,11 @@ public class Attendance {
 
     private LocalDateTime attendanceDateTime;
 
-    @Builder
+    private int week;
+
+    @Builder(toBuilder = true)
     public Attendance(Long attendanceId, User user, String attendanceCode, boolean isAttend,
-                      LocalDateTime startDateTime, LocalDateTime endDateTime, LocalDateTime attendanceDateTime) {
+                      LocalDateTime startDateTime, LocalDateTime endDateTime, LocalDateTime attendanceDateTime, int week) {
         this.attendanceId = attendanceId;
         this.user = user;
         this.attendanceCode = attendanceCode;
@@ -41,5 +44,6 @@ public class Attendance {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.attendanceDateTime = attendanceDateTime;
+        this.week = week;
     }
 }

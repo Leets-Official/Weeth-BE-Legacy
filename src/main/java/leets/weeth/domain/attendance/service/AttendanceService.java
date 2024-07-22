@@ -35,6 +35,7 @@ public class AttendanceService {
         int randomNum = random.nextInt(9000) + 1000; //1000 이상 9999 이하의 난수 생성
         return String.format("%04d", randomNum); //4자리 수로 포맷팅하여 반환
     }
+
     @SneakyThrows
     public ResponseAttendance recordAttendance(RequestAttendance requestDto, Long userId) {
         User user = userRepository.findById(userId)
@@ -56,28 +57,60 @@ public class AttendanceService {
             throw new AttendanceCodeMismatchException();
         }
 
-        //isAttend = true 출석 기록 생성
-        Attendance attendance = Attendance.builder()
-                .user(user)
-                .attendanceCode(requestDto.getAttendanceCode())
-                .isAttend(true)
-                .startDateTime(currentEvent.getStartDateTime())
-                .endDateTime(currentEvent.getEndDateTime())
-                .attendanceDateTime(now)
-                .build();
+        //출석 여부 업데이트
+        List<Attendance> attendances = attendanceRepository.findAllByUserAndWeek(user, currentEvent.getWeek());
 
-        attendanceRepository.save(attendance);
 
         //출석 응답 DTO
-        long totalAttendances = attendanceRepository.countByUserAndIsAttendTrue(user);
         ResponseAttendance responseDto = ResponseAttendance.builder()
                 .scheduleTitle(currentEvent.getTitle())
                 .scheduleDateTime(currentEvent.getStartDateTime().toString())
                 .scheduleLocation(currentEvent.getLocation())
-                .attendanceRate((int) (totalAttendances * 100 / attendanceEvents.size()))
+                .attendanceRate(calculateAttendanceRate(user))
                 .attendanceDate(now)
                 .build();
 
         return responseDto;
+    }
+    private void updateAttendances(List<Attendance> attendances) {
+        for (Attendance attendance : attendances) {
+            // 빌더 패턴을 사용하여 기존 엔티티의 상태를 업데이트
+            Attendance updatedAttendance = attendance.toBuilder()
+                    .isAttend(true) // 출석 상태를 true로 설정
+                    .build();
+
+            // 엔티티를 저장
+            attendanceRepository.save(updatedAttendance);
+        }
+    }
+    private int calculateAttendanceRate(User user) {
+        long totalAttendances = attendanceRepository.countByUserAndIsAttendTrue(user);
+        long totalEvents = eventRepository.countTotalByType(Type.ATTENDANCE);
+        if (totalEvents == 0) return 0;
+        return (int) ((totalAttendances * 100) / totalEvents);
+    }
+    public void generateAttendances(int totalWeeks, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        List<Event> attendanceEvents = eventRepository.findAllByType(Type.ATTENDANCE, Sort.by(Sort.Order.asc("startDateTime")));
+
+        // 각 이벤트에 대해 주차를 기준으로 출석 객체 생성
+        for (Event event : attendanceEvents) {
+            for (int currentWeek = 1; currentWeek <= totalWeeks; currentWeek++) {
+                String attendanceCode = generateRandomAttendanceCode();
+
+                Attendance attendance = Attendance.builder()
+                        .user(user)
+                        .attendanceCode(attendanceCode)
+                        .isAttend(false) //초기 상태는 결석으로 설정
+                        .startDateTime(event.getStartDateTime())
+                        .endDateTime(event.getEndDateTime())
+                        .week(currentWeek) //주차 정보 설정
+                        .build();
+
+                attendanceRepository.save(attendance);
+            }
+        }
     }
 }

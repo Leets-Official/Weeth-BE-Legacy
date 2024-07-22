@@ -18,4 +18,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     // type 맞는 일정 모두 반환
     @Query("SELECT e FROM Event e JOIN FETCH e.user WHERE e.type = :type")
     List<Event> findAllByType(@Param("type") Type type, Sort id);
+    // 특정 타입의 이벤트 총 개수 반환
+    @Query("SELECT COUNT(e) FROM Event e WHERE e.type = :type")
+    long countTotalByType(@Param("type") Type type);
 }
