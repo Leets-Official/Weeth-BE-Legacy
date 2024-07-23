@@ -54,6 +54,7 @@ public class Post extends BaseEntity {
                 .content(dto.getContent())
                 .time(null)
                 .fileUrls(urls)
+                .totalComments(0L)
                 .build();
     }
 

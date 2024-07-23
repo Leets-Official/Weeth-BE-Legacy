@@ -25,6 +25,8 @@ public enum ExceptionType {
     EVENT_NOT_FOUND(HttpStatus.BAD_REQUEST, EventNotFoundException.class),
     INVALID_INPUT_DATE(HttpStatus.BAD_REQUEST, InvalidInputDateException.class),
     NOTICE_TYPE_NOT_MATCH(HttpStatus.BAD_REQUEST, NoticeTypeNotMatchException.class),
+    ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, AccountNotFoundException.class),
+    ACCOUNT_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, AccountExistsException.class),
     ATTENDANCE_EVENT_TYPE_NOT_MATCH(HttpStatus.BAD_REQUEST, AttendanceEventTypeNotMatchException.class);
 
     private final HttpStatus httpStatus;

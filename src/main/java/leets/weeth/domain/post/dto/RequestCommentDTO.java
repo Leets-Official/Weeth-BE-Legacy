@@ -11,7 +11,7 @@ import lombok.ToString;
 @Getter
 @ToString
 public class RequestCommentDTO {
-    private Long parentId;
+    private Long parentCommentId;
     @NotBlank
     private String content;
 

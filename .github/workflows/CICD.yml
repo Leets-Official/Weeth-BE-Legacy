@@ -3,8 +3,7 @@ name: Weeth-BE CICD
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+
 
 jobs:
   build:
