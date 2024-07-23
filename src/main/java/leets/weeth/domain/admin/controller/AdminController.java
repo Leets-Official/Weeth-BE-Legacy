@@ -10,6 +10,7 @@ import leets.weeth.domain.event.dto.RequestEvent;
 import leets.weeth.domain.event.service.EventService;
 import leets.weeth.domain.notice.dto.RequestNotice;
 import leets.weeth.domain.notice.service.NoticeService;
+import leets.weeth.domain.user.service.UserService;
 import leets.weeth.global.auth.annotation.CurrentUser;
 import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
 import leets.weeth.global.common.response.CommonResponse;
@@ -31,6 +32,7 @@ public class AdminController {
     private final EventService eventService;
     private final NoticeService noticeService;
     private final AttendanceEventService attendanceEventService;
+    private final UserService userService;
 
     /*
         Event 관련 admin api
@@ -97,5 +99,12 @@ public class AdminController {
                                                         @Parameter(hidden = true) @CurrentUser Long userId) {
         attendanceEventService.createAttendanceEvent(requestAttendanceEvent, userId);
         return CommonResponse.createSuccess(ATTENDANCE_EVENT_CREATED_SUCCESS.getMessage());
+    }
+
+    @Operation(summary = "가입 신청 승인", description = "관리자의 회원 가입 승인")
+    @PatchMapping("/users")
+    public CommonResponse<Void> accept(@RequestParam Long userId) {
+        userService.accept(userId);
+        return CommonResponse.createSuccess();
     }
 }
