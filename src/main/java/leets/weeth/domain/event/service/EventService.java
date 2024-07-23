@@ -91,7 +91,7 @@ public class EventService {
         }
         // 각 월의 이벤트를 시작 시간 순서대로 정렬
         eventsByMonth.values().forEach(eventList ->
-                eventList.sort(Comparator.comparing(ResponseEvent::startDateTime))
+                eventList.sort(Comparator.comparing(ResponseEvent::start))
         );
         return eventsByMonth;
     }
