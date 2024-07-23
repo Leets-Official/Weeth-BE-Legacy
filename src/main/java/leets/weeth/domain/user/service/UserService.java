@@ -80,4 +80,12 @@ public class UserService {
 
         user.update(dto, passwordEncoder);
     }
+
+    @Transactional
+    public void accept(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        user.accept();
+    }
 }
