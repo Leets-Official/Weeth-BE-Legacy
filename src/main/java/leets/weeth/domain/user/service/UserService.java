@@ -5,7 +5,6 @@ import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.mapper.UserMapper;
 import leets.weeth.domain.user.repository.UserRepository;
 import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
-import leets.weeth.global.common.error.exception.custom.InvalidAccessException;
 import leets.weeth.global.common.error.exception.custom.UserExistsException;
 import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -50,9 +49,6 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        if(!user.getStatus().equals(ACTIVE))
-            throw new InvalidAccessException();
-
         user.applyOB(cardinal);
     }
 
@@ -87,5 +83,21 @@ public class UserService {
                 .orElseThrow(UserNotFoundException::new);
 
         user.accept();
+    }
+
+    @Transactional
+    public void ban(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        user.ban();
+    }
+
+    @Transactional
+    public void update(Long userId, String role) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        user.update(role);
     }
 }

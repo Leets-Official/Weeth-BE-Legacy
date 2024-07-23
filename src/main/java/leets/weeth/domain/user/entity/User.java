@@ -87,4 +87,12 @@ public class User extends BaseEntity {
     public void accept() {
         this.status = Status.ACTIVE;
     }
+
+    public void ban() {
+        this.status = Status.BANNED;
+    }
+
+    public void update(String role) {
+        this.role = Role.valueOf(role);
+    }
 }
