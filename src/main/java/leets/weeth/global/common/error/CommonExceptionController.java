@@ -3,7 +3,6 @@ package leets.weeth.global.common.error;
 import leets.weeth.global.common.error.exception.ExceptionType;
 import leets.weeth.global.common.response.CommonResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.TypeMismatchException;
 import org.springframework.validation.BindException;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
