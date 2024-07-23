@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ResponseAttendance {
     private String scheduleTitle;
-    private String scheduleDateTime;
+    private LocalDateTime scheduleDateTime;
     private String scheduleLocation;
     private int attendanceRate;
     private LocalDateTime attendanceDate;

@@ -3,7 +3,6 @@ package leets.weeth.domain.attendance.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import leets.weeth.domain.attendance.dto.RequestAttendance;
-import leets.weeth.domain.attendance.dto.RequestGenerateAttendances;
 import leets.weeth.domain.attendance.dto.ResponseAttendance;
 import leets.weeth.domain.attendance.service.AttendanceService;
 import leets.weeth.global.common.response.CommonResponse;
@@ -24,13 +23,8 @@ public class AttendanceController {
     @PostMapping("/check-in")
     public CommonResponse<ResponseAttendance> recordAttendance(
             @RequestBody @Valid RequestAttendance requestDto,
-            @AuthenticationPrincipal Long user) {
-        ResponseAttendance response = attendanceService.recordAttendance(requestDto, user);
+            @AuthenticationPrincipal Long userId) {
+        ResponseAttendance response = attendanceService.recordAttendance(requestDto, userId);
         return CommonResponse.createSuccess(response);
-    }
-    @Operation(summary = "출석 객체 생성", description = "주차와 사용자 ID를 기반으로 출석 객체를 생성합니다.")
-    @PostMapping("/generate")
-    public void generateAttendances(@RequestBody @Valid RequestGenerateAttendances requestDto) {
-        attendanceService.generateAttendances(requestDto.getWeeks(), requestDto.getUserId());
     }
 }
