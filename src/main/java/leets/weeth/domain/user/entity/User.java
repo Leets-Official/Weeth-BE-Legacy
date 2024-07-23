@@ -84,4 +84,7 @@ public class User extends BaseEntity {
         this.department = dto.department();
     }
 
+    public void accept() {
+        this.status = Status.ACTIVE;
+    }
 }
