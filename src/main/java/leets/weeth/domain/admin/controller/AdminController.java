@@ -4,6 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import leets.weeth.domain.account.dto.AccountDTO;
+import leets.weeth.domain.account.dto.ReceiptDTO;
+import leets.weeth.domain.account.service.AccountService;
+import leets.weeth.domain.account.service.ReceiptService;
 import leets.weeth.domain.event.attendanceEvent.dto.RequestAttendanceEvent;
 import leets.weeth.domain.event.attendanceEvent.service.AttendanceEventService;
 import leets.weeth.domain.event.dto.RequestEvent;
@@ -33,6 +37,8 @@ public class AdminController {
     private final NoticeService noticeService;
     private final AttendanceEventService attendanceEventService;
     private final UserService userService;
+    private final AccountService accountService;
+    private final ReceiptService receiptService;
 
     /*
         Event 관련 admin api
@@ -126,6 +132,27 @@ public class AdminController {
     @PostMapping("/users/apply/{cardinal}")
     public CommonResponse<String> applyOB(@RequestParam Long userId, @PathVariable Integer cardinal) throws BusinessLogicException {
         userService.applyOB(userId, cardinal);
+        return CommonResponse.createSuccess();
+    }
+
+    @Operation(summary = "회비 총 금액 기입", description = "돈 걷어서 총 금액만큼의 장부 생성")
+    @PostMapping("/account")
+    public CommonResponse<Void> initAccount(@RequestBody @Valid AccountDTO.Save dto) {
+        accountService.init(dto);
+        return CommonResponse.createSuccess();
+    }
+
+    @Operation(summary = "회비 사용 내역 기입")
+    @PostMapping("/account/{cardinal}")
+    public CommonResponse<Void> spend(@RequestBody @Valid ReceiptDTO.Spend dto, @PathVariable Integer cardinal) {
+        receiptService.spend(dto, cardinal);
+        return CommonResponse.createSuccess();
+    }
+
+    @Operation(summary = "회비 사용 내역 취소")
+    @DeleteMapping("/account/{receiptId}")
+    public CommonResponse<Void> cancel(@PathVariable Long receiptId) {
+        receiptService.cancel(receiptId);
         return CommonResponse.createSuccess();
     }
 }
