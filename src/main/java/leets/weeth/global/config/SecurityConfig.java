@@ -58,8 +58,7 @@ public class SecurityConfig {
                         authorize ->
                                 authorize
                                         .requestMatchers("/users/apply").permitAll()
-                                        //일정 관련 경로 권한 설정
-                                       // .requestMatchers("/events/**").permitAll()
+                                        .requestMatchers("/health-check").permitAll()
                                         // 스웨거 경로
                                         .requestMatchers("/v3/api-docs", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/swagger/**").permitAll()
                                         .requestMatchers("/admin/**").hasRole("ADMIN")
