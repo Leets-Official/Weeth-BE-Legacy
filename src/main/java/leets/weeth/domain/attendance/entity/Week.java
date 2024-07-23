@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -20,15 +19,11 @@ public class Week {
     private String weekInfo;
 
     private int cardinal;
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
 
     @Builder
-    public Week(String attendanceCode, String weekInfo, int cardinal, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public Week(String attendanceCode, String weekInfo, int cardinal) {
         this.attendanceCode = attendanceCode;
         this.weekInfo = weekInfo;
         this.cardinal = cardinal;
-        this.startDateTime = startDateTime;
-        this.endDateTime = endDateTime;
     }
 }
