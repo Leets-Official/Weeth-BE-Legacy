@@ -107,4 +107,25 @@ public class AdminController {
         userService.accept(userId);
         return CommonResponse.createSuccess();
     }
+
+    @Operation(summary = "유저 추방")
+    @DeleteMapping("/users")
+    public CommonResponse<Void> ban(@RequestParam Long userId) {
+        userService.ban(userId);
+        return CommonResponse.createSuccess();
+    }
+
+    @Operation(summary = "관리자로 승격/강등", description = "role=ADMIN, USER")
+    @PatchMapping("/users/{role}")
+    public CommonResponse<Void> updateRole(@RequestParam Long userId, @PathVariable String role) {
+        userService.update(userId, role);
+        return CommonResponse.createSuccess();
+    }
+
+    @Operation(summary = "다음 기수도 이어서 진행")
+    @PostMapping("/users/apply/{cardinal}")
+    public CommonResponse<String> applyOB(@RequestParam Long userId, @PathVariable Integer cardinal) throws BusinessLogicException {
+        userService.applyOB(userId, cardinal);
+        return CommonResponse.createSuccess();
+    }
 }
