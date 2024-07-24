@@ -14,6 +14,9 @@ import leets.weeth.domain.event.dto.RequestEvent;
 import leets.weeth.domain.event.service.EventService;
 import leets.weeth.domain.notice.dto.RequestNotice;
 import leets.weeth.domain.notice.service.NoticeService;
+import leets.weeth.domain.penalty.dto.RequestPenalty;
+import leets.weeth.domain.penalty.service.PenaltyService;
+import leets.weeth.domain.post.dto.RequestCommentDTO;
 import leets.weeth.domain.user.service.UserService;
 import leets.weeth.global.auth.annotation.CurrentUser;
 import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
@@ -39,6 +42,7 @@ public class AdminController {
     private final UserService userService;
     private final AccountService accountService;
     private final ReceiptService receiptService;
+    private final PenaltyService penaltyService;
 
     /*
         Event 관련 admin api
@@ -153,6 +157,20 @@ public class AdminController {
     @DeleteMapping("/account/{receiptId}")
     public CommonResponse<Void> cancel(@PathVariable Long receiptId) {
         receiptService.cancel(receiptId);
+        return CommonResponse.createSuccess();
+    }
+
+    @Operation(summary = "패널티 부여")
+    @PostMapping("/penalty")
+    public CommonResponse<Void> assignPenalty(@RequestBody RequestPenalty requestPenalty) {
+        penaltyService.assignPenalty(requestPenalty);
+        return CommonResponse.createSuccess();
+    }
+
+    @Operation(summary = "패널티 삭제")
+    @DeleteMapping("/penalty")
+    public CommonResponse<Void> removePenalty(@RequestParam Long penaltyId) {
+        penaltyService.removePenalty(penaltyId);
         return CommonResponse.createSuccess();
     }
 }
