@@ -41,6 +41,8 @@ public class Event extends BaseEntity {
 
     private LocalDateTime endDateTime;
 
+    private Integer cardinal;
+
     @Enumerated(EnumType.STRING)
     private Type type;
 

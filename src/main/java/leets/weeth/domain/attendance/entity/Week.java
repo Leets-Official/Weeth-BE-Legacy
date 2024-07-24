@@ -1,14 +1,23 @@
 package leets.weeth.domain.attendance.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import leets.weeth.domain.attendance.dto.RequestAttendance;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 
 @Getter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Week {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,15 +27,13 @@ public class Week {
 
     private String weekInfo;
 
-    private int cardinal;
+    private Integer cardinal;
 
-    private int weekNumber;
+    private Integer weekNumber;
 
-    @Builder
-    public Week(String attendanceCode, String weekInfo, int cardinal, int weekNumber) {
-        this.attendanceCode = attendanceCode;
-        this.weekInfo = weekInfo;
-        this.cardinal = cardinal;
-        this.weekNumber = weekNumber;
+    private LocalDate date;
+
+    public boolean isNotMatch(RequestAttendance dto) {
+        return this.attendanceCode.equals(dto.getAttendanceCode());
     }
 }
