@@ -70,6 +70,5 @@ public class Event extends BaseEntity {
             this.fileUrls.clear();
             this.fileUrls.addAll(files);
         });
-        // 시간은 최초 생성한 시간으로 고정
     }
 }
