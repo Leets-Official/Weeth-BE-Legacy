@@ -15,8 +15,8 @@ import leets.weeth.domain.event.service.EventService;
 import leets.weeth.domain.notice.dto.RequestNotice;
 import leets.weeth.domain.notice.service.NoticeService;
 import leets.weeth.domain.penalty.dto.RequestPenalty;
+import leets.weeth.domain.penalty.dto.ResponsePenalty;
 import leets.weeth.domain.penalty.service.PenaltyService;
-import leets.weeth.domain.post.dto.RequestCommentDTO;
 import leets.weeth.domain.user.service.UserService;
 import leets.weeth.global.auth.annotation.CurrentUser;
 import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
@@ -172,5 +172,12 @@ public class AdminController {
     public CommonResponse<Void> removePenalty(@RequestParam Long penaltyId) {
         penaltyService.removePenalty(penaltyId);
         return CommonResponse.createSuccess();
+    }
+
+    @Operation(summary = "모든 유저의 패널티 확인")
+    @GetMapping("/penalty/all")
+    public CommonResponse<List<ResponsePenalty>> showAllPenalty() {
+        List<ResponsePenalty> allPenalties = penaltyService.getAllPenaltiesSortedByUserId();
+        return CommonResponse.createSuccess(allPenalties);
     }
 }

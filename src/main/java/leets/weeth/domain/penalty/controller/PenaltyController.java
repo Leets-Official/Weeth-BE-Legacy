@@ -1,6 +1,5 @@
 package leets.weeth.domain.penalty.controller;
 
-import leets.weeth.domain.penalty.dto.RequestPenalty;
 import leets.weeth.domain.penalty.dto.ResponsePenalty;
 import leets.weeth.domain.penalty.service.PenaltyService;
 import leets.weeth.global.auth.annotation.CurrentUser;

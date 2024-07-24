@@ -1,6 +1,5 @@
 package leets.weeth.domain.penalty.entity;
 
-import com.amazonaws.Request;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import leets.weeth.domain.penalty.dto.RequestPenalty;

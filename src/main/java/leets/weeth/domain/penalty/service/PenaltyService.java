@@ -4,7 +4,6 @@ import leets.weeth.domain.penalty.dto.RequestPenalty;
 import leets.weeth.domain.penalty.dto.ResponsePenalty;
 import leets.weeth.domain.penalty.entity.Penalty;
 import leets.weeth.domain.penalty.repository.PenaltyRepository;
-import leets.weeth.domain.post.dto.ResponsePostDTO;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
 import leets.weeth.global.common.error.exception.custom.PenaltyNotFoundException;
@@ -14,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,5 +40,13 @@ public class PenaltyService {
         Penalty penaltyToRemove = penaltyRepository.findById(penaltyId)
                 .orElseThrow(PenaltyNotFoundException::new);
         penaltyRepository.delete(penaltyToRemove);
+    }
+
+    public List<ResponsePenalty> getAllPenaltiesSortedByUserId() {
+        List<Penalty> allPenalties = penaltyRepository.findAll();
+        return allPenalties.stream()
+                .sorted(Comparator.comparing(Penalty-> Penalty.getUser().getId()))
+                .map(ResponsePenalty::createResponsePenaltyDTO)
+                .toList();
     }
 }
