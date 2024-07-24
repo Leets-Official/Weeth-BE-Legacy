@@ -8,6 +8,8 @@ import leets.weeth.domain.account.dto.AccountDTO;
 import leets.weeth.domain.account.dto.ReceiptDTO;
 import leets.weeth.domain.account.service.AccountService;
 import leets.weeth.domain.account.service.ReceiptService;
+import leets.weeth.domain.attendance.dto.ResponseWeekCode;
+import leets.weeth.domain.attendance.service.WeekService;
 import leets.weeth.domain.event.attendanceEvent.dto.RequestAttendanceEvent;
 import leets.weeth.domain.event.attendanceEvent.service.AttendanceEventService;
 import leets.weeth.domain.event.dto.RequestEvent;
@@ -39,6 +41,7 @@ public class AdminController {
     private final UserService userService;
     private final AccountService accountService;
     private final ReceiptService receiptService;
+    private final WeekService weekService;
 
     /*
         Event 관련 admin api
@@ -154,5 +157,14 @@ public class AdminController {
     public CommonResponse<Void> cancel(@PathVariable Long receiptId) {
         receiptService.cancel(receiptId);
         return CommonResponse.createSuccess();
+    }
+    /*
+        Attendance 관련 admin api
+    */
+    @Operation(summary = "주차별 출석 코드 조회", description = "특정 주차에 대한 출석 코드를 조회합니다.")
+    @GetMapping("/attendance/{weekNumber}")
+    public CommonResponse<ResponseWeekCode> getWeekCode(@PathVariable int weekNumber) {
+        ResponseWeekCode response = weekService.getWeekCode(weekNumber);
+        return CommonResponse.createSuccess(response);
     }
 }

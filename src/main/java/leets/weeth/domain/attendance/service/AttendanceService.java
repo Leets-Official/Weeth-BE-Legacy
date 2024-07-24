@@ -13,7 +13,6 @@ import leets.weeth.domain.event.repository.EventRepository;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
 import leets.weeth.global.common.error.exception.custom.AttendanceCodeMismatchException;
-import leets.weeth.global.common.error.exception.custom.EventNotFoundException;
 import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
 import leets.weeth.global.common.error.exception.custom.AttendanceNotFoundException;
 import lombok.RequiredArgsConstructor;

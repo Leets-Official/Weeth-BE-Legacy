@@ -20,10 +20,13 @@ public class Week {
 
     private int cardinal;
 
+    private int weekNumber;
+
     @Builder
-    public Week(String attendanceCode, String weekInfo, int cardinal) {
+    public Week(String attendanceCode, String weekInfo, int cardinal, int weekNumber) {
         this.attendanceCode = attendanceCode;
         this.weekInfo = weekInfo;
         this.cardinal = cardinal;
+        this.weekNumber = weekNumber;
     }
 }
