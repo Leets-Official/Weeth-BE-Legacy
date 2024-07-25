@@ -8,12 +8,18 @@ import leets.weeth.domain.account.dto.AccountDTO;
 import leets.weeth.domain.account.dto.ReceiptDTO;
 import leets.weeth.domain.account.service.AccountService;
 import leets.weeth.domain.account.service.ReceiptService;
+import leets.weeth.domain.attendance.dto.AttendanceDTO;
+import leets.weeth.domain.attendance.dto.ResponseWeekCode;
+import leets.weeth.domain.attendance.service.WeekService;
 import leets.weeth.domain.event.attendanceEvent.dto.RequestAttendanceEvent;
 import leets.weeth.domain.event.attendanceEvent.service.AttendanceEventService;
 import leets.weeth.domain.event.dto.RequestEvent;
 import leets.weeth.domain.event.service.EventService;
 import leets.weeth.domain.notice.dto.RequestNotice;
 import leets.weeth.domain.notice.service.NoticeService;
+import leets.weeth.domain.penalty.dto.RequestPenalty;
+import leets.weeth.domain.penalty.dto.ResponsePenalty;
+import leets.weeth.domain.penalty.service.PenaltyService;
 import leets.weeth.domain.user.service.UserService;
 import leets.weeth.global.auth.annotation.CurrentUser;
 import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
@@ -39,6 +45,8 @@ public class AdminController {
     private final UserService userService;
     private final AccountService accountService;
     private final ReceiptService receiptService;
+    private final WeekService weekService;
+    private final PenaltyService penaltyService;
 
     /*
         Event 관련 admin api
@@ -74,7 +82,7 @@ public class AdminController {
     @PostMapping("/notice/create")
     public CommonResponse<String> createNotice(@RequestPart(value = "requestNotice") @Valid RequestNotice requestNotice,
                                                @RequestPart(value = "files", required = false) List<MultipartFile> files,
-                                               @Parameter(hidden = true) @CurrentUser Long userId) throws BusinessLogicException {
+                                               @Parameter(hidden = true) @CurrentUser Long userId) {
         noticeService.createNotice(requestNotice, files, userId);
         return CommonResponse.createSuccess(NOTICE_CREATED_SUCCESS.getMessage());
     }
@@ -107,6 +115,13 @@ public class AdminController {
         return CommonResponse.createSuccess(ATTENDANCE_EVENT_CREATED_SUCCESS.getMessage());
     }
 
+    @Operation(summary = "주차 생성")
+    @PostMapping("/attendances")
+    public CommonResponse<Void> createWeek(@RequestBody @Valid AttendanceDTO.Week dto) {
+        weekService.createWeeks(dto);
+        return CommonResponse.createSuccess();
+    }
+
     @Operation(summary = "가입 신청 승인", description = "관리자의 회원 가입 승인")
     @PatchMapping("/users")
     public CommonResponse<Void> accept(@RequestParam Long userId) {
@@ -130,7 +145,7 @@ public class AdminController {
 
     @Operation(summary = "다음 기수도 이어서 진행")
     @PostMapping("/users/apply/{cardinal}")
-    public CommonResponse<String> applyOB(@RequestParam Long userId, @PathVariable Integer cardinal) throws BusinessLogicException {
+    public CommonResponse<String> applyOB(@RequestParam Long userId, @PathVariable Integer cardinal) {
         userService.applyOB(userId, cardinal);
         return CommonResponse.createSuccess();
     }
@@ -154,5 +169,34 @@ public class AdminController {
     public CommonResponse<Void> cancel(@PathVariable Long receiptId) {
         receiptService.cancel(receiptId);
         return CommonResponse.createSuccess();
+    }
+    /*
+        Attendance 관련 admin api
+    */
+    @Operation(summary = "주차별 출석 코드 조회", description = "특정 주차에 대한 출석 코드를 조회합니다.")
+    @GetMapping("/attendances/{cardinal}")
+    public CommonResponse<List<ResponseWeekCode>> getWeekCode(@PathVariable Integer cardinal) {
+        return CommonResponse.createSuccess(weekService.getWeekCode(cardinal));
+    }
+
+    @Operation(summary = "패널티 부여")
+    @PostMapping("/penalty")
+    public CommonResponse<Void> assignPenalty(@RequestBody RequestPenalty requestPenalty) {
+        penaltyService.assignPenalty(requestPenalty);
+        return CommonResponse.createSuccess();
+    }
+
+    @Operation(summary = "패널티 삭제")
+    @DeleteMapping("/penalty")
+    public CommonResponse<Void> removePenalty(@RequestParam Long penaltyId) {
+        penaltyService.removePenalty(penaltyId);
+        return CommonResponse.createSuccess();
+    }
+
+    @Operation(summary = "모든 유저의 패널티 확인")
+    @GetMapping("/penalty/all")
+    public CommonResponse<List<ResponsePenalty>> showAllPenalty() {
+        List<ResponsePenalty> allPenalties = penaltyService.getAllPenaltiesSortedByUserId();
+        return CommonResponse.createSuccess(allPenalties);
     }
 }
