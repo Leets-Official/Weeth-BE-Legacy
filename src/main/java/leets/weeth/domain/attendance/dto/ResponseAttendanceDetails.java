@@ -1,5 +1,4 @@
 package leets.weeth.domain.attendance.dto;
-
 import lombok.Builder;
 import lombok.Data;
 
@@ -7,10 +6,9 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class ResponseAttendance {
+public class ResponseAttendanceDetails {
     private Long attendanceId;
-    private String scheduleLocation;
-    private int attendanceRate;
-    private LocalDateTime attendanceDate;
+    private long totalAttendanceCount;
+    private long totalAbsenceCount;
+    private long totalMeetingsCount;
 }
-

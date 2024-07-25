@@ -41,6 +41,9 @@ public class Event extends BaseEntity {
 
     private LocalDateTime endDateTime;
 
+    // 동아리 기수(시즌별) 일정 구분
+    private Integer cardinal;
+
     @Enumerated(EnumType.STRING)
     private Type type;
 
@@ -70,6 +73,5 @@ public class Event extends BaseEntity {
             this.fileUrls.clear();
             this.fileUrls.addAll(files);
         });
-        // 시간은 최초 생성한 시간으로 고정
     }
 }
