@@ -41,6 +41,7 @@ public class Event extends BaseEntity {
 
     private LocalDateTime endDateTime;
 
+    // 동아리 기수(시즌별) 일정 구분
     private Integer cardinal;
 
     @Enumerated(EnumType.STRING)

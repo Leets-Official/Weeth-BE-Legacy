@@ -14,6 +14,7 @@ public record RequestAttendanceEvent(
         String requiredItems,
         String memberNumber,
         @NotNull LocalDateTime startDateTime,
-        @NotNull LocalDateTime endDateTime
+        @NotNull LocalDateTime endDateTime,
+        @NotNull int cardinal
 ) {
 }
