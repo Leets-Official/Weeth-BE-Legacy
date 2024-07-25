@@ -2,6 +2,7 @@ package leets.weeth.domain.user.entity;
 
 import jakarta.persistence.*;
 import leets.weeth.domain.attendance.entity.Attendance;
+import leets.weeth.domain.penalty.entity.Penalty;
 import leets.weeth.domain.user.converter.CardinalListConverter;
 import leets.weeth.domain.user.dto.UserDTO;
 import leets.weeth.domain.user.entity.enums.Department;
@@ -13,6 +14,7 @@ import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -60,7 +62,10 @@ public class User extends BaseEntity {
     private Integer attendanceRate;
 
     @OneToMany(mappedBy = "user")
-    private List<Attendance> attendances;
+    private List<Attendance> attendances = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Penalty> penalties = new ArrayList<>();
 
     @PrePersist
     public void init() {
@@ -122,5 +127,9 @@ public class User extends BaseEntity {
                 .map(Attendance::getWeek)
                 .filter(week -> week.getDate().isEqual(LocalDate.now()) || week.getDate().isBefore(LocalDate.now()))
                 .count();
+    }
+
+    public void addPenalty(Penalty penalty){
+        this.penalties.add(penalty);
     }
 }
