@@ -21,8 +21,9 @@ public interface AttendanceMapper {
 
     @Mappings({
             @Mapping(target = "attendanceCount", expression = "java( user.getAttendanceCount() )"),
-            @Mapping(target = "total", expression = "java( getTotal(user) )"),
-            @Mapping(target = "absenceCount", expression = "java( getAbsenceCount(user) )")
+            @Mapping(target = "total", expression = "java( user.getAttendances().size() )"),
+            @Mapping(target = "absenceCount", expression = "java( getAbsenceCount(user) )"),
+            @Mapping(target = "attendances", source = "attendances")
     })
     AttendanceDTO.Detail toDetailDto(User user, List<AttendanceDTO.Response> attendances);
 
@@ -42,14 +43,11 @@ public interface AttendanceMapper {
         return String.format("%04d", randomNum); // 4자리 수로 포맷팅하여 반환
     }
 
-    default Integer getTotal(User user) {
+    default Integer getAbsenceCount(User user) {
         return (int) user.getAttendances().stream()
                 .map(Attendance::getWeek)
                 .filter(week -> week.getDate().isEqual(LocalDate.now()) || week.getDate().isBefore(LocalDate.now()))
-                .count();
-    }
-
-    default Integer getAbsenceCount(User user) {
-        return getTotal(user) - user.getAttendanceCount();
+                .count() // 현재 날짜까지의 모임 횟수
+                - user.getAttendanceCount();    // 현재 날짜까지의 출석 횟수
     }
 }

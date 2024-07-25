@@ -34,6 +34,6 @@ public class Week {
     private LocalDate date;
 
     public boolean isNotMatch(RequestAttendance dto) {
-        return this.attendanceCode.equals(dto.getAttendanceCode());
+        return !this.attendanceCode.equals(dto.getAttendanceCode());
     }
 }

@@ -21,7 +21,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findAllByType(@Param("type") Type type, Sort id);
     // 특정 타입의 이벤트 총 개수 반환
 
-    Optional<Event> findByTypeAndStartDateTimeIsAfterAndEndDateTimeIsBefore(Type type, LocalDateTime start, LocalDateTime end);
+    Optional<Event> findByTypeAndStartDateTimeIsBeforeAndEndDateTimeIsAfter(Type type, LocalDateTime start, LocalDateTime end);
 
     List<Event> findAllByTypeAndCardinal(Type type, Integer cardinal);
 }

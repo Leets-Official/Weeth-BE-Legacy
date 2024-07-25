@@ -66,6 +66,7 @@ public class User extends BaseEntity {
     public void init() {
         status = Status.WAITING;
         role = Role.USER;
+        attendanceCount = 0;
     }
 
     public void updateRefreshToken(String updatedToken) {

@@ -78,7 +78,7 @@ public class AdminController {
     @PostMapping("/notice/create")
     public CommonResponse<String> createNotice(@RequestPart(value = "requestNotice") @Valid RequestNotice requestNotice,
                                                @RequestPart(value = "files", required = false) List<MultipartFile> files,
-                                               @Parameter(hidden = true) @CurrentUser Long userId) throws BusinessLogicException {
+                                               @Parameter(hidden = true) @CurrentUser Long userId) {
         noticeService.createNotice(requestNotice, files, userId);
         return CommonResponse.createSuccess(NOTICE_CREATED_SUCCESS.getMessage());
     }
@@ -170,7 +170,7 @@ public class AdminController {
         Attendance 관련 admin api
     */
     @Operation(summary = "주차별 출석 코드 조회", description = "특정 주차에 대한 출석 코드를 조회합니다.")
-    @GetMapping("/attendance/{cardinal}")
+    @GetMapping("/attendances/{cardinal}")
     public CommonResponse<List<ResponseWeekCode>> getWeekCode(@PathVariable Integer cardinal) {
         return CommonResponse.createSuccess(weekService.getWeekCode(cardinal));
     }

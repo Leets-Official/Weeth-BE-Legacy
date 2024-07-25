@@ -30,7 +30,7 @@ public record AttendanceDTO() {
             Integer attendanceRate,
 
             String title,
-            LocalDateTime startDatetime,
+            LocalDateTime startDateTime,
             LocalDateTime endDateTime,
             String location
     ) {}

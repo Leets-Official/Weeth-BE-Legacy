@@ -25,7 +25,7 @@ public class Attendance {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private boolean isAttend;
+    private Boolean isAttend;
 
     @ManyToOne
     @JoinColumn(name = "week_id")

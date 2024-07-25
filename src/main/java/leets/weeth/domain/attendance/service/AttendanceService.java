@@ -71,7 +71,7 @@ public class AttendanceService {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        Event event = eventRepository.findByTypeAndStartDateTimeIsAfterAndEndDateTimeIsBefore(ATTENDANCE, LocalDateTime.now(), LocalDateTime.now())
+        Event event = eventRepository.findByTypeAndStartDateTimeIsBeforeAndEndDateTimeIsAfter(ATTENDANCE, LocalDateTime.now(), LocalDateTime.now())
                 .orElseThrow(EventNotFoundException::new);
 
         return attendanceMapper.toMainDto(user, event);
