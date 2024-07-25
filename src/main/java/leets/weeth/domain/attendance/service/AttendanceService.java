@@ -49,7 +49,7 @@ public class AttendanceService {
                 .orElseThrow(AttendanceNotFoundException::new);
 
         attendance.attend(true);
-        user.attend();
+        user.attend(attendance);
         attendanceRepository.save(attendance);
     }
 

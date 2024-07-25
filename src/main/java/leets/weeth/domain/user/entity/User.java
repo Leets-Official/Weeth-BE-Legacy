@@ -111,9 +111,10 @@ public class User extends BaseEntity {
                 .orElse(0);
     }
 
-    public void attend() {
+    public void attend(Attendance attendance) {
         ++this.attendanceCount;
         this.attendanceRate = (this.attendanceCount * 100) / getCurrentWeek();
+        this.attendances.add(attendance);
     }
 
     private Integer getCurrentWeek() {
