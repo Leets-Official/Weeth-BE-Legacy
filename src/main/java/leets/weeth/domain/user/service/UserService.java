@@ -1,10 +1,10 @@
 package leets.weeth.domain.user.service;
 
+import leets.weeth.domain.attendance.service.AttendanceService;
 import leets.weeth.domain.user.dto.UserDTO;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.mapper.UserMapper;
 import leets.weeth.domain.user.repository.UserRepository;
-import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
 import leets.weeth.global.common.error.exception.custom.UserExistsException;
 import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +27,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper mapper;
     private final PasswordEncoder passwordEncoder;
+    private final AttendanceService attendanceService;
 
     public void signUp(UserDTO.SignUp requestDto) {
         if(userRepository.existsByEmail(requestDto.email()) ||  // 이메일 중복
@@ -45,7 +46,7 @@ public class UserService {
     }
 
     @Transactional
-    public void applyOB(Long userId, Integer cardinal) throws BusinessLogicException {
+    public void applyOB(Long userId, Integer cardinal) {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
@@ -82,6 +83,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
+        attendanceService.createAttendancesForUser(user, user.getCurrentCardinal());
         user.accept();
     }
 

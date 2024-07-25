@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     // 기간 내의 모든 일정 반환
@@ -19,6 +20,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("SELECT e FROM Event e JOIN FETCH e.user WHERE e.type = :type")
     List<Event> findAllByType(@Param("type") Type type, Sort id);
     // 특정 타입의 이벤트 총 개수 반환
-    @Query("SELECT COUNT(e) FROM Event e WHERE e.type = :type")
-    long countTotalByType(@Param("type") Type type);
+
+    Optional<Event> findByTypeAndStartDateTimeIsBeforeAndEndDateTimeIsAfter(Type type, LocalDateTime start, LocalDateTime end);
+
+    List<Event> findAllByTypeAndCardinal(Type type, Integer cardinal);
 }

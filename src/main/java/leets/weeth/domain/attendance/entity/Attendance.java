@@ -2,6 +2,7 @@ package leets.weeth.domain.attendance.entity;
 
 import jakarta.persistence.*;
 import leets.weeth.domain.user.entity.User;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,8 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Attendance {
 
     @Id
@@ -22,20 +25,15 @@ public class Attendance {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private boolean isAttend;
+    private Boolean isAttend;
 
     @ManyToOne
     @JoinColumn(name = "week_id")
     private Week week;
 
     private LocalDateTime attendanceDateTime;
-    @Builder
-    public Attendance(User user, boolean isAttend, Week week) {
-        this.user = user;
-        this.isAttend = isAttend;
-        this.week = week;
-    }
-    public void setIsAttend(boolean isAttend) {
+
+    public void attend(boolean isAttend) {
         this.isAttend = isAttend;
         this.attendanceDateTime = LocalDateTime.now(); //출석시간은 현재 시간을 반환하도록 설정
     }

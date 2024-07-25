@@ -8,8 +8,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class ResponseAttendance {
-    private String scheduleTitle;
-    private LocalDateTime scheduleDateTime;
+    private Long attendanceId;
     private String scheduleLocation;
     private int attendanceRate;
     private LocalDateTime attendanceDate;
