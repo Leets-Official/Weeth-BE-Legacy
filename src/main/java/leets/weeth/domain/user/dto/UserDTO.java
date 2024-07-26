@@ -20,7 +20,7 @@ public class UserDTO {
         @NotBlank        String studentId,
         @NotBlank        String tel,
         @NotNull         Position position,
-        @NotNull         Department department,
+        @NotNull         String department,
         @NotNull         Integer cardinal
     ) {}
 
@@ -39,7 +39,7 @@ public class UserDTO {
             String email,
             String studentId,
             String tel,
-            Department department,
+            String department,
             List<Integer> cardinals,
             Position position
     ) {}
@@ -50,7 +50,7 @@ public class UserDTO {
             String email,
             String studentId,
             String tel,
-            Department department,
+            String department,
             List<Integer> cardinals,
             Position position,
             Status status,
