@@ -1,7 +1,6 @@
 package leets.weeth.domain.account.service;
 
 import leets.weeth.domain.account.dto.AccountDTO;
-import leets.weeth.domain.account.dto.ReceiptDTO;
 import leets.weeth.domain.account.entity.Account;
 import leets.weeth.domain.account.mapper.AccountMapper;
 import leets.weeth.domain.account.mapper.ReceiptMapper;
@@ -20,9 +19,6 @@ public class AccountService {
     private final ReceiptMapper receiptMapper;
 
     public AccountDTO.Response find(Integer cardinal) {
-        accountRepository.findByCardinal(cardinal).get().getReceipts()
-                .listIterator().forEachRemaining(System.out::println);
-
         return accountRepository.findByCardinal(cardinal)
                 .map(account -> accountMapper.to(account, receiptMapper))
                 .orElseThrow(AccountNotFoundException::new);
