@@ -20,6 +20,7 @@ import leets.weeth.domain.notice.service.NoticeService;
 import leets.weeth.domain.penalty.dto.RequestPenalty;
 import leets.weeth.domain.penalty.dto.ResponsePenalty;
 import leets.weeth.domain.penalty.service.PenaltyService;
+import leets.weeth.domain.user.dto.UserDTO;
 import leets.weeth.domain.user.service.UserService;
 import leets.weeth.global.auth.annotation.CurrentUser;
 import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
@@ -159,8 +160,8 @@ public class AdminController {
 
     @Operation(summary = "회비 사용 내역 기입")
     @PostMapping("/account/{cardinal}")
-    public CommonResponse<Void> spend(@RequestBody @Valid ReceiptDTO.Spend dto, @PathVariable Integer cardinal) {
-        receiptService.spend(dto, cardinal);
+    public CommonResponse<Void> spend(@RequestBody @Valid ReceiptDTO.Spend dto, @PathVariable Integer cardinal, @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+        receiptService.spend(dto, cardinal, files);
         return CommonResponse.createSuccess();
     }
 
@@ -198,5 +199,18 @@ public class AdminController {
     public CommonResponse<List<ResponsePenalty>> showAllPenalty() {
         List<ResponsePenalty> allPenalties = penaltyService.getAllPenaltiesSortedByUserId();
         return CommonResponse.createSuccess(allPenalties);
+    }
+
+    @Operation(summary = "어드민용 회원 조회")
+    @GetMapping("/users/all")
+    public CommonResponse<List<UserDTO.AdminResponse>> findAll() {
+        return CommonResponse.createSuccess(userService.findAllByAdmin());
+    }
+
+    @Operation(summary = "회원 비밀번호 초기화")
+    @PatchMapping("/users/reset")
+    public CommonResponse<Void> resetPassword(@RequestParam Long userId) {
+        userService.resetPassword(userId);
+        return CommonResponse.createSuccess();
     }
 }

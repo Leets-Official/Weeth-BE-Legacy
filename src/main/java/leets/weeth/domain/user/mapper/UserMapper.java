@@ -16,5 +16,11 @@ public interface UserMapper {
 
     UserDTO.Response to(User user);
 
+    @Mappings({
+            @Mapping(target = "absenceCount", expression = "java( user.getAbsenceCount() )")
+    })
+    UserDTO.AdminResponse toAdminResponse(User user);
+
+
 }
 
