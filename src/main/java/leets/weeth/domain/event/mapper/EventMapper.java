@@ -13,6 +13,8 @@ public interface EventMapper {
             @Mapping(source = "user.name", target = "userName"),
             @Mapping(source = "createdAt", target = "createdAt"),
             @Mapping(source = "modifiedAt", target = "modifiedAt"),
+            @Mapping(source = "startDateTime", target = "start"),
+            @Mapping(source = "endDateTime", target = "end"),
     })
     ResponseEvent toEventDto(Event event);
 
