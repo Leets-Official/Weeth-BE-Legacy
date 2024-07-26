@@ -29,6 +29,7 @@ public class Event extends BaseEntity {
 
     private String title;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     private String location;
