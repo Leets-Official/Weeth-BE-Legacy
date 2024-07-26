@@ -160,8 +160,8 @@ public class AdminController {
 
     @Operation(summary = "회비 사용 내역 기입")
     @PostMapping("/account/{cardinal}")
-    public CommonResponse<Void> spend(@RequestBody @Valid ReceiptDTO.Spend dto, @PathVariable Integer cardinal) {
-        receiptService.spend(dto, cardinal);
+    public CommonResponse<Void> spend(@RequestBody @Valid ReceiptDTO.Spend dto, @PathVariable Integer cardinal, @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+        receiptService.spend(dto, cardinal, files);
         return CommonResponse.createSuccess();
     }
 
