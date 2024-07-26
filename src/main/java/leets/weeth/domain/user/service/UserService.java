@@ -53,7 +53,7 @@ public class UserService {
         user.applyOB(cardinal);
     }
 
-    public Map<Integer, List<UserDTO.Response>> findUsers() {
+    public Map<Integer, List<UserDTO.Response>> findAll() {
         return userRepository.findAllByStatusOrderByName(ACTIVE).stream()
                 .flatMap(user -> Stream.concat(
                         user.getCardinals().stream()
@@ -101,5 +101,19 @@ public class UserService {
                 .orElseThrow(UserNotFoundException::new);
 
         user.update(role);
+    }
+
+    public List<UserDTO.AdminResponse> findAllByAdmin() {
+        return userRepository.findAll().stream()
+                .map(mapper::toAdminResponse)
+                .toList();
+    }
+
+    @Transactional
+    public void resetPassword(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        user.reset(passwordEncoder);
     }
 }
