@@ -14,9 +14,16 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ReceiptMapper {
 
+    @Mapping(target = "images", expression = "java( toUrls(receipt.getImages()) )")
     ReceiptDTO.Response to(Receipt receipt);
 
     @Mapping(target = "description", source = "dto.description")
     @Mapping(target = "account", source = "account")
     Receipt from(ReceiptDTO.Spend dto, Account account, List<File> images);
+
+    default List<String> toUrls(List<File> images) {
+        return images.stream()
+                .map(File::getUrl)
+                .toList();
+    }
 }

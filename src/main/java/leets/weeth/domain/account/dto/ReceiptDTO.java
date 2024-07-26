@@ -3,6 +3,7 @@ package leets.weeth.domain.account.dto;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class ReceiptDTO {
 
@@ -10,7 +11,7 @@ public class ReceiptDTO {
             Long id,
             Integer amount,
             String description,
-            String imageUrl,
+            List<String> images,
             LocalDate date
     ) {}
 
