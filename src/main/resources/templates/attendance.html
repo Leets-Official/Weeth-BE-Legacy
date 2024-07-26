@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}">
+    <style>
+        .form-container {
+            width: 25%;
+        }
+        .penalty-item {
+            margin-bottom: 1em;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div th:replace="~{fragments/bodyHeader :: bodyHeader}"></div>
+    <div class="container">
+        <h1>출석관리</h1>
+        <div>
+            <button id="createWeekButton" class="btn btn-primary">출석 정보 입력</button>
+            <button id="penaltyCheckButton" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#penaltyModal">패널티 조회</button>
+            <div id="createWeekForm" class="form-container mt-3" style="display:none;">
+                <div class="form-group">
+                    <label for="cardinal">Cardinal</label>
+                    <input type="number" class="form-control" id="cardinal" placeholder="Enter cardinal" required>
+                </div>
+                <div class="form-group">
+                    <label for="weekNumber">Week Number</label>
+                    <input type="number" class="form-control" id="weekNumber" placeholder="Enter week number" required>
+                </div>
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="datetime-local" class="form-control" id="date" required>
+                </div>
+                <button id="submitWeekButton" class="btn btn-success mt-2">Submit</button>
+                <button id="closeWeekFormButton" class="btn btn-secondary mt-2">Close</button>
+            </div>
+            <div id="apiMessage" class="alert mt-3" style="display: none;"></div>
+        </div>
+    </div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+
+<!-- Penalty Modal -->
+<div class="modal fade" id="penaltyModal" tabindex="-1" aria-labelledby="penaltyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="penaltyModalLabel">패널티 목록</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="penaltyList" class="mt-3"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/auth.js"></script>
+<script>
+    document.getElementById('createWeekButton').addEventListener('click', function() {
+        const form = document.getElementById('createWeekForm');
+        form.style.display = (form.style.display === 'block') ? 'none' : 'block';
+    });
+
+    document.getElementById('closeWeekFormButton').addEventListener('click', function() {
+        document.getElementById('createWeekForm').style.display = 'none';
+    });
+
+    document.getElementById('submitWeekButton').addEventListener('click', function() {
+        const cardinal = document.getElementById('cardinal').value;
+        const weekNumber = document.getElementById('weekNumber').value;
+        const date = document.getElementById('date').value;
+
+        const data = {
+            cardinal: parseInt(cardinal),
+            weekNumber: parseInt(weekNumber),
+            date: date
+        };
+
+        apiRequest('/admin/attendances', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.text())
+            .then(message => {
+                showApiMessage(message, 'success');
+                document.getElementById('createWeekForm').style.display = 'none';
+            })
+            .catch(error => {
+                showApiMessage(error.message, 'danger');
+            });
+    });
+
+    document.getElementById('penaltyCheckButton').addEventListener('click', function() {
+        const penaltyList = document.getElementById('penaltyList');
+        apiRequest('/admin/penalty/all')
+            .then(response => response.json())
+            .then(data => {
+                penaltyList.innerHTML = '';
+                const penalties = data.data;
+                penalties.forEach(penalty => {
+                    const row = document.createElement('div');
+                    row.className = 'penalty-item';
+                    row.innerHTML = `
+                        <p>User: ${penalty.userName} (ID: ${penalty.userId})</p>
+                        <p>Penalty ID: ${penalty.penaltyId}</p>
+                        <p>Description: ${penalty.penaltyDescription}</p>
+                        <p>Time: ${penalty.time}</p>
+                        <p>Count: ${penalty.penaltyCount}</p>
+                        <button class="btn btn-danger" onclick="deletePenalty(${penalty.penaltyId})">삭제</button>
+                        <hr>
+                    `;
+                    penaltyList.appendChild(row);
+                });
+            })
+            .catch(error => {
+                showApiMessage(error.message, 'danger');
+            });
+    });
+
+    function deletePenalty(penaltyId) {
+        apiRequest(`/admin/penalty?penaltyId=${penaltyId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.text())
+            .then(message => {
+                showApiMessage(message, 'success');
+                document.getElementById('penaltyCheckButton').click(); // Refresh the penalty list
+            })
+            .catch(error => {
+                showApiMessage(error.message, 'danger');
+            });
+    }
+
+    function showApiMessage(message, type) {
+        const apiMessageDiv = document.getElementById('apiMessage');
+        apiMessageDiv.className = `alert alert-${type}`;
+        apiMessageDiv.style.display = 'block';
+        apiMessageDiv.innerText = message;
+        setTimeout(() => {
+            apiMessageDiv.style.display = 'none';
+        }, 5000);
+    }
+</script>
+</body>
+</html>

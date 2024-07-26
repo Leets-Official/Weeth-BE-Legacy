@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="/js/auth.js"></script>
+    <title>Admin Page</title>
+    <style>
+        .actions-row {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+            align-items: center;
+        }
+        .penalty-form {
+            display: inline-block;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div th:replace="~{fragments/bodyHeader :: bodyHeader}"></div>
+    <h1>Manage Members</h1>
+    <div>
+        <button id="loadMembers" class="btn btn-primary">Load Members</button>
+        <table class="table mt-3">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Student ID</th>
+                <th>Tel</th>
+                <th>Department</th>
+                <th>Email</th>
+                <th>Cardinals</th>
+                <th>Position</th>
+                <th>Role</th>
+            </tr>
+            </thead>
+            <tbody id="membersList"></tbody>
+        </table>
+        <div id="tokenErrorMessage" class="alert alert-danger mt-3" style="display: none;"></div>
+        <div id="apiMessage" class="alert mt-3" style="display: none;"></div>
+    </div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    document.getElementById('loadMembers').addEventListener('click', function() {
+        apiRequest('/users/all')
+            .then(response => response.json())
+            .then(data => {
+                const membersList = document.getElementById('membersList');
+                membersList.innerHTML = '';  // Clear existing members before adding new ones
+
+                const members = new Set();  // Use a set to track unique members
+                Object.values(data.data).forEach(membersArray => {
+                    membersArray.forEach(member => {
+                        const memberKey = `${member.id}-${member.email}`;  // Use a combination of id and email to ensure uniqueness
+                        if (!members.has(memberKey)) {
+                            members.add(memberKey);
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${member.id}</td>
+                                <td>${member.name}</td>
+                                <td>${member.studentId}</td>
+                                <td>${member.tel}</td>
+                                <td>${member.department}</td>
+                                <td>${member.email}</td>
+                                <td>${member.cardinals.join(', ')}</td>
+                                <td>${member.position}</td>
+                                <td>${member.role}</td>
+                            `;
+                            membersList.appendChild(row);
+
+                            const actionsRow = document.createElement('tr');
+                            actionsRow.innerHTML = `
+                                <td colspan="9">
+                                    <div class="actions-row">
+                                        <button class="btn btn-primary" onclick="approveUser(${member.id})" ${member.status === 'ACTIVE' ? 'disabled' : ''}>가입 승인</button>
+                                        ${member.position === 'USER' ?
+                                `<button class="btn btn-primary" onclick="changeUserRole(${member.id}, 'ADMIN')">관리자로 변경</button>` :
+                                `<button class="btn btn-outline-danger" onclick="changeUserRole(${member.id}, 'USER')">사용자로 변경</button>`
+                            }
+                                        <button class="btn btn-danger" onclick="deleteUser(${member.id})">유저 추방</button>
+                                        <button class="btn btn-warning" onclick="showPenaltyForm(${member.id})">패널티 부여</button>
+                                        <div id="penaltyForm-${member.id}" class="penalty-form" style="display: none;">
+                                            <div class="form-group">
+                                                <label for="penaltyDescription-${member.id}">Penalty Description</label>
+                                                <input type="text" class="form-control" id="penaltyDescription-${member.id}" placeholder="Enter penalty description" required>
+                                            </div>
+                                            <button class="btn btn-success mt-2" onclick="submitPenalty(${member.id})">Submit</button>
+                                            <button class="btn btn-secondary mt-2" onclick="hidePenaltyForm(${member.id})">Close</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            `;
+                            membersList.appendChild(actionsRow);
+                        }
+                    });
+                });
+            })
+            .catch(error => {
+                showTokenErrorMessage(error.message);
+                console.error('Error loading members:', error);
+            });
+    });
+
+    function approveUser(userId) {
+        apiRequest(`/admin/users?userId=${userId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.text())
+            .then(message => {
+                showApiMessage(message, 'success');
+            })
+            .catch(error => {
+                showApiMessage(error.message, 'danger');
+            });
+    }
+
+    function changeUserRole(userId, role) {
+        apiRequest(`/admin/users/${role}?userId=${userId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.text())
+            .then(message => {
+                showApiMessage(message, 'success');
+            })
+            .catch(error => {
+                showApiMessage(error.message, 'danger');
+            });
+    }
+
+    function deleteUser(userId) {
+        apiRequest(`/admin/users?userId=${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId: userId })
+        })
+            .then(response => response.text())
+            .then(message => {
+                showApiMessage(message, 'success');
+            })
+            .catch(error => {
+                showApiMessage(error.message, 'danger');
+            });
+    }
+
+    function showPenaltyForm(userId) {
+        const form = document.getElementById(`penaltyForm-${userId}`);
+        form.style.display = 'inline-block';
+    }
+
+    function hidePenaltyForm(userId) {
+        const form = document.getElementById(`penaltyForm-${userId}`);
+        form.style.display = 'none';
+    }
+
+    function submitPenalty(userId) {
+        const penaltyDescription = document.getElementById(`penaltyDescription-${userId}`).value;
+
+        const data = {
+            userId: userId,
+            penaltyDescription: penaltyDescription
+        };
+
+        apiRequest('/admin/penalty', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.text())
+            .then(message => {
+                showApiMessage(message, 'success');
+                hidePenaltyForm(userId);
+            })
+            .catch(error => {
+                showApiMessage(error.message, 'danger');
+            });
+    }
+</script>
+</body>
+</html>
