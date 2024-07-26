@@ -54,16 +54,23 @@ public class CustomJsonUsernamePasswordAuthenticationFilter extends AbstractAuth
                 .ifPresentOrElse(
                         user -> {
                             if (user.isInactive())
-                                throw new AuthenticationServiceException("가입 승인이 허가되지 않은 사용자입니다.");
+                                throw new AuthenticationServiceException("가입 승인이 허가되지 않은 이메일입니다.");
                             },
                         () -> {
-                            throw new AuthenticationServiceException("존재하지 않는 사용자입니다");
+                            throw new AuthenticationServiceException("존재하지 않는 이메일입니다");
                         }
                 );
 
 
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(email, password);
 
-        return this.getAuthenticationManager().authenticate(authRequest);
+        Authentication authenticate;
+        try {
+            authenticate = this.getAuthenticationManager().authenticate(authRequest);
+        } catch (AuthenticationException e) {
+            throw new AuthenticationServiceException("비밀번호가 일치하지 않습니다.");
+        }
+
+        return authenticate;
     }
 }
