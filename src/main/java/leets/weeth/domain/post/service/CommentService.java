@@ -39,7 +39,6 @@ public class CommentService {
             currentPost.addComment(newComment);
             postRepository.save(currentPost);
         }
-        currentPost.calculateTotalComments();
         postRepository.save(currentPost);
     }
 
@@ -96,8 +95,6 @@ public class CommentService {
             commentToDelete.markAsDeleted();
             commentRepository.save(commentToDelete);
         }
-        // 댓글 총 개수 다시 계산
-        currentPost.calculateTotalComments();
         postRepository.save(currentPost);
     }
 

@@ -27,7 +27,7 @@ public class ResponsePostDTO {
     private List<File> fileUrls;
     private List<ResponseCommentDTO> comments;
     @NotBlank
-    private Long totalComments;
+    private Long commentCount;
 
 
     public static ResponsePostDTO createResponsePostDTO(Post post) {
@@ -42,7 +42,7 @@ public class ResponsePostDTO {
                         .stream()
                         .map(ResponseCommentDTO::createResponseCommentDto)
                         .collect(Collectors.toList()))
-                .totalComments(post.getTotalComments())
+                .commentCount(Post.calculateTotalComments(post))
                 .build();
     }
 }
