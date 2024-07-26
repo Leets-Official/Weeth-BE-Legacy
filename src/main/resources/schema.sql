@@ -17,9 +17,7 @@ CREATE TABLE IF NOT EXISTS attendance (
                                           week_id BIGINT,
                                           created_at DATETIME(6),
                                           modified_at DATETIME(6),
-                                          PRIMARY KEY (attendance_id),
-                                          FOREIGN KEY (user_id) REFERENCES users (user_id),
-                                          FOREIGN KEY (week_id) REFERENCES week (week_id)
+                                          PRIMARY KEY (attendance_id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS comment (
@@ -31,17 +29,13 @@ CREATE TABLE IF NOT EXISTS comment (
                                        content VARCHAR(255) NOT NULL,
                                        created_at DATETIME(6),
                                        modified_at DATETIME(6),
-                                       PRIMARY KEY (comment_id),
-                                       FOREIGN KEY (post_id) REFERENCES post (post_id),
-                                       FOREIGN KEY (user_id) REFERENCES users (user_id)
+                                       PRIMARY KEY (comment_id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS comment_children (
                                                 children_comment_id BIGINT NOT NULL,
                                                 comment_comment_id BIGINT NOT NULL,
-                                                UNIQUE (children_comment_id),
-                                                FOREIGN KEY (children_comment_id) REFERENCES comment (comment_id),
-                                                FOREIGN KEY (comment_comment_id) REFERENCES comment (comment_id)
+                                                UNIQUE (children_comment_id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS event (
@@ -58,16 +52,13 @@ CREATE TABLE IF NOT EXISTS event (
                                      type ENUM('ATTENDANCE', 'EVENT', 'NOTICE'),
                                      created_at DATETIME(6),
                                      modified_at DATETIME(6),
-                                     PRIMARY KEY (event_id),
-                                     FOREIGN KEY (user_id) REFERENCES users (user_id)
+                                     PRIMARY KEY (event_id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS event_file_urls (
                                                event_event_id BIGINT NOT NULL,
                                                file_urls_file_id BIGINT NOT NULL,
-                                               UNIQUE (file_urls_file_id),
-                                               FOREIGN KEY (event_event_id) REFERENCES event (event_id),
-                                               FOREIGN KEY (file_urls_file_id) REFERENCES file (file_id)
+                                               UNIQUE (file_urls_file_id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS file (
@@ -84,8 +75,7 @@ CREATE TABLE IF NOT EXISTS penalty (
                                        penalty_description VARCHAR(255) NOT NULL,
                                        created_at DATETIME(6),
                                        modified_at DATETIME(6),
-                                       PRIMARY KEY (penalty_id),
-                                       FOREIGN KEY (user_id) REFERENCES users (user_id)
+                                       PRIMARY KEY (penalty_id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS post (
@@ -97,24 +87,19 @@ CREATE TABLE IF NOT EXISTS post (
                                     total_comments BIGINT,
                                     created_at DATETIME(6),
                                     modified_at DATETIME(6),
-                                    PRIMARY KEY (post_id),
-                                    FOREIGN KEY (user_id) REFERENCES users (user_id)
+                                    PRIMARY KEY (post_id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS post_file_urls (
                                               file_urls_file_id BIGINT NOT NULL,
                                               post_post_id BIGINT NOT NULL,
-                                              UNIQUE (file_urls_file_id),
-                                              FOREIGN KEY (file_urls_file_id) REFERENCES file (file_id),
-                                              FOREIGN KEY (post_post_id) REFERENCES post (post_id)
+                                              UNIQUE (file_urls_file_id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS post_parent_comments (
                                                     parent_comments_comment_id BIGINT NOT NULL,
                                                     post_post_id BIGINT NOT NULL,
-                                                    UNIQUE (parent_comments_comment_id),
-                                                    FOREIGN KEY (parent_comments_comment_id) REFERENCES comment (comment_id),
-                                                    FOREIGN KEY (post_post_id) REFERENCES post (post_id)
+                                                    UNIQUE (parent_comments_comment_id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS receipt (
@@ -126,8 +111,7 @@ CREATE TABLE IF NOT EXISTS receipt (
                                        image_url VARCHAR(255),
                                        created_at DATETIME(6),
                                        modified_at DATETIME(6),
-                                       PRIMARY KEY (receipt_id),
-                                       FOREIGN KEY (account_id) REFERENCES account (account_id)
+                                       PRIMARY KEY (receipt_id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS users (
@@ -161,3 +145,52 @@ CREATE TABLE IF NOT EXISTS week (
                                     modified_at DATETIME(6),
                                     PRIMARY KEY (week_id)
 ) ENGINE=InnoDB;
+
+-- Foreign Key Constraints
+ALTER TABLE attendance
+    ADD CONSTRAINT FKjcaqd29v2qy723owsdah2t8vx FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+ALTER TABLE attendance
+    ADD CONSTRAINT FK2r76ie9bkrqenigcqvelf2nnx FOREIGN KEY (week_id) REFERENCES week (week_id);
+
+ALTER TABLE comment
+    ADD CONSTRAINT FKs1slvnkuemjsq2kj4h3vhx7i1 FOREIGN KEY (post_id) REFERENCES post (post_id);
+
+ALTER TABLE comment
+    ADD CONSTRAINT FKqm52p1v3o13hy268he0wcngr5 FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+ALTER TABLE comment_children
+    ADD CONSTRAINT FKhfy6pj40df0q5pdyuei2nadd3 FOREIGN KEY (children_comment_id) REFERENCES comment (comment_id);
+
+ALTER TABLE comment_children
+    ADD CONSTRAINT FKsmnqex4yd57o0g4wl6mwptcm3 FOREIGN KEY (comment_comment_id) REFERENCES comment (comment_id);
+
+ALTER TABLE event
+    ADD CONSTRAINT FK31rxexkqqbeymnpw4d3bf9vsy FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+ALTER TABLE event_file_urls
+    ADD CONSTRAINT FK79wtbc2mtfshl4rq6exnsapd7 FOREIGN KEY (file_urls_file_id) REFERENCES file (file_id);
+
+ALTER TABLE event_file_urls
+    ADD CONSTRAINT FKicqnwj7k0ekl9rsswrxcgcjsl FOREIGN KEY (event_event_id) REFERENCES event (event_id);
+
+ALTER TABLE penalty
+    ADD CONSTRAINT FKqg3stjpb11u1ij1qclpi8ol9m FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+ALTER TABLE post
+    ADD CONSTRAINT FK7ky67sgi7k0ayf22652f7763r FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+ALTER TABLE post_file_urls
+    ADD CONSTRAINT FKmtbf98u6kx0x8r8hldolqqmjj FOREIGN KEY (file_urls_file_id) REFERENCES file (file_id);
+
+ALTER TABLE post_file_urls
+    ADD CONSTRAINT FKiilpq9ykr3rl9au2x99cvntta FOREIGN KEY (post_post_id) REFERENCES post (post_id);
+
+ALTER TABLE post_parent_comments
+    ADD CONSTRAINT FKm4ssgt3wvdhx68wp58m8q66b7 FOREIGN KEY (parent_comments_comment_id) REFERENCES comment (comment_id);
+
+ALTER TABLE post_parent_comments
+    ADD CONSTRAINT FKtm0bqww2mfv9r6nuo89okvbdw FOREIGN KEY (post_post_id) REFERENCES post (post_id);
+
+ALTER TABLE receipt
+    ADD CONSTRAINT FK7jbjwo4ybdl7qtjwkp4kitbh0 FOREIGN KEY (account_id) REFERENCES account (account_id);
