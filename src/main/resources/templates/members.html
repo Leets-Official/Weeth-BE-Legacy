@@ -3,7 +3,6 @@
 <head th:replace="~{fragments/header :: header}">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <script src="/js/auth.js"></script>
     <title>Admin Page</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
@@ -33,6 +32,11 @@
         .table td {
             vertical-align: middle;
         }
+        .form-container {
+            width: 50%;
+            margin: 0 auto; /* Center the form container */
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -55,201 +59,7 @@
     </div>
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        if (getToken()) {
-            loadMembers();
-        } else {
-            showTokenErrorMessage('JWT token is missing. Please log in.');
-        }
-    });
-
-    function loadMembers() {
-        apiRequest('/admin/users/all')
-            .then(response => response.json())
-            .then(data => {
-                const membersList = document.getElementById('membersList');
-                membersList.innerHTML = '';  // Clear existing members before adding new ones
-
-                const membersArray = data.data; // data.data가 배열이라고 가정
-
-                membersArray.forEach(member => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${member.id}</td>
-                        <td>
-                            <div class="member-info">
-                                <div class="info-section"><strong>이름:</strong> ${member.name}</div>
-                                <div class="info-section"><strong>이메일:</strong> ${member.email}</div>
-                                <div class="info-section"><strong>학번:</strong> ${member.studentId}</div>
-                                <div class="info-section"><strong>Tel::</strong> ${member.tel}</div>
-                                <div class="info-section"><strong>학과:</strong> ${member.department}</div>
-                                <div class="info-section"><strong>기수:</strong> ${member.cardinals.join(', ')}</div>
-                                <div class="info-section"><strong>Position:</strong> ${member.position}</div>
-                                <div class="info-section"><strong>가입상태:</strong> ${member.status}</div>
-                                <div class="info-section"><strong>Role:</strong> ${member.role}</div>
-                                <div class="info-section"><strong>출석 횟수:</strong> ${member.attendanceCount}</div>
-                                <div class="info-section"><strong>결석 횟수:</strong> ${member.absenceCount}</div>
-                                <div class="info-section"><strong>출석률:</strong> ${member.attendanceRate ?? 'N/A'}</div>
-                                <div class="info-section"><strong>Created At:</strong> ${member.createdAt}</div>
-                                <div class="info-section"><strong>Modified At:</strong> ${member.modifiedAt}</div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="actions-row">
-                                <button class="btn btn-primary btn-sm" onclick="confirmAction('가입 승인', approveUser, ${member.id})" ${member.status === 'ACTIVE' ? 'disabled' : ''}>가입 승인</button>
-                                ${member.role === 'USER' ?
-                        `<button class="btn btn-primary btn-sm" onclick="confirmAction('관리자로 변경', changeUserRole, ${member.id}, 'ADMIN')">관리자로 변경</button>` :
-                        `<button class="btn btn-danger btn-sm" onclick="confirmAction('사용자로 변경', changeUserRole, ${member.id}, 'USER')">사용자로 변경</button>`
-                    }
-                                <button class="btn btn-danger btn-sm" onclick="confirmAction('유저 추방', deleteUser, ${member.id})">유저 추방</button>
-                                <button class="btn btn-danger btn-sm" onclick="showPenaltyForm(${member.id})">패널티 부여</button>
-                                <button class="btn btn-secondary btn-sm" onclick="confirmAction('비밀번호 초기화', resetPassword, ${member.id})">비밀번호 초기화</button>
-                                <div id="penaltyForm-${member.id}" class="penalty-form" style="display: none;">
-                                    <div class="form-group">
-                                        <label for="penaltyDescription-${member.id}">Penalty Description</label>
-                                        <input type="text" class="form-control" id="penaltyDescription-${member.id}" placeholder="Enter penalty description" required>
-                                    </div>
-                                    <button class="btn btn-success btn-sm mt-2" onclick="confirmAction('패널티 제출', submitPenalty, ${member.id})">Submit</button>
-                                    <button class="btn btn-secondary btn-sm mt-2" onclick="hidePenaltyForm(${member.id})">Close</button>
-                                </div>
-                            </div>
-                        </td>
-                    `;
-                    membersList.appendChild(row);
-                });
-            })
-            .catch(error => {
-                showTokenErrorMessage(error.message);
-                console.error('Error loading members:', error);
-            });
-    }
-
-    function confirmAction(actionName, actionFunction, ...args) {
-        if (confirm(`${actionName} 하시겠습니까? ${actionName === '비밀번호 초기화' ? '초기화시 비밀번호가 학번으로 초기화됩니다.' : ''}`)) {
-            actionFunction(...args);
-        }
-    }
-
-    function approveUser(userId) {
-        apiRequest(`/admin/users?userId=${userId}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => response.text())
-            .then(message => {
-                showApiMessage(message, 'success');
-                loadMembers();
-            })
-            .catch(error => {
-                showApiMessage(error.message, 'danger');
-            });
-    }
-
-    function changeUserRole(userId, role) {
-        apiRequest(`/admin/users/${role}?userId=${userId}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => response.text())
-            .then(message => {
-                showApiMessage(message, 'success');
-                loadMembers();
-            })
-            .catch(error => {
-                showApiMessage(error.message, 'danger');
-            });
-    }
-
-    function deleteUser(userId) {
-        apiRequest(`/admin/users?userId=${userId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ userId: userId })
-        })
-            .then(response => response.text())
-            .then(message => {
-                showApiMessage(message, 'success');
-                loadMembers();
-            })
-            .catch(error => {
-                showApiMessage(error.message, 'danger');
-            });
-    }
-
-    function resetPassword(userId) {
-        apiRequest(`/admin/users/reset?userId=${userId}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => response.text())
-            .then(message => {
-                showApiMessage(message, 'success');
-            })
-            .catch(error => {
-                showApiMessage(error.message, 'danger');
-            });
-    }
-
-    function showPenaltyForm(userId) {
-        const form = document.getElementById(`penaltyForm-${userId}`);
-        form.style.display = 'inline-block';
-    }
-
-    function hidePenaltyForm(userId) {
-        const form = document.getElementById(`penaltyForm-${userId}`);
-        form.style.display = 'none';
-    }
-
-    function submitPenalty(userId) {
-        const penaltyDescription = document.getElementById(`penaltyDescription-${userId}`).value;
-
-        const data = {
-            userId: userId,
-            penaltyDescription: penaltyDescription
-        };
-
-        apiRequest('/admin/penalty', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => response.text())
-            .then(message => {
-                showApiMessage(message, 'success');
-                hidePenaltyForm(userId);
-            })
-            .catch(error => {
-                showApiMessage(error.message, 'danger');
-            });
-    }
-
-    function showTokenErrorMessage(message) {
-        const tokenErrorMessageDiv = document.getElementById('tokenErrorMessage');
-        tokenErrorMessageDiv.style.display = 'block';
-        tokenErrorMessageDiv.innerText = message;
-    }
-
-    function showApiMessage(message, type) {
-        const apiMessageDiv = document.getElementById('apiMessage');
-        apiMessageDiv.className = `alert alert-${type}`;
-        apiMessageDiv.style.display = 'block';
-        apiMessageDiv.innerText = message;
-        setTimeout(() => {
-            apiMessageDiv.style.display = 'none';
-        }, 5000);
-    }
-</script>
+<script src="/js/auth.js"></script>
+<script src="/js/members.js"></script>
 </body>
 </html>

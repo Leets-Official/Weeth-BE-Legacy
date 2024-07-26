@@ -49,7 +49,7 @@
         if (getToken()) {
             loadPenalties();
         } else {
-            showApiMessage('JWT token is missing. Please log in.', 'danger');
+            alert('JWT token is missing. Please log in.');
         }
     });
 
@@ -77,41 +77,29 @@
                 });
             })
             .catch(error => {
-                showApiMessage(error.message, 'danger');
+                alert(error.message);
             });
     }
 
     function confirmDeletePenalty(penaltyId) {
         if (confirm("삭제 하시겠습니까?")) {
-            deletePenalty(penaltyId);
+            deletePenalty(penaltyId)
+                .then(message => {
+                    alert(`패널티 삭제 성공: ${message}`);
+                })
+                .catch(error => {
+                    alert(`패널티 삭제 실패: ${error.message}`);
+                });
         }
     }
 
     function deletePenalty(penaltyId) {
-        apiRequest(`/admin/penalty?penaltyId=${penaltyId}`, {
+        return apiRequest(`/admin/penalty?penaltyId=${penaltyId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
             }
-        })
-            .then(response => response.text())
-            .then(message => {
-                showApiMessage(message, 'success');
-                loadPenalties(); // Refresh the penalty list
-            })
-            .catch(error => {
-                showApiMessage(error.message, 'danger');
-            });
-    }
-
-    function showApiMessage(message, type) {
-        const apiMessageDiv = document.getElementById('apiMessage');
-        apiMessageDiv.className = `alert alert-${type}`;
-        apiMessageDiv.style.display = 'block';
-        apiMessageDiv.innerText = message;
-        setTimeout(() => {
-            apiMessageDiv.style.display = 'none';
-        }, 5000);
+        }).then(response => response.text());
     }
 </script>
 </body>
