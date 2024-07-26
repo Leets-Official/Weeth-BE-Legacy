@@ -104,13 +104,12 @@
         })
             .then(response => response.text())
             .then(message => {
-                showApiMessage(message, 'success');
+                alert(`Success: ${message}`);
                 document.getElementById('totalAccountForm').style.display = 'none';
             })
             .catch(error => {
-                showApiMessage(error.message, 'danger');
+                alert(`Error: ${error.message}`);
             });
-
     });
 
     document.getElementById('manageAccountButton').addEventListener('click', function() {
@@ -123,49 +122,41 @@
     });
 
     document.getElementById('submitAccountButton').addEventListener('click', function() {
-        if (confirm('회비 정보를 제출하시겠습니까?')) {
-            const cardinal = document.getElementById('cardinal').value;
-            const amount = document.getElementById('amount').value;
-            const description = document.getElementById('description').value;
-            const date = document.getElementById('date').value;
-            const fileInput = document.getElementById('file');
-            const files = fileInput.files;
-
-            const formData = new FormData();
-            formData.append('dto', new Blob([JSON.stringify({
-                amount: parseInt(amount),
-                description: description,
-                date: date
-            })], { type: 'application/json' }));
-
-            for (let i = 0; i < files.length; i++) {
-                formData.append('files', files[i]);
-            }
-
-            fetch(`/admin/account/${cardinal}`, {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => response.text())
-                .then(message => {
-                    showApiMessage(message, 'success');
-                    document.getElementById('manageAccountForm').style.display = 'none';
-                })
-                .catch(error => {
-                    showApiMessage(error.message, 'danger');
-                });
+        if (!confirm('회비 정보를 제출하시겠습니까?')) {
+            return;
         }
-    });
 
-    function showApiMessage(message, type) {
-        const apiMessageDiv = document.getElementById('apiMessage');
-        apiMessageDiv.className = `alert alert-${type}`;
-        apiMessageDiv.style.display = 'block';
-        apiMessageDiv.innerText = message;
-        setTimeout(() => {
-            apiMessageDiv.style.display = 'none';
-        }, 5000);
-    }
+        const cardinal = document.getElementById('cardinal').value;
+        const amount = document.getElementById('amount').value;
+        const description = document.getElementById('description').value;
+        const date = document.getElementById('date').value;
+        const fileInput = document.getElementById('file');
+        const files = fileInput.files;
+
+        const formData = new FormData();
+        formData.append('dto', new Blob([JSON.stringify({
+            amount: parseInt(amount),
+            description: description,
+            date: date
+        })], { type: 'application/json' }));
+
+        for (let i = 0; i < files.length; i++) {
+            formData.append('files', files[i]);
+        }
+
+        apiRequest(`/admin/account/${cardinal}`, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.text())
+            .then(message => {
+                alert(`Success: ${message}`);
+                document.getElementById('manageAccountForm').style.display = 'none';
+            })
+            .catch(error => {
+                alert(`Error: ${error.message}`);
+            });
+    });
 </script>
 </body>
 </html>

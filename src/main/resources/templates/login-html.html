@@ -40,7 +40,7 @@
 
         console.log("Sending login request:", { email, password });
 
-        fetch('/login', {
+        apiRequest('/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
