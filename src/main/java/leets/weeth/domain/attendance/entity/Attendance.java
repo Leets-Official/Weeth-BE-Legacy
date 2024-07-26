@@ -2,6 +2,7 @@ package leets.weeth.domain.attendance.entity;
 
 import jakarta.persistence.*;
 import leets.weeth.domain.user.entity.User;
+import leets.weeth.global.common.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Attendance {
+public class Attendance extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
