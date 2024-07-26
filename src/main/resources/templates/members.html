@@ -5,38 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <script src="/js/auth.js"></script>
     <title>Admin Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         .actions-row {
             display: flex;
-            justify-content: flex-start;
+            justify-content: space-around;
             gap: 10px;
             align-items: center;
+            margin-top: 10px;
         }
         .penalty-form {
             display: inline-block;
             margin-left: 10px;
             vertical-align: middle;
         }
+        .member-info {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .info-section {
+            margin-bottom: 10px;
+        }
+        .table td {
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
-<div class="container">
+<div class="container mt-5">
     <div th:replace="~{fragments/bodyHeader :: bodyHeader}"></div>
-    <h1>Manage Members</h1>
+    <h1 class="mb-4">사용자 관리</h1>
     <div>
-        <button id="loadMembers" class="btn btn-primary">Load Members</button>
-        <table class="table mt-3">
-            <thead>
+        <table class="table table-hover">
+            <thead class="thead-dark">
             <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Student ID</th>
-                <th>Tel</th>
-                <th>Department</th>
-                <th>Email</th>
-                <th>Cardinals</th>
-                <th>Position</th>
-                <th>Role</th>
+                <th>Information</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody id="membersList"></tbody>
@@ -48,65 +57,80 @@
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 <script>
-    document.getElementById('loadMembers').addEventListener('click', function() {
-        apiRequest('/users/all')
+    document.addEventListener('DOMContentLoaded', function() {
+        if (getToken()) {
+            loadMembers();
+        } else {
+            showTokenErrorMessage('JWT token is missing. Please log in.');
+        }
+    });
+
+    function loadMembers() {
+        apiRequest('/admin/users/all')
             .then(response => response.json())
             .then(data => {
                 const membersList = document.getElementById('membersList');
                 membersList.innerHTML = '';  // Clear existing members before adding new ones
 
-                const members = new Set();  // Use a set to track unique members
-                Object.values(data.data).forEach(membersArray => {
-                    membersArray.forEach(member => {
-                        const memberKey = `${member.id}-${member.email}`;  // Use a combination of id and email to ensure uniqueness
-                        if (!members.has(memberKey)) {
-                            members.add(memberKey);
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>${member.id}</td>
-                                <td>${member.name}</td>
-                                <td>${member.studentId}</td>
-                                <td>${member.tel}</td>
-                                <td>${member.department}</td>
-                                <td>${member.email}</td>
-                                <td>${member.cardinals.join(', ')}</td>
-                                <td>${member.position}</td>
-                                <td>${member.role}</td>
-                            `;
-                            membersList.appendChild(row);
+                const membersArray = data.data; // data.data가 배열이라고 가정
 
-                            const actionsRow = document.createElement('tr');
-                            actionsRow.innerHTML = `
-                                <td colspan="9">
-                                    <div class="actions-row">
-                                        <button class="btn btn-primary" onclick="approveUser(${member.id})" ${member.status === 'ACTIVE' ? 'disabled' : ''}>가입 승인</button>
-                                        ${member.position === 'USER' ?
-                                `<button class="btn btn-primary" onclick="changeUserRole(${member.id}, 'ADMIN')">관리자로 변경</button>` :
-                                `<button class="btn btn-outline-danger" onclick="changeUserRole(${member.id}, 'USER')">사용자로 변경</button>`
-                            }
-                                        <button class="btn btn-danger" onclick="deleteUser(${member.id})">유저 추방</button>
-                                        <button class="btn btn-warning" onclick="showPenaltyForm(${member.id})">패널티 부여</button>
-                                        <div id="penaltyForm-${member.id}" class="penalty-form" style="display: none;">
-                                            <div class="form-group">
-                                                <label for="penaltyDescription-${member.id}">Penalty Description</label>
-                                                <input type="text" class="form-control" id="penaltyDescription-${member.id}" placeholder="Enter penalty description" required>
-                                            </div>
-                                            <button class="btn btn-success mt-2" onclick="submitPenalty(${member.id})">Submit</button>
-                                            <button class="btn btn-secondary mt-2" onclick="hidePenaltyForm(${member.id})">Close</button>
-                                        </div>
+                membersArray.forEach(member => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${member.id}</td>
+                        <td>
+                            <div class="member-info">
+                                <div class="info-section"><strong>이름:</strong> ${member.name}</div>
+                                <div class="info-section"><strong>이메일:</strong> ${member.email}</div>
+                                <div class="info-section"><strong>학번:</strong> ${member.studentId}</div>
+                                <div class="info-section"><strong>Tel::</strong> ${member.tel}</div>
+                                <div class="info-section"><strong>학과:</strong> ${member.department}</div>
+                                <div class="info-section"><strong>기수:</strong> ${member.cardinals.join(', ')}</div>
+                                <div class="info-section"><strong>Position:</strong> ${member.position}</div>
+                                <div class="info-section"><strong>가입상태:</strong> ${member.status}</div>
+                                <div class="info-section"><strong>Role:</strong> ${member.role}</div>
+                                <div class="info-section"><strong>출석 횟수:</strong> ${member.attendanceCount}</div>
+                                <div class="info-section"><strong>결석 횟수:</strong> ${member.absenceCount}</div>
+                                <div class="info-section"><strong>출석률:</strong> ${member.attendanceRate ?? 'N/A'}</div>
+                                <div class="info-section"><strong>Created At:</strong> ${member.createdAt}</div>
+                                <div class="info-section"><strong>Modified At:</strong> ${member.modifiedAt}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="actions-row">
+                                <button class="btn btn-primary btn-sm" onclick="confirmAction('가입 승인', approveUser, ${member.id})" ${member.status === 'ACTIVE' ? 'disabled' : ''}>가입 승인</button>
+                                ${member.role === 'USER' ?
+                        `<button class="btn btn-primary btn-sm" onclick="confirmAction('관리자로 변경', changeUserRole, ${member.id}, 'ADMIN')">관리자로 변경</button>` :
+                        `<button class="btn btn-danger btn-sm" onclick="confirmAction('사용자로 변경', changeUserRole, ${member.id}, 'USER')">사용자로 변경</button>`
+                    }
+                                <button class="btn btn-danger btn-sm" onclick="confirmAction('유저 추방', deleteUser, ${member.id})">유저 추방</button>
+                                <button class="btn btn-danger btn-sm" onclick="showPenaltyForm(${member.id})">패널티 부여</button>
+                                <button class="btn btn-secondary btn-sm" onclick="confirmAction('비밀번호 초기화', resetPassword, ${member.id})">비밀번호 초기화</button>
+                                <div id="penaltyForm-${member.id}" class="penalty-form" style="display: none;">
+                                    <div class="form-group">
+                                        <label for="penaltyDescription-${member.id}">Penalty Description</label>
+                                        <input type="text" class="form-control" id="penaltyDescription-${member.id}" placeholder="Enter penalty description" required>
                                     </div>
-                                </td>
-                            `;
-                            membersList.appendChild(actionsRow);
-                        }
-                    });
+                                    <button class="btn btn-success btn-sm mt-2" onclick="confirmAction('패널티 제출', submitPenalty, ${member.id})">Submit</button>
+                                    <button class="btn btn-secondary btn-sm mt-2" onclick="hidePenaltyForm(${member.id})">Close</button>
+                                </div>
+                            </div>
+                        </td>
+                    `;
+                    membersList.appendChild(row);
                 });
             })
             .catch(error => {
                 showTokenErrorMessage(error.message);
                 console.error('Error loading members:', error);
             });
-    });
+    }
+
+    function confirmAction(actionName, actionFunction, ...args) {
+        if (confirm(`${actionName} 하시겠습니까? ${actionName === '비밀번호 초기화' ? '초기화시 비밀번호가 학번으로 초기화됩니다.' : ''}`)) {
+            actionFunction(...args);
+        }
+    }
 
     function approveUser(userId) {
         apiRequest(`/admin/users?userId=${userId}`, {
@@ -118,6 +142,7 @@
             .then(response => response.text())
             .then(message => {
                 showApiMessage(message, 'success');
+                loadMembers();
             })
             .catch(error => {
                 showApiMessage(error.message, 'danger');
@@ -134,6 +159,7 @@
             .then(response => response.text())
             .then(message => {
                 showApiMessage(message, 'success');
+                loadMembers();
             })
             .catch(error => {
                 showApiMessage(error.message, 'danger');
@@ -147,6 +173,23 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ userId: userId })
+        })
+            .then(response => response.text())
+            .then(message => {
+                showApiMessage(message, 'success');
+                loadMembers();
+            })
+            .catch(error => {
+                showApiMessage(error.message, 'danger');
+            });
+    }
+
+    function resetPassword(userId) {
+        apiRequest(`/admin/users/reset?userId=${userId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            }
         })
             .then(response => response.text())
             .then(message => {
@@ -190,6 +233,22 @@
             .catch(error => {
                 showApiMessage(error.message, 'danger');
             });
+    }
+
+    function showTokenErrorMessage(message) {
+        const tokenErrorMessageDiv = document.getElementById('tokenErrorMessage');
+        tokenErrorMessageDiv.style.display = 'block';
+        tokenErrorMessageDiv.innerText = message;
+    }
+
+    function showApiMessage(message, type) {
+        const apiMessageDiv = document.getElementById('apiMessage');
+        apiMessageDiv.className = `alert alert-${type}`;
+        apiMessageDiv.style.display = 'block';
+        apiMessageDiv.innerText = message;
+        setTimeout(() => {
+            apiMessageDiv.style.display = 'none';
+        }, 5000);
     }
 </script>
 </body>

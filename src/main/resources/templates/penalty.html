@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="/js/auth.js"></script>
+    <title>Penalty Management</title>
+    <style>
+        .penalty-item {
+            margin-bottom: 1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .penalty-details {
+            flex-grow: 1;
+        }
+        .penalty-actions {
+            margin-left: 1em;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div th:replace="~{fragments/bodyHeader :: bodyHeader}"></div>
+    <h1>패널티 관리</h1>
+    <div>
+        <table class="table mt-3">
+            <thead>
+            <tr>
+                <th>User ID</th>
+                <th>User Name</th>
+                <th>Penalty ID</th>
+                <th>Description</th>
+                <th>Time</th>
+                <th>Count</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="penaltyList"></tbody>
+        </table>
+        <div id="apiMessage" class="alert mt-3" style="display: none;"></div>
+    </div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (getToken()) {
+            loadPenalties();
+        } else {
+            showApiMessage('JWT token is missing. Please log in.', 'danger');
+        }
+    });
+
+    function loadPenalties() {
+        const penaltyList = document.getElementById('penaltyList');
+        apiRequest('/admin/penalty/all')
+            .then(response => response.json())
+            .then(data => {
+                penaltyList.innerHTML = '';
+                const penalties = data.data;
+                penalties.forEach(penalty => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${penalty.userId}</td>
+                        <td>${penalty.userName}</td>
+                        <td>${penalty.penaltyId}</td>
+                        <td>${penalty.penaltyDescription}</td>
+                        <td>${penalty.time}</td>
+                        <td>${penalty.penaltyCount}</td>
+                        <td>
+                            <button class="btn btn-danger" onclick="confirmDeletePenalty(${penalty.penaltyId})">삭제</button>
+                        </td>
+                    `;
+                    penaltyList.appendChild(row);
+                });
+            })
+            .catch(error => {
+                showApiMessage(error.message, 'danger');
+            });
+    }
+
+    function confirmDeletePenalty(penaltyId) {
+        if (confirm("삭제 하시겠습니까?")) {
+            deletePenalty(penaltyId);
+        }
+    }
+
+    function deletePenalty(penaltyId) {
+        apiRequest(`/admin/penalty?penaltyId=${penaltyId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.text())
+            .then(message => {
+                showApiMessage(message, 'success');
+                loadPenalties(); // Refresh the penalty list
+            })
+            .catch(error => {
+                showApiMessage(error.message, 'danger');
+            });
+    }
+
+    function showApiMessage(message, type) {
+        const apiMessageDiv = document.getElementById('apiMessage');
+        apiMessageDiv.className = `alert alert-${type}`;
+        apiMessageDiv.style.display = 'block';
+        apiMessageDiv.innerText = message;
+        setTimeout(() => {
+            apiMessageDiv.style.display = 'none';
+        }, 5000);
+    }
+</script>
+</body>
+</html>
