@@ -17,7 +17,6 @@ public class ReceiptDTO {
     public record Spend(
             @NotNull Integer amount,
             String description,
-            String imageUrl,
             LocalDate date
     ) {}
 }
