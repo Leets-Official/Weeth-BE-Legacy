@@ -129,7 +129,19 @@ public class User extends BaseEntity {
                 .count();
     }
 
+    public Integer getAbsenceCount() {
+        return (int) this.getAttendances().stream()
+                .map(Attendance::getWeek)
+                .filter(week -> week.getDate().isEqual(LocalDate.now()) || week.getDate().isBefore(LocalDate.now()))
+                .count() // 현재 날짜까지의 모임 횟수
+                - this.getAttendanceCount();    // 현재 날짜까지의 출석 횟수
+    }
+
     public void addPenalty(Penalty penalty){
         this.penalties.add(penalty);
+    }
+
+    public void reset(PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(studentId);
     }
 }

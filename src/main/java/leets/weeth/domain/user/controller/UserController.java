@@ -38,7 +38,7 @@ public class UserController {
     @Operation(summary = "동아리 회원 조회 (전체/기수별)")
     @GetMapping("/all")
     public CommonResponse<Map<Integer, List<UserDTO.Response>>> getUsers() {
-        return CommonResponse.createSuccess(userService.findUsers());
+        return CommonResponse.createSuccess(userService.findAll());
     }
 
     @Operation(summary = "내 정보 조회")
