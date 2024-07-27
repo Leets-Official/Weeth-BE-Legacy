@@ -10,6 +10,15 @@
             width: 50%;
             margin: 0 auto; /* Center the form container */
         }
+        .account-info {
+            margin-top: 20px;
+        }
+        .d-inline-block {
+            display: inline-block;
+        }
+        .w-auto {
+            width: auto;
+        }
     </style>
 </head>
 <body>
@@ -17,146 +26,69 @@
     <div th:replace="~{fragments/bodyHeader :: bodyHeader}"></div>
     <div class="container">
         <h1>회비 관리</h1>
-        <div>
-            <button id="totalAccountButton" class="btn btn-secondary mt-3">총 회비 등록</button>
-            <div id="totalAccountForm" class="form-container mt-3" style="display:none;">
-                <div class="form-group">
-                    <label for="totalCardinal">Cardinal</label>
-                    <input type="number" class="form-control" id="totalCardinal" placeholder="Enter cardinal" required>
+        <div class="row">
+            <div class="col-md-8">
+                <div>
+                    <label for="checkCardinal">Cardinal</label>
+                    <input type="number" class="form-control d-inline-block w-auto" id="checkCardinal" placeholder="Enter cardinal" required>
+                    <button id="checkAccountButton" class="btn btn-secondary mt-3">회비 조회</button>
                 </div>
-                <div class="form-group">
-                    <label for="totalDescription">Description</label>
-                    <input type="text" class="form-control" id="totalDescription" placeholder="Enter description" required>
-                </div>
-                <div class="form-group">
-                    <label for="totalAmount">Total Amount</label>
-                    <input type="number" class="form-control" id="totalAmount" placeholder="Enter total amount" required>
-                </div>
-                <button id="submitTotalAccountButton" class="btn btn-success mt-2">Submit</button>
-                <button id="closeTotalAccountFormButton" class="btn btn-secondary mt-2">Close</button>
+                <div id="accountInfo" class="account-info" style="display:none;"></div>
             </div>
-        </div>
-        <hr>
-        <div>
-            <button id="manageAccountButton" class="btn btn-primary">회비 정보 입력</button>
-            <div id="manageAccountForm" class="form-container mt-3" style="display:none;">
-                <div class="form-group">
-                    <label for="cardinal">Cardinal</label>
-                    <input type="number" class="form-control" id="cardinal" placeholder="Enter cardinal" required>
+            <div class="col-md-4">
+                <div>
+                    <button id="totalAccountButton" class="btn btn-secondary mt-3">총 회비 등록</button>
+                    <div id="totalAccountForm" class="form-container mt-3" style="display:none;">
+                        <div class="form-group">
+                            <label for="totalCardinal">Cardinal</label>
+                            <input type="number" class="form-control" id="totalCardinal" placeholder="Enter cardinal" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="totalDescription">Description</label>
+                            <input type="text" class="form-control" id="totalDescription" placeholder="Enter description" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="totalAmount">Total Amount</label>
+                            <input type="number" class="form-control" id="totalAmount" placeholder="Enter total amount" required>
+                        </div>
+                        <button id="submitTotalAccountButton" class="btn btn-success mt-2">Submit</button>
+                        <button id="closeTotalAccountFormButton" class="btn btn-secondary mt-2">Close</button>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="amount">Amount</label>
-                    <input type="number" class="form-control" id="amount" placeholder="Enter amount" required>
+                <hr>
+                <div>
+                    <button id="manageAccountButton" class="btn btn-primary">회비 정보 입력</button>
+                    <div id="manageAccountForm" class="form-container mt-3" style="display:none;">
+                        <div class="form-group">
+                            <label for="cardinal">Cardinal</label>
+                            <input type="number" class="form-control" id="cardinal" placeholder="Enter cardinal" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">Amount</label>
+                            <input type="number" class="form-control" id="amount" placeholder="Enter amount" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <input type="text" class="form-control" id="description" placeholder="Enter description" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" class="form-control" id="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="file">File</label>
+                            <input type="file" class="form-control" id="file" multiple>
+                        </div>
+                        <button id="submitAccountButton" class="btn btn-success mt-2">Submit</button>
+                        <button id="closeAccountFormButton" class="btn btn-secondary mt-2">Close</button>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <input type="text" class="form-control" id="description" placeholder="Enter description" required>
-                </div>
-                <div class="form-group">
-                    <label for="date">Date</label>
-                    <input type="date" class="form-control" id="date" required>
-                </div>
-                <div class="form-group">
-                    <label for="file">File</label>
-                    <input type="file" class="form-control" id="file" multiple>
-                </div>
-                <button id="submitAccountButton" class="btn btn-success mt-2">Submit</button>
-                <button id="closeAccountFormButton" class="btn btn-secondary mt-2">Close</button>
             </div>
-            <div id="apiMessage" class="alert mt-3" style="display: none;"></div>
         </div>
     </div>
     <div th:replace="~{fragments/footer :: footer}"></div>
 </div>
-
 <script src="/js/auth.js"></script>
-<script>
-    document.getElementById('totalAccountButton').addEventListener('click', function() {
-        const form = document.getElementById('totalAccountForm');
-        form.style.display = (form.style.display === 'block') ? 'none' : 'block';
-    });
-
-    document.getElementById('closeTotalAccountFormButton').addEventListener('click', function() {
-        document.getElementById('totalAccountForm').style.display = 'none';
-    });
-
-    document.getElementById('submitTotalAccountButton').addEventListener('click', function() {
-        if (!confirm('총 회비 정보를 제출하시겠습니까?')) {
-            return;
-        }
-
-        const cardinal = document.getElementById('totalCardinal').value;
-        const description = document.getElementById('totalDescription').value;
-        const total = document.getElementById('totalAmount').value;
-
-        const data = {
-            description: description,
-            total: parseInt(total),
-            cardinal: parseInt(cardinal)
-        };
-
-        apiRequest('/admin/account', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => response.text())
-            .then(message => {
-                alert(`Success: ${message}`);
-                document.getElementById('totalAccountForm').style.display = 'none';
-            })
-            .catch(error => {
-                alert(`Error: ${error.message}`);
-            });
-    });
-
-    document.getElementById('manageAccountButton').addEventListener('click', function() {
-        const form = document.getElementById('manageAccountForm');
-        form.style.display = (form.style.display === 'block') ? 'none' : 'block';
-    });
-
-    document.getElementById('closeAccountFormButton').addEventListener('click', function() {
-        document.getElementById('manageAccountForm').style.display = 'none';
-    });
-
-    document.getElementById('submitAccountButton').addEventListener('click', function() {
-        if (!confirm('회비 정보를 제출하시겠습니까?')) {
-            return;
-        }
-
-        const cardinal = document.getElementById('cardinal').value;
-        const amount = document.getElementById('amount').value;
-        const description = document.getElementById('description').value;
-        const date = document.getElementById('date').value;
-        const fileInput = document.getElementById('file');
-        const files = fileInput.files;
-
-        const formData = new FormData();
-        formData.append('dto', new Blob([JSON.stringify({
-            amount: parseInt(amount),
-            description: description,
-            date: date
-        })], { type: 'application/json' }));
-
-        for (let i = 0; i < files.length; i++) {
-            formData.append('files', files[i]);
-        }
-
-        apiRequest(`/admin/account/${cardinal}`, {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.text())
-            .then(message => {
-                alert(`Success: ${message}`);
-                document.getElementById('manageAccountForm').style.display = 'none';
-            })
-            .catch(error => {
-                alert(`Error: ${error.message}`);
-            });
-    });
-</script>
+<script src="/js/account.js"></script>
 </body>
 </html>
