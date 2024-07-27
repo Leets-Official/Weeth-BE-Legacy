@@ -45,15 +45,22 @@ public class AttendanceEventService {
         eventRepository.save(mapper.fromAttendanceEventDto(requestDto, user));
     }
 
-    // 출석 일정 + Code 한 번에 조회
     @Transactional(readOnly = true)
     public List<ResponseAttendanceEvent> getAttendanceEvents() {
+        // 이벤트를 타입별로 정렬된 목록으로 조회
         List<Event> events = eventRepository.findAllByType(Type.ATTENDANCE, Sort.by(Sort.Direction.ASC, "startDateTime"));
+        // 모든 주간 데이터를 조회
         List<Week> weeks = weekRepository.findAll();
 
+        // 중복된 날짜를 가진 주간 데이터가 있을 경우, 하나의 주간 데이터만 유지
         Map<LocalDate, Week> weekMap = weeks.stream()
-                .collect(Collectors.toMap(Week::getDate, week -> week));
+                .collect(Collectors.toMap(
+                        Week::getDate,
+                        week -> week,
+                        (existing, replacement) -> existing // 중복 키가 발생할 경우 기존 값을 유지
+                ));
 
+        // 이벤트 목록을 순회하며 주간 데이터와 매핑하여 DTO로 변환
         return events.stream()
                 .map(event -> {
                     Week matchingWeek = weekMap.get(event.getStartDateTime().toLocalDate());
