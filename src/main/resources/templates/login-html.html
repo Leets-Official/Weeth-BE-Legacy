@@ -44,7 +44,8 @@
 
         console.log("Sending login request:", { email, password });
 
-        apiRequest(`${apiEndpoint}/login`, {
+        // apiRequest는 token 검사를 하기 때문에 로그인 에만 fetch 사용
+        fetch(`${apiEndpoint}/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
