@@ -1,3 +1,7 @@
+const apiEndpoint = (window.location.hostname === 'localhost')
+    ? 'http://localhost:8080'
+    : 'https://api.weeth.site';
+
 document.addEventListener('DOMContentLoaded', function() {
     if (getToken()) {
         loadPenalties();
@@ -8,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function loadPenalties() {
     const penaltyList = document.getElementById('penaltyList');
-    apiRequest('/admin/penalty/all')
+    apiRequest(`${apiEndpoint}/admin/penalty/all`)
         .then(response => response.json())
         .then(data => {
             penaltyList.innerHTML = '';
@@ -47,7 +51,7 @@ function confirmDeletePenalty(penaltyId) {
 }
 
 function deletePenalty(penaltyId) {
-    return apiRequest(`/admin/penalty?penaltyId=${penaltyId}`, {
+    return apiRequest(`${apiEndpoint}/admin/penalty?penaltyId=${penaltyId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'

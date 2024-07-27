@@ -1,3 +1,7 @@
+const apiEndpoint = (window.location.hostname === 'localhost')
+    ? 'http://localhost:8080'
+    : 'https://api.weeth.site';
+
 document.addEventListener('DOMContentLoaded', function () {
     if (getToken()) {
         loadMembers();
@@ -7,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function loadMembers() {
-    apiRequest('/admin/users/all')
+    apiRequest(`${apiEndpoint}/admin/users/all`)
         .then(response => response.json())
         .then(data => {
             const membersList = document.getElementById('membersList');
@@ -89,7 +93,7 @@ function confirmAction(actionName, actionFunction, ...args) {
 }
 
 function approveUser(userId) {
-    return apiRequest(`/admin/users?userId=${userId}`, {
+    return apiRequest(`${apiEndpoint}/admin/users?userId=${userId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
@@ -98,7 +102,7 @@ function approveUser(userId) {
 }
 
 function changeUserRole(userId, role) {
-    return apiRequest(`/admin/users/${role}?userId=${userId}`, {
+    return apiRequest(`${apiEndpoint}/admin/users/${role}?userId=${userId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
@@ -107,7 +111,7 @@ function changeUserRole(userId, role) {
 }
 
 function deleteUser(userId) {
-    return apiRequest(`/admin/users?userId=${userId}`, {
+    return apiRequest(`${apiEndpoint}/admin/users?userId=${userId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
@@ -117,7 +121,7 @@ function deleteUser(userId) {
 }
 
 function resetPassword(userId) {
-    return apiRequest(`/admin/users/reset?userId=${userId}`, {
+    return apiRequest(`${apiEndpoint}/admin/users/reset?userId=${userId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
@@ -143,7 +147,7 @@ function submitPenalty(userId) {
         penaltyDescription: penaltyDescription
     };
 
-    return apiRequest('/admin/penalty', {
+    return apiRequest(`${apiEndpoint}/admin/penalty`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -166,7 +170,7 @@ function submitNextCardinal(userId) {
     const cardinalInput = document.getElementById(`nextCardinal-${userId}`);
     const cardinal = cardinalInput.value;
 
-    return apiRequest(`/admin/users/apply/${cardinal}?userId=${userId}`, {
+    return apiRequest(`${apiEndpoint}/admin/users/apply/${cardinal}?userId=${userId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

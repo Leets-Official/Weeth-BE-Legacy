@@ -1,3 +1,7 @@
+const apiEndpoint = (window.location.hostname === 'localhost')
+    ? 'http://localhost:8080'
+    : 'https://api.weeth.site';
+
 document.addEventListener('DOMContentLoaded', function () {
     loadAttendanceEvents();
 
@@ -24,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
             date: date
         };
 
-        apiRequest('/admin/attendances', {
+        apiRequest(`${apiEndpoint}/admin/attendances`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -64,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
             cardinal: parseInt(cardinal)
         };
 
-        apiRequest('/admin/attendance-event', {
+        apiRequest(`${apiEndpoint}/admin/attendance-event`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -84,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('checkAttendanceCodeButton').addEventListener('click', function () {
         const cardinal = document.getElementById('checkCardinal').value;
 
-        apiRequest(`/admin/attendances/${cardinal}`, {
+        apiRequest(`${apiEndpoint}/admin/attendances/${cardinal}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -105,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function loadAttendanceEvents() {
-    apiRequest('/admin/attendance-event', {
+    apiRequest(`${apiEndpoint}/admin/attendance-event`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'

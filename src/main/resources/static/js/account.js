@@ -1,3 +1,7 @@
+const apiEndpoint = (window.location.hostname === 'localhost')
+    ? 'http://localhost:8080'
+    : 'https://api.weeth.site';
+
 document.getElementById('totalAccountButton').addEventListener('click', function() {
     const form = document.getElementById('totalAccountForm');
     form.style.display = (form.style.display === 'block') ? 'none' : 'block';
@@ -22,7 +26,7 @@ document.getElementById('submitTotalAccountButton').addEventListener('click', fu
         cardinal: parseInt(cardinal)
     };
 
-    apiRequest('/admin/account', {
+    apiRequest(`${apiEndpoint}/admin/account`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -71,7 +75,7 @@ document.getElementById('submitAccountButton').addEventListener('click', functio
         formData.append('files', files[i]);
     }
 
-    apiRequest(`/admin/account/${cardinal}`, {
+    apiRequest(`${apiEndpoint}/admin/account/${cardinal}`, {
         method: 'POST',
         body: formData
     })
@@ -88,7 +92,7 @@ document.getElementById('submitAccountButton').addEventListener('click', functio
 document.getElementById('checkAccountButton').addEventListener('click', function() {
     const cardinal = document.getElementById('checkCardinal').value;
 
-    apiRequest(`/account/${cardinal}`, {
+    apiRequest(`${apiEndpoint}/account/${cardinal}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -135,7 +139,7 @@ function displayAccountInfo(account) {
 
 function deleteReceipt(receiptId) {
     if (confirm('삭제하시겠습니까?')) {
-        apiRequest(`/admin/account/${receiptId}`, {
+        apiRequest(`${apiEndpoint}/admin/account/${receiptId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -145,7 +149,7 @@ function deleteReceipt(receiptId) {
             .then(message => {
                 alert(`Success: ${message}`);
                 const cardinal = document.getElementById('checkCardinal').value;
-                apiRequest(`/admin/account/${cardinal}`, {
+                apiRequest(`${apiEndpoint}/admin/account/${cardinal}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
