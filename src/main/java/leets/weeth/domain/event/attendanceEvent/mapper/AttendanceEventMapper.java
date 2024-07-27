@@ -1,6 +1,9 @@
 package leets.weeth.domain.event.attendanceEvent.mapper;
 
+import leets.weeth.domain.attendance.dto.ResponseWeekCode;
+import leets.weeth.domain.attendance.entity.Week;
 import leets.weeth.domain.event.attendanceEvent.dto.RequestAttendanceEvent;
+import leets.weeth.domain.event.attendanceEvent.dto.ResponseAttendanceEvent;
 import leets.weeth.domain.event.entity.Event;
 import leets.weeth.domain.user.entity.User;
 import org.mapstruct.*;
@@ -18,4 +21,18 @@ public interface AttendanceEventMapper {
             @Mapping(target = "id", ignore = true)
     })
     Event fromAttendanceEventDto(RequestAttendanceEvent dto, User user);
+
+
+    @Mappings({
+            @Mapping(target = "weekCode", source = "week"),
+            @Mapping(target = "cardinal", source = "event.cardinal")
+    })
+    ResponseAttendanceEvent toAttendanceEventDto(Event event, Week week);
+
+    default ResponseWeekCode toResponseWeekCode(Week week) {
+        if (week == null) {
+            return null;
+        }
+        return new ResponseWeekCode(week);
+    }
 }
