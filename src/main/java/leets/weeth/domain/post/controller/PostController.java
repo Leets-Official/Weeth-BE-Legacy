@@ -33,6 +33,12 @@ public class PostController {
         return CommonResponse.createSuccess(posts);
     }
 
+    @GetMapping("/load")
+    public CommonResponse<List<ResponsePostDTO>> loadPosts(@RequestParam(required = false) Long lastPostId) throws InvalidAccessException {
+        List<ResponsePostDTO> postsLoaded = postService.loadPosts(lastPostId);
+        return CommonResponse.createSuccess(postsLoaded);
+    }
+
     @GetMapping("/myPosts")
     public CommonResponse<List<ResponsePostDTO>> showMyPost(@CurrentUser Long userId){
         List<ResponsePostDTO> myPost = postService.myPosts(userId);
