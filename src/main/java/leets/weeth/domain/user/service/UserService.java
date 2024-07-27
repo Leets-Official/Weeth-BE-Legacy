@@ -83,8 +83,10 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        attendanceService.createAttendancesForUser(user, user.getCurrentCardinal());
-        user.accept();
+        if(user.isInactive()) {
+            attendanceService.createAttendancesForUser(user, user.getCurrentCardinal());
+            user.accept();
+        }
     }
 
     @Transactional
