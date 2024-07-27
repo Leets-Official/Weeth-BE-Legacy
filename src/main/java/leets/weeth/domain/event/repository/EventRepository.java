@@ -13,8 +13,8 @@ import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     // 기간 내의 모든 일정 반환
-    @Query("SELECT e FROM Event e JOIN FETCH e.user WHERE e.startDateTime BETWEEN :startDate AND :endDate OR e.endDateTime BETWEEN :startDate AND :endDate")
-    List<Event> findByStartDateTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
+    @Query("SELECT e FROM Event e LEFT JOIN FETCH e.user u WHERE e.startDateTime <= :end AND e.endDateTime >= :start")
+    List<Event> findByStartDateTimeLessThanEqualAndEndDateTimeGreaterThanEqual(@Param("end") LocalDateTime end, @Param("start") LocalDateTime start);
 
     // type 맞는 일정 모두 반환
     @Query("SELECT e FROM Event e JOIN FETCH e.user WHERE e.type = :type")
