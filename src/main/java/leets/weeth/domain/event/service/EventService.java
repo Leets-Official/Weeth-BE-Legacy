@@ -58,7 +58,7 @@ public class EventService {
         // 기간 입력 검증
         validateDateRange(startDate, endDate);
 
-        List<Event> events = eventRepository.findByStartDateTimeBetween(startDate, endDate);
+        List<Event> events = eventRepository.findByStartDateTimeLessThanEqualAndEndDateTimeGreaterThanEqual(endDate, startDate);
         return events.stream()
                 .map(eventMapper::toEventDto)
                 .toList();
@@ -70,7 +70,7 @@ public class EventService {
         // 1년치 일정을 모두 조회
         LocalDateTime start = LocalDateTime.of(year, 1, 1, 0, 0);
         LocalDateTime end = LocalDateTime.of(year, 12, 31, 23, 59);
-        List<Event> events = eventRepository.findByStartDateTimeBetween(start, end);
+        List<Event> events = eventRepository.findByStartDateTimeLessThanEqualAndEndDateTimeGreaterThanEqual(end, start);
 
         Map<Integer, List<ResponseEvent>> eventsByMonth = new HashMap<>();
         for (Event event : events) {
