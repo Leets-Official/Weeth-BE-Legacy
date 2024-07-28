@@ -41,7 +41,8 @@ public class UserDTO {
             String tel,
             String department,
             List<Integer> cardinals,
-            Position position
+            Position position,
+            Role role
     ) {}
 
     public record AdminResponse (
