@@ -50,7 +50,8 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        user.applyOB(cardinal);
+        if(!user.getCardinals().contains(cardinal))
+            user.applyOB(cardinal);
     }
 
     public Map<Integer, List<UserDTO.Response>> findAll() {
