@@ -30,11 +30,7 @@ public class UserService {
     private final AttendanceService attendanceService;
 
     public void signUp(UserDTO.SignUp requestDto) {
-        if(userRepository.existsByEmail(requestDto.email()) ||  // 이메일 중복
-                userRepository.existsByStudentId(requestDto.studentId()) ||     // 학번 중복
-                userRepository.existsByTel(requestDto.tel()))   // 전화번호 중복
-            throw new UserExistsException();
-
+        validate(requestDto);
         User user = mapper.from(requestDto, passwordEncoder);
         userRepository.save(user);
     }
@@ -76,6 +72,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
+        validate(userId, dto);
         user.update(dto, passwordEncoder);
     }
 
@@ -118,5 +115,19 @@ public class UserService {
                 .orElseThrow(UserNotFoundException::new);
 
         user.reset(passwordEncoder);
+    }
+
+    private void validate(UserDTO.SignUp requestDto) {
+        if(userRepository.existsByEmail(requestDto.email()) ||  // 이메일 중복
+                userRepository.existsByStudentId(requestDto.studentId()) ||     // 학번 중복
+                userRepository.existsByTel(requestDto.tel()))   // 전화번호 중복
+            throw new UserExistsException();
+    }
+
+    private void validate(Long userId, UserDTO.Update dto) {
+        if(userRepository.existsByEmailAndIdIsNot(dto.email(), userId) ||  // 이메일 중복
+                userRepository.existsByStudentIdAndIdIsNot(dto.studentId(), userId) ||     // 학번 중복
+                userRepository.existsByTelAndIdIsNot(dto.tel(), userId))   // 전화번호 중복
+            throw new UserExistsException();
     }
 }
