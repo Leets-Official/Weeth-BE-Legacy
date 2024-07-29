@@ -1,10 +1,11 @@
 package leets.weeth.domain.post.repository;
 
 import leets.weeth.domain.post.entity.Post;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
+import org.springframework.data.repository.query.Param;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT MAX(p.id) FROM Post p")
     Long findMaxPostId();
 
-    @Query("SELECT COUNT(p) FROM Post p")
-    int countTotalPosts();
+    @Query("SELECT p FROM Post p WHERE p.id < :maxPostId ORDER BY p.id DESC")
+    List<Post> findRecentPosts(@Param("maxPostId") Long maxPostId, Pageable pageable);
+
 }

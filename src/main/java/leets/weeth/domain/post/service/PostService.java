@@ -14,11 +14,11 @@ import leets.weeth.global.common.error.exception.custom.PostNotFoundException;
 import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -105,30 +105,19 @@ public class PostService {
 
     public List<PostDTO> loadPosts(Long lastPostId) throws InvalidAccessException {
         Long maxPostId = postRepository.findMaxPostId();
+
         if(lastPostId==null){   // 첫번째 요청인 경우
             lastPostId = maxPostId + 1;
         }
         if(lastPostId <= 1 || lastPostId > maxPostId + 1){
             throw new InvalidAccessException(); // postId가 1 이하이거나 최대값보다 클경우
         }
-        List<Post> postsToLoad = new ArrayList<>();
-        int postsFetched = 0;
-        Long currentPostId = lastPostId - 1;
-        while (postsFetched < 15) {
-            Post post = postRepository.findById(currentPostId).orElse(null);
-            if (post != null) {
-                postsToLoad.add(post);
-                postsFetched++;
-            }
-            currentPostId--;
-            if(currentPostId<1){
-                break;
-            }
 
-        }
-        return postsToLoad.stream()
+        Pageable pageable = PageRequest.of(0, 15); // 첫 페이지, 페이지당 15개 게시글
+        List<Post> posts = postRepository.findRecentPosts(lastPostId, pageable);
+        return posts.stream()
                 .map(PostDTO::createResponsePostDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }
