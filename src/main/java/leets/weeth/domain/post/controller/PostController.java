@@ -1,9 +1,7 @@
 package leets.weeth.domain.post.controller;
 
-import leets.weeth.domain.post.dto.PageInfoDTO;
 import leets.weeth.domain.post.dto.RequestPostDTO;
 import leets.weeth.domain.post.dto.PostDTO;
-import leets.weeth.domain.post.dto.ResponsePostDTO;
 import leets.weeth.domain.post.service.PostService;
 import leets.weeth.global.auth.annotation.CurrentUser;
 import leets.weeth.global.common.error.exception.custom.InvalidAccessException;
@@ -36,12 +34,9 @@ public class PostController {
     }
 
     @GetMapping("/load")
-    public CommonResponse<ResponsePostDTO> loadPosts(@RequestParam(required = false) Long lastPostId) throws InvalidAccessException {
+    public CommonResponse<List<PostDTO>> loadPosts(@RequestParam(required = false) Long lastPostId) throws InvalidAccessException {
         List<PostDTO> postsLoaded = postService.loadPosts(lastPostId);
-        PageInfoDTO pageInfoDTO = postService.calculateTotalPosts();
-
-        ResponsePostDTO responsePostDTO = ResponsePostDTO.createResponsePostDTO(postsLoaded, pageInfoDTO);
-        return CommonResponse.createSuccess(responsePostDTO);
+        return CommonResponse.createSuccess(postsLoaded);
     }
 
 

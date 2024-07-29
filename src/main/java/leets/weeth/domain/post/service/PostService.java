@@ -3,7 +3,6 @@ package leets.weeth.domain.post.service;
 import jakarta.transaction.Transactional;
 import leets.weeth.domain.file.entity.File;
 import leets.weeth.domain.file.service.FileService;
-import leets.weeth.domain.post.dto.PageInfoDTO;
 import leets.weeth.domain.post.dto.RequestPostDTO;
 import leets.weeth.domain.post.dto.PostDTO;
 import leets.weeth.domain.post.entity.Post;
@@ -132,7 +131,4 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    public PageInfoDTO calculateTotalPosts(){
-        return PageInfoDTO.createPageInfoDTO(postRepository.countTotalPosts());
-    }
 }
