@@ -15,4 +15,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT MAX(p.id) FROM Post p")
     Long findMaxPostId();
 
+    @Query("SELECT COUNT(p) FROM Post p")
+    int countTotalPosts();
 }
