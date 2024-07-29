@@ -36,8 +36,8 @@ public class Attendance extends BaseEntity {
 
     private LocalDateTime attendanceDateTime;
 
-    public void attend(boolean isAttend) {
-        this.isAttend = isAttend;
+    public void attend() {
+        this.isAttend = true;
         this.attendanceDateTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime(); //한국 시간을 반환하도록 설정
     }
 }

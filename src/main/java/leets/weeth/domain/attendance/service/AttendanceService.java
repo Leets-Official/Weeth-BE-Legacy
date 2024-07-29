@@ -51,9 +51,11 @@ public class AttendanceService {
         Attendance attendance = attendanceRepository.findAllByUserAndWeek(user, week)
                 .orElseThrow(AttendanceNotFoundException::new);
 
-        attendance.attend(true);
-        user.attend(attendance);
-        attendanceRepository.save(attendance);
+        if(!attendance.getIsAttend()) {
+            attendance.attend();
+            user.attend(attendance);
+            attendanceRepository.save(attendance);
+        }
     }
 
     //회원가입 승인과 연계할 메서드
