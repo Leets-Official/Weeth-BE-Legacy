@@ -5,6 +5,8 @@ import leets.weeth.domain.user.dto.UserDTO;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.mapper.UserMapper;
 import leets.weeth.domain.user.repository.UserRepository;
+import leets.weeth.global.common.error.exception.custom.StudentIdExistsException;
+import leets.weeth.global.common.error.exception.custom.TelExistsException;
 import leets.weeth.global.common.error.exception.custom.UserExistsException;
 import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -124,10 +126,11 @@ public class UserService {
     }
 
     private void validate(UserDTO.SignUp requestDto) {
-        if(userRepository.existsByEmail(requestDto.email()) ||  // 이메일 중복
-                userRepository.existsByStudentId(requestDto.studentId()) ||     // 학번 중복
-                userRepository.existsByTel(requestDto.tel()))   // 전화번호 중복
-            throw new UserExistsException();
+        if(userRepository.existsByStudentId(requestDto.studentId())){
+            throw new StudentIdExistsException();
+        } else if(userRepository.existsByTel(requestDto.tel())){
+            throw new TelExistsException();
+        }
     }
 
     private void validate(Long userId, UserDTO.Update dto) {
