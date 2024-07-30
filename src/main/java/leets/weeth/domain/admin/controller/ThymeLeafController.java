@@ -18,13 +18,13 @@ public class ThymeLeafController {
     @GetMapping("/login")
     public String loginPage(Model model) {
         model.addAttribute("pageTitle", "Login");
-        return "login-html";
+        return "login";
     }
 
-    @GetMapping("/members")
-    public String members(Model model) {
+    @GetMapping("/member")
+    public String member(Model model) {
         model.addAttribute("pageTitle", "멤버 관리");
-        return "members";
+        return "member";
     }
 
     @GetMapping("/attendance")
@@ -32,6 +32,7 @@ public class ThymeLeafController {
         model.addAttribute("pageTitle", "출석 관리");
         return "attendance";
     }
+
 
     @GetMapping("/penalty")
     public String penalty(Model model) {

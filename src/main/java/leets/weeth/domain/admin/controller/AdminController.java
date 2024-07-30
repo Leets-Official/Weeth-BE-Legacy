@@ -25,6 +25,7 @@ import leets.weeth.domain.user.dto.UserDTO;
 import leets.weeth.domain.user.service.UserService;
 import leets.weeth.global.auth.annotation.CurrentUser;
 import leets.weeth.global.common.error.exception.custom.BusinessLogicException;
+import leets.weeth.global.common.error.exception.custom.InvalidInputDateException;
 import leets.weeth.global.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -112,7 +113,7 @@ public class AdminController {
     @Operation(summary = "출석 일정 생성", description = "관리자가 출석일정을 등록합니다.")
     @PostMapping("/attendance-event")
     public CommonResponse<String> createAttendanceEvent(@RequestBody @Valid RequestAttendanceEvent requestAttendanceEvent,
-                                                        @Parameter(hidden = true) @CurrentUser Long userId) {
+                                                        @Parameter(hidden = true) @CurrentUser Long userId) throws InvalidInputDateException {
         attendanceEventService.createAttendanceEvent(requestAttendanceEvent, userId);
         return CommonResponse.createSuccess(ATTENDANCE_EVENT_CREATED_SUCCESS.getMessage());
     }

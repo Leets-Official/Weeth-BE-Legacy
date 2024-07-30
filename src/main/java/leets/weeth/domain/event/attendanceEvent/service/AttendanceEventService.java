@@ -11,6 +11,7 @@ import leets.weeth.domain.event.entity.enums.Type;
 import leets.weeth.domain.event.repository.EventRepository;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
+import leets.weeth.global.common.error.exception.custom.InvalidInputDateException;
 import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,7 +40,10 @@ public class AttendanceEventService {
 
     // 출석 일정 생성
     @Transactional
-    public void createAttendanceEvent(RequestAttendanceEvent requestDto, Long userId) {
+    public void createAttendanceEvent(RequestAttendanceEvent requestDto, Long userId) throws InvalidInputDateException {
+        // 기간 입력 검증
+        validateDateRange(requestDto.startDateTime(), requestDto.endDateTime());
+
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
@@ -68,5 +73,12 @@ public class AttendanceEventService {
                 })
                 .filter(Objects::nonNull)
                 .toList();
+    }
+
+    // 시작 날짜가 종료 날짜 보다 느린지 검증
+    private void validateDateRange(LocalDateTime start, LocalDateTime end) throws InvalidInputDateException {
+        if (start.isAfter(end)) {
+            throw new InvalidInputDateException();
+        }
     }
 }
