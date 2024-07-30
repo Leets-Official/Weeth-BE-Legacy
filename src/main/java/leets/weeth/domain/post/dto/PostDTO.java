@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @ToString
-public class ResponsePostDTO {
+public class PostDTO {
 
     private Long id;
     @NotBlank
@@ -30,8 +30,8 @@ public class ResponsePostDTO {
     private Long totalComments;
 
 
-    public static ResponsePostDTO createResponsePostDTO(Post post) {
-        return ResponsePostDTO.builder()
+    public static PostDTO createResponsePostDTO(Post post) {
+        return PostDTO.builder()
                 .id(post.getId())
                 .name(post.getUser().getName())
                 .title(post.getTitle())
