@@ -2,19 +2,12 @@ const apiEndpoint = (window.location.hostname === 'localhost')
     ? 'http://localhost:8080'
     : 'https://api.weeth.site';
 
-document.getElementById('totalAccountButton').addEventListener('click', function() {
-    const form = document.getElementById('totalAccountForm');
-    form.style.display = (form.style.display === 'block') ? 'none' : 'block';
+document.getElementById('receiptForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // 기본 폼 제출 동작 방지
+    confirmAction('영수증 제출', submitReceipt);
 });
 
-document.getElementById('closeTotalAccountFormButton').addEventListener('click', function() {
-    document.getElementById('totalAccountForm').style.display = 'none';
-});
-
-document.getElementById('submitTotalAccountButton').addEventListener('click', function() {
-    if (!confirm('총 회비 정보를 제출하시겠습니까?')) {
-        return;
-    }
+function submitTotalAccount() {
 
     const cardinal = document.getElementById('totalCardinal').value;
     const description = document.getElementById('totalDescription').value;
@@ -26,70 +19,17 @@ document.getElementById('submitTotalAccountButton').addEventListener('click', fu
         cardinal: parseInt(cardinal)
     };
 
-    apiRequest(`${apiEndpoint}/admin/account`, {
+    return apiRequest(`${apiEndpoint}/admin/account`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
-    })
-        .then(response => response.text())
-        .then(message => {
-            alert(`Success: ${message}`);
-            document.getElementById('totalAccountForm').style.display = 'none';
-        })
-        .catch(error => {
-            alert(`Error: ${error.message}`);
-        });
-});
+    }).then(response => response.json());
+}
 
-document.getElementById('manageAccountButton').addEventListener('click', function() {
-    const form = document.getElementById('manageAccountForm');
-    form.style.display = (form.style.display === 'block') ? 'none' : 'block';
-});
 
-document.getElementById('closeAccountFormButton').addEventListener('click', function() {
-    document.getElementById('manageAccountForm').style.display = 'none';
-});
-
-document.getElementById('submitAccountButton').addEventListener('click', function() {
-    if (!confirm('회비 정보를 제출하시겠습니까?')) {
-        return;
-    }
-
-    const cardinal = document.getElementById('cardinal').value;
-    const amount = document.getElementById('amount').value;
-    const description = document.getElementById('description').value;
-    const date = document.getElementById('date').value;
-    const fileInput = document.getElementById('file');
-    const files = fileInput.files;
-
-    const formData = new FormData();
-    formData.append('dto', new Blob([JSON.stringify({
-        amount: parseInt(amount),
-        description: description,
-        date: date
-    })], { type: 'application/json' }));
-
-    for (let i = 0; i < files.length; i++) {
-        formData.append('files', files[i]);
-    }
-
-    apiRequest(`${apiEndpoint}/admin/account/${cardinal}`, {
-        method: 'POST',
-        body: formData
-    })
-        .then(response => response.text())
-        .then(message => {
-            alert(`Success: ${message}`);
-            document.getElementById('manageAccountForm').style.display = 'none';
-        })
-        .catch(error => {
-            alert(`Error: ${error.message}`);
-        });
-});
-
-document.getElementById('checkAccountButton').addEventListener('click', function() {
+function checkAccount() {
     const cardinal = document.getElementById('checkCardinal').value;
 
     apiRequest(`${apiEndpoint}/account/${cardinal}`, {
@@ -105,7 +45,8 @@ document.getElementById('checkAccountButton').addEventListener('click', function
         .catch(error => {
             alert(`Error: ${error.message}`);
         });
-});
+}
+
 
 function displayAccountInfo(account) {
     const accountInfoDiv = document.getElementById('accountInfo');
@@ -137,6 +78,47 @@ function displayAccountInfo(account) {
     `;
 }
 
+function submitReceipt() {
+
+    const cardinal = document.getElementById('cardinal').value;
+    const amount = document.getElementById('amount').value;
+    const description = document.getElementById('description').value;
+    const date = document.getElementById('date').value;
+    const fileInput = document.getElementById('file');
+    const files = fileInput.files;
+
+    const formData = new FormData();
+    formData.append('dto', new Blob([JSON.stringify({
+        amount: parseInt(amount),
+        description: description,
+        date: date
+    })], { type: 'application/json' }));
+
+    for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+    }
+
+    apiRequest(`${apiEndpoint}/admin/account/${cardinal}`, {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            if (data.code === 200) {
+                alert(`성공: ${data.message}`);
+            } else {
+                throw new Error(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Request failed:', error);
+            alert(`Error: ${error.message}`);
+        });
+}
+
+
 function deleteReceipt(receiptId) {
     if (confirm('삭제하시겠습니까?')) {
         apiRequest(`${apiEndpoint}/admin/account/${receiptId}`, {
@@ -145,11 +127,11 @@ function deleteReceipt(receiptId) {
                 'Content-Type': 'application/json'
             }
         })
-            .then(response => response.text())
+            .then(response => response.json())
             .then(message => {
-                alert(`Success: ${message}`);
+                alert(`삭제 성공`);
                 const cardinal = document.getElementById('checkCardinal').value;
-                apiRequest(`${apiEndpoint}/admin/account/${cardinal}`, {
+                apiRequest(`${apiEndpoint}/account/${cardinal}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -157,7 +139,11 @@ function deleteReceipt(receiptId) {
                 })
                     .then(response => response.json())
                     .then(data => {
-                        displayAccountInfo(data.data);
+                        if(data.code===200) {
+                            displayAccountInfo(data.data);
+                        }else {
+                            throw new Error(data.message);
+                        }
                     })
                     .catch(error => {
                         alert(`Error: ${error.message}`);
@@ -165,6 +151,53 @@ function deleteReceipt(receiptId) {
             })
             .catch(error => {
                 alert(`Error: ${error.message}`);
+            });
+    }
+}
+
+function setModalContent(type) {
+    let modalBodyContent = document.getElementById('modal-body-content');
+    let modalSubmitButton = document.getElementById('modalSubmitButton');
+    if (type === 'total') {
+        modalBodyContent.innerHTML = `
+                <form id="totalAccountForm">
+                    <div class="form-group">
+                        <label for="totalCardinal">기수</label>
+                        <input type="number" class="form-control" id="totalCardinal" placeholder="기수 입력" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="totalDescription">설명</label>
+                        <input type="text" class="form-control" id="totalDescription" placeholder="설명 입력" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="totalAmount">총 금액</label>
+                        <input type="number" class="form-control" id="totalAmount" placeholder="총 금액 입력" required>
+                    </div>
+                </form>
+            `;
+        modalSubmitButton.onclick = function() {
+            const form = document.getElementById('totalAccountForm');
+            if (form.checkValidity()) {
+                confirmAction('총 회비 등록', submitTotalAccount);
+            } else {
+                form.reportValidity();
+            }
+        };
+    }
+}
+
+function confirmAction(actionName, actionFunction, ...args) {
+    if (confirm(`${actionName} 하시겠습니까?`)) {
+        actionFunction(...args)
+            .then(response => {
+                if (response.code === 200) {
+                    alert(`${actionName} 성공: ${response.message}`);
+                } else {
+                    throw new Error(response.message);
+                }
+            })
+            .catch(error => {
+                alert(`${actionName} 실패: ${error.message}`);
             });
     }
 }

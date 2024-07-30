@@ -1,94 +1,123 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: header}">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <script src="/js/auth.js"></script>
-    <title>Account Management</title>
-    <style>
-        .form-container {
-            width: 50%;
-            margin: 0 auto; /* Center the form container */
-        }
-        .account-info {
-            margin-top: 20px;
-        }
-        .d-inline-block {
-            display: inline-block;
-        }
-        .w-auto {
-            width: auto;
-        }
-    </style>
+<head th:replace="~{fragments/headerFragment :: headerFragment}">
+    <!-- Custom styles for this page -->
+    <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 </head>
-<body>
-<div class="wrapper">
-    <div th:replace="~{fragments/bodyHeader :: bodyHeader}"></div>
-    <div class="container">
-        <h1>회비 관리</h1>
-        <div class="row">
-            <div class="col-md-8">
-                <div>
-                    <label for="checkCardinal">Cardinal</label>
-                    <input type="number" class="form-control d-inline-block w-auto" id="checkCardinal" placeholder="Enter cardinal" required>
-                    <button id="checkAccountButton" class="btn btn-secondary mt-3">회비 조회</button>
+
+<body id="page-top">
+<!-- Page Wrapper -->
+<div id="wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+            <div th:replace="~{fragments/topbar :: topbarFragment}"></div>
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <h1 class="h3 mb-2 text-gray-800">회비</h1>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card shadow h-100 py-2">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-lg text-primary">회비 조회</h6>
+                                <div class="float-right">
+                                    <a class="btn btn-primary" href="#" data-toggle="modal" data-target="#manageAccount" onclick="setModalContent('total')">총 회비 등록</a>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="input-group mb-3">
+                                    <input type="number" class="form-control" id="checkCardinal" placeholder="기수 입력" required>
+                                    <div class="input-group-append">
+                                        <button id="checkAccountButton" class="btn btn-secondary" onclick="checkAccount()">회비 조회</button>
+                                    </div>
+                                </div>
+                                <div id="accountInfo" class="account-info mt-3" style="display:none;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card position-relative">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">회비 사용 내역 입력</h6>
+                            </div>
+                            <div class="card-body">
+                                <form id="receiptForm">
+                                    <div class="form-group">
+                                        <label for="cardinal">기수</label>
+                                        <input type="number" class="form-control" id="cardinal" placeholder="기수 입력" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="amount">사용 금액</label>
+                                        <input type="number" class="form-control" id="amount" placeholder="사용 금액 입력" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="description">사용 내역</label>
+                                        <input type="text" class="form-control" id="description" placeholder="사용 내역 입력" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="date">날짜</label>
+                                        <input type="date" class="form-control" id="date" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="file">첨부파일</label>
+                                        <input type="file" class="form-control" id="file" multiple>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">제출</button>
+                                </form>
+                                <p class="mb-0 small mt-3">Note:</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div id="accountInfo" class="account-info" style="display:none;"></div>
+                <!-- Token Error Message -->
+                <div id="tokenErrorMessage" style="display:none; color:red;">JWT token is missing. Please log in.</div>
             </div>
-            <div class="col-md-4">
-                <div>
-                    <button id="totalAccountButton" class="btn btn-secondary mt-3">총 회비 등록</button>
-                    <div id="totalAccountForm" class="form-container mt-3" style="display:none;">
-                        <div class="form-group">
-                            <label for="totalCardinal">Cardinal</label>
-                            <input type="number" class="form-control" id="totalCardinal" placeholder="Enter cardinal" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="totalDescription">Description</label>
-                            <input type="text" class="form-control" id="totalDescription" placeholder="Enter description" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="totalAmount">Total Amount</label>
-                            <input type="number" class="form-control" id="totalAmount" placeholder="Enter total amount" required>
-                        </div>
-                        <button id="submitTotalAccountButton" class="btn btn-success mt-2">Submit</button>
-                        <button id="closeTotalAccountFormButton" class="btn btn-secondary mt-2">Close</button>
-                    </div>
-                </div>
-                <hr>
-                <div>
-                    <button id="manageAccountButton" class="btn btn-primary">회비 정보 입력</button>
-                    <div id="manageAccountForm" class="form-container mt-3" style="display:none;">
-                        <div class="form-group">
-                            <label for="cardinal">Cardinal</label>
-                            <input type="number" class="form-control" id="cardinal" placeholder="Enter cardinal" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="amount">Amount</label>
-                            <input type="number" class="form-control" id="amount" placeholder="Enter amount" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="description">Description</label>
-                            <input type="text" class="form-control" id="description" placeholder="Enter description" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="date">Date</label>
-                            <input type="date" class="form-control" id="date" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="file">File</label>
-                            <input type="file" class="form-control" id="file" multiple>
-                        </div>
-                        <button id="submitAccountButton" class="btn btn-success mt-2">Submit</button>
-                        <button id="closeAccountFormButton" class="btn btn-secondary mt-2">Close</button>
-                    </div>
-                </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+    </div>
+    <!-- End of Content Wrapper -->
+</div>
+<!-- End of Page Wrapper -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+<div class="modal fade" id="manageAccount" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">회비 등록</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body-content">
+                <!-- 버튼 내용은 JavaScript로 동적으로 설정됩니다. -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a type="submit" class="btn btn-primary" id="modalSubmitButton">완료</a>
             </div>
         </div>
     </div>
-    <div th:replace="~{fragments/footer :: footer}"></div>
 </div>
-<script src="/js/auth.js"></script>
+<div th:replace="~{fragments/logout :: logoutFragment}"></div>
+<div th:replace="~{fragments/script :: scriptFragment}"></div>
+
 <script src="/js/account.js"></script>
+<!--<script src="/vendor/datatables/jquery.dataTables.min.js"></script>-->
+<script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="/js/demo/datatables-demo.js"></script>
+
 </body>
 </html>
