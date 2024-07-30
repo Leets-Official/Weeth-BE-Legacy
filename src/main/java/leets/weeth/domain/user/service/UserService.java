@@ -128,7 +128,8 @@ public class UserService {
     private void validate(UserDTO.SignUp requestDto) {
         if(userRepository.existsByStudentId(requestDto.studentId())){
             throw new StudentIdExistsException();
-        } else if(userRepository.existsByTel(requestDto.tel())){
+        }
+        if(userRepository.existsByTel(requestDto.tel())){
             throw new TelExistsException();
         }
     }
