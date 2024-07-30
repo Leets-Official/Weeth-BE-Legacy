@@ -117,6 +117,12 @@ public class UserService {
         user.reset(passwordEncoder);
     }
 
+
+    public void validate(String email){
+        if(userRepository.existsByEmail(email))
+            throw new UserExistsException();
+    }
+
     private void validate(UserDTO.SignUp requestDto) {
         if(userRepository.existsByEmail(requestDto.email()) ||  // 이메일 중복
                 userRepository.existsByStudentId(requestDto.studentId()) ||     // 학번 중복
@@ -130,4 +136,6 @@ public class UserService {
                 userRepository.existsByTelAndIdIsNot(dto.tel(), userId))   // 전화번호 중복
             throw new UserExistsException();
     }
+
 }
+

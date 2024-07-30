@@ -64,7 +64,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorize ->
                                 authorize
-                                        .requestMatchers("/users/apply").permitAll()
+                                        .requestMatchers("/users/apply", "/users/duplication/**").permitAll()
                                         .requestMatchers("/health-check").permitAll()
                                         .requestMatchers("/adminpage/login","/adminpage/home","/adminpage/account", "/adminpage/attendance", "/adminpage/members","/adminpage/penalty", "/css/**", "/js/**").permitAll()
                                         // 스웨거 경로

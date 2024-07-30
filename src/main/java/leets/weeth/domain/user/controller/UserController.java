@@ -53,4 +53,11 @@ public class UserController {
         userService.update(userId, dto);
         return CommonResponse.createSuccess();
     }
+
+    @Operation(summary = "이메일 중복 조회")
+    @GetMapping("/duplication/{email}")
+    public CommonResponse<String> validate(@PathVariable String email) {
+        userService.validate(email);
+        return CommonResponse.createSuccess();
+    }
 }
