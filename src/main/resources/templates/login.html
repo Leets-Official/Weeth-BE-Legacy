@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Login</title>
+    <title th:text="${pageTitle}"></title>
 
     <!-- Custom fonts for this template-->
     <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -116,7 +116,7 @@
                     const token = response.headers.get('Authorization');
                     setToken(token);
                     console.log("Login successful, token:", token);
-                    window.location.href = `${apiEndpoint}/adminpage/home`;
+                    window.location.href = `${apiEndpoint}/adminpage/member`;
                 } else {
                     return response.text().then(message => { throw new Error(message); });
                 }

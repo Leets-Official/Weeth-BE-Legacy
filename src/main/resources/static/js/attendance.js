@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (getToken()) {
         loadAttendanceEvents();
     } else {
-        showTokenErrorMessage('JWT token is missing. Please log in.');
+        alert('JWT token is missing. Please log in.');
+        window.location.href = "/adminpage/login";
     }
 
     document.getElementById('attendanceForm').addEventListener('submit', function (event) {

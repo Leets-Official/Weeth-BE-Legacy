@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loadPenalties();
     } else {
         alert('JWT token is missing. Please log in.');
+        window.location.href = "/adminpage/login";
     }
 
     const topbarSearchInput = document.getElementById('topbarSearchInput');
