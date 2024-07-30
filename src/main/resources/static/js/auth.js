@@ -23,44 +23,9 @@ function authFetch(url, options = {}) {
     return fetch(url, options);
 }
 
-function login(email, password) {
-    fetch('/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-    })
-        .then(response => {
-            if (response.ok) {
-                const token = response.headers.get('Authorization');
-                setToken(token);
-                window.location.href = '/admin';
-            } else {
-                return response.text().then(message => { throw new Error(message); });
-            }
-        })
-        .catch(error => {
-            console.error("Login failed:", error.message);
-            alert(error.message);
-        });
-}
-
-function loadPage(url) {
-    authFetch(url).then(response => {
-        if (response.ok) {
-            window.location.href = url;
-        } else {
-            console.error("Failed to load page:", url);
-        }
-    }).catch(error => {
-        console.error("Error loading page:", error);
-    });
-}
 
 function logout() {
     removeToken();
-    window.location.href = '/login-html';
 }
 
 function apiRequest(url, options = {}) {

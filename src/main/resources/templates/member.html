@@ -5,7 +5,7 @@
     <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
     <style>
         table.dataTable th {
-            font-weight: bold;
+            .text-gray-900
         }
     </style>
 </head>
@@ -26,15 +26,11 @@
             <div class="container-fluid">
 
                 <!-- Page Heading -->
-                <h1 class="h3 mb-2 text-gray-800">패널티</h1>
-                <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
-                    For more information about DataTables, please visit the <a target="_blank"
-                                                                               href="https://datatables.net">official DataTables documentation</a>.</p>
-
+                <h1 class="h3 mb-2 text-gray-800">사용자</h1>
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">패널티 정보</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">사용자 정보</h6>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -43,25 +39,44 @@
                                 <tr>
                                     <th class="text-gray-900">ID</th>
                                     <th class="text-gray-900">이름</th>
-                                    <th class="text-gray-900">패널티 ID</th>
-                                    <th class="text-gray-900">설명</th>
-                                    <th class="text-gray-900">Date</th>
-                                    <th class="text-gray-900">총 횟수</th>
-                                    <th class="text-gray-900">삭제</th>
+                                    <th class="text-gray-900">이메일</th>
+                                    <th class="text-gray-900">학번</th>
+                                    <th class="text-gray-900">전화번호</th>
+                                    <th class="text-gray-900">학과</th>
+                                    <th class="text-gray-900">기수</th>
+                                    <th class="text-gray-900">Position</th>
+                                    <th class="text-gray-900">상태</th>
+                                    <th class="text-gray-900">Role</th>
+                                    <th class="text-gray-900">출석</th>
+                                    <th class="text-gray-900">결석</th>
+                                    <th class="text-gray-900">출석률</th>
+                                    <th class="text-gray-900">가입</th>
+                                    <th class="text-gray-900">수정</th>
+                                    <th class="text-gray-900">관리</th>
                                 </tr>
                                 </thead>
                                 <tfoot>
                                 <tr>
                                     <th class="text-gray-900">ID</th>
                                     <th class="text-gray-900">이름</th>
-                                    <th class="text-gray-900">패널티 ID</th>
-                                    <th class="text-gray-900">설명</th>
-                                    <th class="text-gray-900">Date</th>
-                                    <th class="text-gray-900">총 횟수</th>
-                                    <th class="text-gray-900">삭제</th>
+                                    <th class="text-gray-900">이메일</th>
+                                    <th class="text-gray-900">학번</th>
+                                    <th class="text-gray-900">전화번호</th>
+                                    <th class="text-gray-900">학과</th>
+                                    <th class="text-gray-900">기수</th>
+                                    <th class="text-gray-900">Position</th>
+                                    <th class="text-gray-900">상태</th>
+                                    <th class="text-gray-900">Role</th>
+                                    <th class="text-gray-900">출석</th>
+                                    <th class="text-gray-900">결석</th>
+                                    <th class="text-gray-900">출석률</th>
+                                    <th class="text-gray-900">가입</th>
+                                    <th class="text-gray-900">수정</th>
+                                    <th class="text-gray-900">관리</th>
                                 </tr>
                                 </tfoot>
-                                <tbody id="penaltyList">
+                                <tbody id="membersList">
+                                <!-- Members will be inserted here -->
                                 </tbody>
                             </table>
                         </div>
@@ -82,10 +97,11 @@
 <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
 </a>
+<div th:replace="~{fragments/managemodal :: manageFragment}"></div>
 <div th:replace="~{fragments/logout :: logoutFragment}"></div>
 <div th:replace="~{fragments/script :: scriptFragment}"></div>
 
-<script src="/js/penalty.js"></script>
+<script src="/js/members.js"></script>
 
 <!--<script src="/vendor/datatables/jquery.dataTables.min.js"></script>-->
 <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>

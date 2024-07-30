@@ -1,35 +1,33 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: header}"></head>
-<body>
-<div class="container">
-    <div th:replace="~{fragments/bodyHeader :: bodyHeader}"></div>
-    <h1>관리자 페이지</h1>
-    <div class="mt-4">
-        <button id="manageMembers" class="btn btn-primary">멤버 관리</button>
-        <button id="managePenalty" class="btn btn-primary">패널티 관리</button>
-        <button id="manageAttendance" class="btn btn-primary">출석 관리</button>
-        <button id="manageFees" class="btn btn-primary">회비 관리</button>
+<head th:replace="~{fragments/headerFragment :: headerFragment}">
+
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div th:replace="~{fragments/topbar :: topbarFragment}"></div>
+            <!-- 본문 -->
+        </div>
+        <div th:replace="~{fragments/footer :: footer}"></div>
     </div>
-</div>
-<div th:replace="~{fragments/footer :: footer}"></div>
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
 
-<script>
-    document.getElementById('manageMembers').addEventListener('click', function() {
-        window.location.href = '/adminpage/members';
-    });
+    <div th:replace="~{fragments/logout :: logoutFragment}"></div>
 
-    document.getElementById('managePenalty').addEventListener('click', function() {
-        window.location.href = '/adminpage/penalty';
-    });
+    <div th:replace="~{fragments/script :: scriptFragment}"></div>
 
-    document.getElementById('manageAttendance').addEventListener('click', function() {
-        window.location.href = '/adminpage/attendance';
-    });
+    <!-- Page level plugins -->
+    <script src="/vendor/chart.js/Chart.min.js"></script>
 
-    document.getElementById('manageFees').addEventListener('click', function() {
-        window.location.href = '/adminpage/account';
-    });
-</script>
+    <!-- Page level custom scripts -->
+    <script src="/js/demo/chart-area-demo.js"></script>
+    <script src="/js/demo/chart-pie-demo.js"></script>
 </body>
 </html>
