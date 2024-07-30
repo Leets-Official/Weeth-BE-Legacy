@@ -2,6 +2,7 @@ package leets.weeth.domain.event.repository;
 
 import leets.weeth.domain.event.entity.Event;
 import leets.weeth.domain.event.entity.enums.Type;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +25,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Optional<Event> findByTypeAndStartDateTimeIsBeforeAndEndDateTimeIsAfter(Type type, LocalDateTime start, LocalDateTime end);
 
     List<Event> findAllByTypeAndCardinal(Type type, Integer cardinal);
+
+    @Query("SELECT MAX(e.id) FROM Event e WHERE e.type = :type")
+    Long findMaxNoticeId(@Param("type") Type type);
+
+    @Query("SELECT e FROM Event e WHERE e.id < :lastNoticeId AND e.type = :type ORDER BY e.id DESC")
+    List<Event> findRecentNoticesBytype(@Param("lastNoticeId") Long lastNoticeId, @Param("type") Type type, Pageable pageable);
 }
