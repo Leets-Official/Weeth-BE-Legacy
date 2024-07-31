@@ -3,11 +3,12 @@ package leets.weeth.domain.post.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import leets.weeth.domain.file.entity.File;
+import leets.weeth.domain.file.converter.FileListConverter;
 import leets.weeth.domain.post.dto.RequestPostDTO;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.global.common.entity.BaseEntity;
 import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,25 +42,25 @@ public class Post extends BaseEntity {
     private List<Comment> parentComments = new ArrayList<>();
 
     LocalDateTime time;
-    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<File> fileUrls = new ArrayList<>();
 
-    public static Post createPost(RequestPostDTO dto, User user, List<File> urls){
+    @Convert(converter = FileListConverter.class)
+    private List<String> files = new ArrayList<>();
+
+    public static Post createPost(RequestPostDTO dto, User user, List<String> files){
 
         return Post.builder()
                 .user(user)
                 .title(dto.getTitle())
                 .content(dto.getContent())
                 .time(null)
-                .fileUrls(urls)
+                .files(files)
                 .build();
     }
 
-    public void updatePost(RequestPostDTO dto, List<File> newUrls) {
+    public void updatePost(RequestPostDTO dto, List<String> files) {
         this.title = dto.getTitle();
         this.content = dto.getContent();
-        this.fileUrls.clear(); // 기존 파일 제거
-        this.fileUrls.addAll(newUrls); // 새로운 url 추가
+        this.files = files;
     }
 
     public static Long calculateTotalComments(Post post) {

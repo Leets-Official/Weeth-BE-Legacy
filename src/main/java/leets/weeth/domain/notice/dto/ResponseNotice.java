@@ -1,7 +1,6 @@
 package leets.weeth.domain.notice.dto;
 
 import leets.weeth.domain.event.entity.enums.Type;
-import leets.weeth.domain.file.entity.File;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -16,6 +15,6 @@ public record ResponseNotice(
         LocalDateTime modifiedAt,
         String userName,
         Type type,
-        List<File> fileUrls
+        List<String> fileUrls
 ) {
 }

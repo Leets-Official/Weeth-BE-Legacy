@@ -1,9 +1,9 @@
 package leets.weeth.domain.post.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import leets.weeth.domain.file.entity.File;
 import leets.weeth.domain.post.entity.Post;
 import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +24,7 @@ public class ResponsePostDTO {
     private String content;
     @NotBlank
     private LocalDateTime time;
-    private List<File> fileUrls;
+    private List<String> fileUrls;
     private List<ResponseCommentDTO> comments;
     @NotBlank
     private Long commentCount;
@@ -37,7 +37,7 @@ public class ResponsePostDTO {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .time(post.getTime())
-                .fileUrls(post.getFileUrls())
+                .fileUrls(post.getFiles())
                 .comments(post.getParentComments()
                         .stream()
                         .map(ResponseCommentDTO::createResponseCommentDto)
