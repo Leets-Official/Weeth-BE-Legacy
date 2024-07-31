@@ -37,7 +37,7 @@ public class PostController {
         return CommonResponse.createSuccess(posts);
     }
 
-    @Operation(summary = "본인의 게시글 조회")
+    @Operation(summary = "최근 게시글 15개 조회")
     @GetMapping("/load")
     public CommonResponse<List<ResponsePostDTO>> loadPosts(@RequestParam(required = false) Long lastPostId) throws InvalidAccessException {
         List<ResponsePostDTO> postsLoaded = postService.loadPosts(lastPostId);
@@ -45,7 +45,7 @@ public class PostController {
     }
 
 
-
+    @Operation(summary = "본인의 게시글 조회")
     @GetMapping("/myPosts")
     public CommonResponse<List<ResponsePostDTO>> showMyPost(@CurrentUser Long userId){
         List<ResponsePostDTO> myPost = postService.myPosts(userId);

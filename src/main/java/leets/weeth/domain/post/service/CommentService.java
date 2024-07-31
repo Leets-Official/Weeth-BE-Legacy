@@ -23,19 +23,23 @@ public class CommentService {
     public void createComment(Long userId, Long postId, RequestCommentDTO requestCommentDTO) {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
+        // 해당 유저가 없는 경우
         Post currentPost = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+        // 해당 게시물이 없는 경우
         
         Comment newComment = Comment.createComment(requestCommentDTO, currentPost, user);
         Comment parentComment;
         commentRepository.save(newComment);
-        // child인 경우(부모가 있는 경우)
+        // 댓글이 child인 경우(부모가 있는 경우)
         if(requestCommentDTO.getParentCommentId()!=null){
             parentComment = commentRepository.findById(requestCommentDTO.getParentCommentId())
                     .orElseThrow(CommentNotFoundException::new);
             parentComment.addChild(newComment);
+            // 자식 추가
             commentRepository.save(parentComment);
         }
         else{
+            // 댓글이 부모인 경우
             currentPost.addComment(newComment);
             postRepository.save(currentPost);
         }
