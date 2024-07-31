@@ -30,7 +30,7 @@ public class UserDTO {
             @NotBlank        String password,
             @NotBlank        String studentId,
             @NotBlank        String tel,
-            @NotNull         Department department
+            @NotNull         String department
     ) {}
 
     public record Response(
