@@ -20,7 +20,7 @@ public class UserDTO {
         @NotBlank        String studentId,
         @NotBlank        String tel,
         @NotNull         Position position,
-        @NotNull         String department,
+        @NotNull         Department department,
         @NotNull         Integer cardinal
     ) {}
 

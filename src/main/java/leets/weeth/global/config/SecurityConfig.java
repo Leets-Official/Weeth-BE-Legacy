@@ -64,7 +64,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorize ->
                                 authorize
-                                        .requestMatchers("/users/apply").permitAll()
+                                        .requestMatchers("/users/apply", "/users/duplication/**").permitAll()
                                         .requestMatchers("/health-check").permitAll()
                                         .requestMatchers("/adminpage/login","/adminpage/home","/adminpage/account", "/adminpage/attendance", "/adminpage/members","/adminpage/penalty", "/css/**", "/js/**").permitAll()
                                         // 스웨거 경로
@@ -86,6 +86,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://weeth.site", "https://api.weeth.site"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization, Authorization-refresh"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
