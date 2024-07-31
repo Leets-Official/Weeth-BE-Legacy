@@ -1,111 +1,115 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: header}">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <script src="/js/auth.js"></script>
-    <title>Attendance Management</title>
-    <style>
-        .form-container {
-            width: 50%;
-            margin: 0 auto; /* Center the form container */
-        }
-        .table-container {
-            width: 100%;
-            margin-top: 1em;
-        }
-        .main-content {
-            display: flex;
-        }
-        .event-list {
-            flex: 2;
-            margin-right: 2em;
-        }
-        .sidebar {
-            flex: 1;
-        }
-    </style>
+<head th:replace="~{fragments/headerFragment :: headerFragment}">
+    <!-- Custom styles for this page -->
+    <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 </head>
-<body>
-<div class="wrapper">
-    <div th:replace="~{fragments/bodyHeader :: bodyHeader}"></div>
-    <div class="container">
-        <h1>출석 관리</h1>
-        <div class="row">
-            <div class="col-md-8">
-                <div id="attendanceEventList"></div>
-                <div id="attendanceCodeResult" class="table-container mt-3" style="display: none;">
-                    <h3>출석 코드</h3>
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>주차</th>
-                            <th>출석코드</th>
-                        </tr>
-                        </thead>
-                        <tbody id="attendanceCodeTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div>
-                    <button id="createWeekButton" class="btn btn-primary mt-3">출석 정보 입력</button>
-                    <div id="createWeekForm" class="form-container mt-3" style="display:none;">
-                        <hr>
-                        <h3>출석 일정은 출석을 체크하는 당일 정보를 입력해주시기 바랍니다.</h3>
-                        <h5>예시: 1차 정기모임 / 가천관 / 노트북 / 전원 / 시작:19시 / 종료:20시</h5>
-                        <div class="form-group">
-                            <label for="cardinal">기수</label>
-                            <input type="number" class="form-control" id="cardinal" placeholder="Enter cardinal" required>
+
+<body id="page-top">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+            <div th:replace="~{fragments/topbar :: topbarFragment}"></div>
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <h1 class="h3 mb-2 text-gray-800">출석</h1>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card shadow h-100 py-2">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-lg text-primary">출석 일정</h6>
+                            </div>
+                            <div id="attendanceContainer">
+                                <!-- 동적으로 생성된 카드들이 이 안에 추가됩니다 -->
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="weekNumber">주차 번호</label>
-                            <input type="number" class="form-control" id="weekNumber" placeholder="Enter week number" required>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card position-relative">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">출석 일정 입력</h6>
+                            </div>
+                            <div class="card-body">
+                                <form id="attendanceForm">
+                                    <div class="form-group">
+                                        <label for="title">제목</label>
+                                        <input type="text" class="form-control" id="title" placeholder="제목 입력" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="eventDate">날짜</label>
+                                        <input type="date" class="form-control" id="eventDate" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="startTime">시작 시간</label>
+                                        <input type="time" class="form-control" id="startTime" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="endTime">종료 시간</label>
+                                        <input type="time" class="form-control" id="endTime" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="location">장소</label>
+                                        <input type="text" class="form-control" id="location" placeholder="장소 입력" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="eventContent">내용</label>
+                                        <textarea class="form-control" id="eventContent" rows="3" placeholder="내용 입력" required></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="requiredItems">필요 항목</label>
+                                        <input type="text" class="form-control" id="requiredItems" placeholder="필요 항목 입력" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="memberNumber">회원 수</label>
+                                        <input type="number" class="form-control" id="memberNumber" placeholder="회원 수 입력" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cardinal">기수</label>
+                                        <input type="number" class="form-control" id="cardinal" placeholder="기수 입력" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="weekNumber">주차 번호</label>
+                                        <input type="number" class="form-control" id="weekNumber" placeholder="주차 번호 입력" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" id="submitEventButton">제출</button>
+                                </form>
+                                <p class="mb-0 small mt-3">Note: 출석은 정기모임 시간 사이에만 가능하므로 날짜는 정기모임 당일, 시간을 입력하여 주시기 바랍니다.</p>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="date">날짜</label>
-                            <input type="date" class="form-control" id="date" required>
-                        </div>
-                        <hr>
-                        <div class="form-group">
-                            <label for="title">출석 제목 ex(정기모임)</label>
-                            <input type="text" class="form-control" id="title" placeholder="Enter title" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="content">세부내용</label>
-                            <textarea class="form-control" id="content" placeholder="Enter content" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="location">장소</label>
-                            <input type="text" class="form-control" id="location" placeholder="Enter location" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="requiredItems">준비물</label>
-                            <input type="text" class="form-control" id="requiredItems" placeholder="Enter required items" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="memberNumber">참여인원</label>
-                            <input type="text" class="form-control" id="memberNumber" placeholder="Enter member number" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="startDateTime">시간날짜</label>
-                            <input type="datetime-local" class="form-control" id="startDateTime" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="endDateTime">종료날짜</label>
-                            <input type="datetime-local" class="form-control" id="endDateTime" required>
-                        </div>
-                        <button id="submitEventButton" class="btn btn-success mt-2">Submit Event</button>
-                        <button id="closeWeekFormButton" class="btn btn-secondary mt-2">Close</button>
                     </div>
                 </div>
-                <div id="apiMessage" class="alert mt-3" style="display: none;"></div>
+                <!-- Token Error Message -->
+                <div id="tokenErrorMessage" style="display:none; color:red;">JWT token is missing. Please log in.</div>
             </div>
+            <!-- /.container-fluid -->
         </div>
+        <!-- End of Main Content -->
     </div>
-    <div th:replace="~{fragments/footer :: footer}"></div>
+    <!-- End of Content Wrapper -->
 </div>
-<script src="/js/auth.js"></script>
+<!-- End of Page Wrapper -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+<div th:replace="~{fragments/logout :: logoutFragment}"></div>
+<div th:replace="~{fragments/script :: scriptFragment}"></div>
+
 <script src="/js/attendance.js"></script>
+<!--<script src="/vendor/datatables/jquery.dataTables.min.js"></script>-->
+<script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="/js/demo/datatables-demo.js"></script>
+
 </body>
 </html>

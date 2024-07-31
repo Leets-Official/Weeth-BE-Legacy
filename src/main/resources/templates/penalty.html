@@ -1,49 +1,95 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: header}">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <script src="/js/auth.js"></script>
-    <title>Penalty Management</title>
+<head th:replace="~{fragments/headerFragment :: headerFragment}">
+    <!-- Custom styles for this page -->
+    <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
     <style>
-        .penalty-item {
-            margin-bottom: 1em;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .penalty-details {
-            flex-grow: 1;
-        }
-        .penalty-actions {
-            margin-left: 1em;
+        table.dataTable th {
+            font-weight: bold;
         }
     </style>
 </head>
-<body>
-<div class="container">
-    <div th:replace="~{fragments/bodyHeader :: bodyHeader}"></div>
-    <h1>패널티 관리</h1>
-    <div>
-        <table class="table mt-3">
-            <thead>
-            <tr>
-                <th>User ID</th>
-                <th>User Name</th>
-                <th>Penalty ID</th>
-                <th>Description</th>
-                <th>Time</th>
-                <th>Count</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody id="penaltyList"></tbody>
-        </table>
-        <div id="apiMessage" class="alert mt-3" style="display: none;"></div>
+
+<body id="page-top">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+            <div th:replace="~{fragments/topbar :: topbarFragment}"></div>
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <h1 class="h3 mb-2 text-gray-800">패널티</h1>
+                <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+                    For more information about DataTables, please visit the <a target="_blank"
+                                                                               href="https://datatables.net">official DataTables documentation</a>.</p>
+
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">패널티 정보</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th class="text-gray-900">ID</th>
+                                    <th class="text-gray-900">이름</th>
+                                    <th class="text-gray-900">패널티 ID</th>
+                                    <th class="text-gray-900">설명</th>
+                                    <th class="text-gray-900">Date</th>
+                                    <th class="text-gray-900">총 횟수</th>
+                                    <th class="text-gray-900">삭제</th>
+                                </tr>
+                                </thead>
+                                <tfoot>
+                                <tr>
+                                    <th class="text-gray-900">ID</th>
+                                    <th class="text-gray-900">이름</th>
+                                    <th class="text-gray-900">패널티 ID</th>
+                                    <th class="text-gray-900">설명</th>
+                                    <th class="text-gray-900">Date</th>
+                                    <th class="text-gray-900">총 횟수</th>
+                                    <th class="text-gray-900">삭제</th>
+                                </tr>
+                                </tfoot>
+                                <tbody id="penaltyList">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- Token Error Message -->
+                <div id="tokenErrorMessage" style="display:none; color:red;">JWT token is missing. Please log in.</div>
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
     </div>
+    <!-- End of Content Wrapper -->
 </div>
+<!-- End of Page Wrapper -->
 <div th:replace="~{fragments/footer :: footer}"></div>
-<script src="/js/auth.js"></script>
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+<div th:replace="~{fragments/logout :: logoutFragment}"></div>
+<div th:replace="~{fragments/script :: scriptFragment}"></div>
+
 <script src="/js/penalty.js"></script>
+
+<!--<script src="/vendor/datatables/jquery.dataTables.min.js"></script>-->
+<script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="/js/demo/datatables-demo.js"></script>
+
 </body>
 </html>
