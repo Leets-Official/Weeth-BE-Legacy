@@ -66,8 +66,7 @@ public class SecurityConfig {
                                 authorize
                                         .requestMatchers("/users/apply", "/users/duplication/**").permitAll()
                                         .requestMatchers("/health-check").permitAll()
-                                        .requestMatchers("/adminpage/**").permitAll()
-                                        .requestMatchers("/adminpage/login","/adminpage/home","/adminpage/account", "/adminpage/attendance", "/adminpage/members","/adminpage/penalty",
+                                        .requestMatchers("/adminpage/login","/adminpage/account", "/adminpage/attendance", "/adminpage/member","/adminpage/penalty",
                                                 "/css/**", "/js/**", "/img/**", "/scss/**", "/vendor/**").permitAll()
                                         // 스웨거 경로
                                         .requestMatchers("/v3/api-docs", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/swagger/**").permitAll()
