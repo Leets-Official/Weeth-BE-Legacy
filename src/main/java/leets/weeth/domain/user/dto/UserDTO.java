@@ -19,8 +19,8 @@ public class UserDTO {
         @NotBlank        String password,
         @NotBlank        String studentId,
         @NotBlank        String tel,
-        @NotNull         Position position,
-        @NotNull         Department department,
+        @NotNull         String position,
+        @NotNull         String department,
         @NotNull         Integer cardinal
     ) {}
 
