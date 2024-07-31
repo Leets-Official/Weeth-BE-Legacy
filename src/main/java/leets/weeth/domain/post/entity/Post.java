@@ -37,7 +37,7 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @OneToMany(orphanRemoval = true)
+    @OneToMany(mappedBy = "post", orphanRemoval = true)
     @JsonManagedReference
     private List<Comment> parentComments = new ArrayList<>();
 
