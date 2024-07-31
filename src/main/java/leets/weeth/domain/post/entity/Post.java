@@ -40,9 +40,6 @@ public class Post extends BaseEntity {
     @JsonManagedReference
     private List<Comment> parentComments = new ArrayList<>();
 
-    // 총 댓글 개수 : 댓글 + 대댓글
-    private Long totalComments = 0L;
-
     LocalDateTime time;
     @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<File> fileUrls = new ArrayList<>();
@@ -55,7 +52,6 @@ public class Post extends BaseEntity {
                 .content(dto.getContent())
                 .time(null)
                 .fileUrls(urls)
-                .totalComments(0L)
                 .build();
     }
 
@@ -66,11 +62,11 @@ public class Post extends BaseEntity {
         this.fileUrls.addAll(newUrls); // 새로운 url 추가
     }
 
-    public void calculateTotalComments() {
-        Long totalComments = parentComments.stream()
-                .mapToLong(this::countCommentsRecursively)
+    public static Long calculateTotalComments(Post post) {
+        Long totalComments = post.parentComments.stream()
+                .mapToLong(post::countCommentsRecursively)
                 .sum();
-        this.totalComments = totalComments;
+        return totalComments;
     }
 
     private Long countCommentsRecursively(Comment comment) {

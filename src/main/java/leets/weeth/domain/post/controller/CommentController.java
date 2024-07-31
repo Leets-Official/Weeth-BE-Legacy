@@ -1,5 +1,6 @@
 package leets.weeth.domain.post.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import leets.weeth.domain.post.dto.RequestCommentDTO;
 import leets.weeth.domain.post.service.CommentService;
 import leets.weeth.global.auth.annotation.CurrentUser;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
     @Autowired
     private CommentService commentService;
+    @Operation(summary = "댓글 또는 대댓글 생성")
     @PostMapping("")
     public CommonResponse<String> createComment(@PathVariable Long postId, @RequestBody RequestCommentDTO dto,
                                          @CurrentUser Long userId) {
@@ -23,6 +25,7 @@ public class CommentController {
         return CommonResponse.createSuccess();
     }
 
+    @Operation(summary = "댓글 수정")
     @PatchMapping("/{commentId}")
     public CommonResponse<String> updateComment(@PathVariable Long postId, @PathVariable Long commentId, @CurrentUser Long userId,
                                                 @RequestBody RequestCommentDTO dto) throws UserMismatchException {
@@ -30,6 +33,7 @@ public class CommentController {
         return CommonResponse.createSuccess();
     }
 
+    @Operation(summary = "댓글 삭제")
     @DeleteMapping("/{commentId}")
     public CommonResponse<String> deleteComment(@PathVariable Long commentId, @CurrentUser Long userId) throws UserMismatchException {
         commentService.deleteComment(userId, commentId);

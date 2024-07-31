@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import leets.weeth.domain.file.entity.File;
 import leets.weeth.domain.file.service.FileService;
 import leets.weeth.domain.post.dto.RequestPostDTO;
-import leets.weeth.domain.post.dto.PostDTO;
+import leets.weeth.domain.post.dto.ResponsePostDTO;
 import leets.weeth.domain.post.entity.Post;
 import leets.weeth.domain.post.repository.PostRepository;
 import leets.weeth.domain.user.entity.User;
@@ -31,30 +31,30 @@ public class PostService {
     private final FileService fileService;
 
     //모든 게시물 가져오기
-    public List<PostDTO> findAllPosts() {
+    public List<ResponsePostDTO> findAllPosts() {
         // 모든 게시물을 id에 대해 오름차순으로 조회
         List<Post> posts = postRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
         return posts.stream()
-                .map(PostDTO::createResponsePostDTO)
+                .map(ResponsePostDTO::createResponsePostDTO)
                 .collect(Collectors.toList());
     }
 
     // 특정 postId의 게시물만 조회
-    public PostDTO show(Long postId) {
+    public ResponsePostDTO show(Long postId) {
         Post target = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
 
-        return PostDTO.createResponsePostDTO(target);
+        return ResponsePostDTO.createResponsePostDTO(target);
     }
 
     // 특정 유저(본인)의 게시물만 조회
-    public List<PostDTO> myPosts(Long userId){
+    public List<ResponsePostDTO> myPosts(Long userId){
         // 특정 유저의 모든 게시물을 오름차순으로 조회
         List<Post> myPosts = postRepository.findByUserId(userId, Sort.by(Sort.Direction.ASC, "id"));
 
         // Post 리스트를 ResponsePostDTO 리스트로 변환
         return myPosts.stream()
-                .map(PostDTO::createResponsePostDTO) // Post -> ResponsePostDTO 변환
+                .map(ResponsePostDTO::createResponsePostDTO) // Post -> ResponsePostDTO 변환
                 .collect(Collectors.toList());
     }
 
@@ -103,7 +103,7 @@ public class PostService {
         postRepository.delete(deleted);
     }
 
-    public List<PostDTO> loadPosts(Long lastPostId) throws InvalidAccessException {
+    public List<ResponsePostDTO> loadPosts(Long lastPostId) throws InvalidAccessException {
         Long maxPostId = postRepository.findMaxPostId();
 
         if(lastPostId==null){   // 첫번째 요청인 경우
@@ -116,7 +116,7 @@ public class PostService {
         Pageable pageable = PageRequest.of(0, 15); // 첫 페이지, 페이지당 15개 게시글
         List<Post> posts = postRepository.findRecentPosts(lastPostId, pageable);
         return posts.stream()
-                .map(PostDTO::createResponsePostDTO)
+                .map(ResponsePostDTO::createResponsePostDTO)
                 .toList();
     }
 

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @ToString
-public class PostDTO {
+public class ResponsePostDTO {
 
     private Long id;
     @NotBlank
@@ -27,11 +27,11 @@ public class PostDTO {
     private List<File> fileUrls;
     private List<ResponseCommentDTO> comments;
     @NotBlank
-    private Long totalComments;
+    private Long commentCount;
 
 
-    public static PostDTO createResponsePostDTO(Post post) {
-        return PostDTO.builder()
+    public static ResponsePostDTO createResponsePostDTO(Post post) {
+        return ResponsePostDTO.builder()
                 .id(post.getId())
                 .name(post.getUser().getName())
                 .title(post.getTitle())
@@ -42,7 +42,7 @@ public class PostDTO {
                         .stream()
                         .map(ResponseCommentDTO::createResponseCommentDto)
                         .collect(Collectors.toList()))
-                .totalComments(post.getTotalComments())
+                .commentCount(Post.calculateTotalComments(post))
                 .build();
     }
 }
