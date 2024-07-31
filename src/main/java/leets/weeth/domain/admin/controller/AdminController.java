@@ -138,22 +138,25 @@ public class AdminController {
     public CommonResponse<List<ResponseWeekCode>> getWeekCode(@PathVariable Integer cardinal) {
         return CommonResponse.createSuccess(weekService.getWeekCode(cardinal));
     }
+    /*
+        Penalty 관련 admin api
+     */
 
-    @Operation(summary = "패널티 부여")
+    @Operation(summary = "패널티 부여", description = "관리자가 특정 유저에게 패널티를 부여합니다.")
     @PostMapping("/penalty")
     public CommonResponse<Void> assignPenalty(@RequestBody RequestPenalty requestPenalty) {
         penaltyService.assignPenalty(requestPenalty);
         return CommonResponse.createSuccess();
     }
 
-    @Operation(summary = "패널티 삭제")
+    @Operation(summary = "패널티 삭제", description = "관리자가 특정 패널티를 삭제합니다.")
     @DeleteMapping("/penalty")
     public CommonResponse<Void> removePenalty(@RequestParam Long penaltyId) {
         penaltyService.removePenalty(penaltyId);
         return CommonResponse.createSuccess();
     }
 
-    @Operation(summary = "모든 유저의 패널티 확인")
+    @Operation(summary = "모든 유저의 패널티 확인", description = "관리자가 모든 패널티를 userId 순서로 조회합니다.")
     @GetMapping("/penalty/all")
     public CommonResponse<List<ResponsePenalty>> showAllPenalty() {
         List<ResponsePenalty> allPenalties = penaltyService.getAllPenaltiesSortedByUserId();
