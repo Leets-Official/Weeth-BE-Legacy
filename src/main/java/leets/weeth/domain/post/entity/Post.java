@@ -70,12 +70,23 @@ public class Post extends BaseEntity {
     }
 
     private Long countCommentsRecursively(Comment comment) {
-        if (comment.getChildren() == null) {
-            return 1L; // 현재 댓글만 카운트
+        // 부모 댓글이 삭제된 경우
+        if(comment.getIsDeleted()){
+            if (comment.getChildren() == null) {
+                return 0L; // 0개
+            }
+            return comment.getChildren().stream()
+                    .mapToLong(this::countCommentsRecursively)
+                    .sum(); // 자식 댓글만 카운트 
         }
-        return 1L + comment.getChildren().stream()
-                .mapToLong(this::countCommentsRecursively)
-                .sum();
+        else{
+            if (comment.getChildren() == null) {
+                return 1L; // 현재 댓글만 카운트
+            }
+            return 1L + comment.getChildren().stream()
+                    .mapToLong(this::countCommentsRecursively)
+                    .sum(); // 현재 및 자식 댓글 카운트
+        }
     }
 
     @PrePersist

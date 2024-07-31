@@ -20,7 +20,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -36,7 +35,7 @@ public class PostService {
         List<Post> posts = postRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
         return posts.stream()
                 .map(ResponsePostDTO::createResponsePostDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // 특정 postId의 게시물만 조회
@@ -55,7 +54,7 @@ public class PostService {
         // Post 리스트를 ResponsePostDTO 리스트로 변환
         return myPosts.stream()
                 .map(ResponsePostDTO::createResponsePostDTO) // Post -> ResponsePostDTO 변환
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
