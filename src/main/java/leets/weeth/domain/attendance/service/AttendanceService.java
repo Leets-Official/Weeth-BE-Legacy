@@ -11,13 +11,16 @@ import leets.weeth.domain.event.entity.Event;
 import leets.weeth.domain.event.repository.EventRepository;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
-import leets.weeth.global.common.error.exception.custom.*;
+import leets.weeth.global.common.error.exception.custom.AttendanceCodeMismatchException;
+import leets.weeth.global.common.error.exception.custom.AttendanceNotFoundException;
+import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
+import leets.weeth.global.common.error.exception.custom.WeekNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -48,9 +51,11 @@ public class AttendanceService {
         Attendance attendance = attendanceRepository.findAllByUserAndWeek(user, week)
                 .orElseThrow(AttendanceNotFoundException::new);
 
-        attendance.attend(true);
-        user.attend(attendance);
-        attendanceRepository.save(attendance);
+        if(!attendance.getIsAttend()) {
+            attendance.attend();
+            user.attend(attendance);
+            attendanceRepository.save(attendance);
+        }
     }
 
     //회원가입 승인과 연계할 메서드
@@ -71,8 +76,13 @@ public class AttendanceService {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        Event event = eventRepository.findByTypeAndStartDateTimeIsBeforeAndEndDateTimeIsAfter(ATTENDANCE, LocalDateTime.now(), LocalDateTime.now())
-                .orElseThrow(EventNotFoundException::new);
+        List<Event> events = eventRepository.findAllByType(ATTENDANCE, Sort.by(Sort.Direction.ASC, "id"));
+        Event event = events.stream()
+                .filter(e -> e.getStartDateTime().toLocalDate().isEqual(LocalDate.now())
+                        && e.getEndDateTime().toLocalDate().isEqual(LocalDate.now()))
+                .findAny()
+                .orElse(null);
+
 
         return attendanceMapper.toMainDto(user, event);
     }

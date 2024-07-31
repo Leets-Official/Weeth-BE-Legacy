@@ -12,6 +12,7 @@ import leets.weeth.domain.attendance.dto.AttendanceDTO;
 import leets.weeth.domain.attendance.dto.ResponseWeekCode;
 import leets.weeth.domain.attendance.service.WeekService;
 import leets.weeth.domain.event.attendanceEvent.dto.RequestAttendanceEvent;
+import leets.weeth.domain.event.attendanceEvent.dto.ResponseAttendanceEvent;
 import leets.weeth.domain.event.attendanceEvent.service.AttendanceEventService;
 import leets.weeth.domain.event.dto.RequestEvent;
 import leets.weeth.domain.event.service.EventService;
@@ -53,7 +54,7 @@ public class AdminController {
         Event 관련 admin api
      */
     @Operation(summary = "일정 생성", description = "관리자가 일정을 등록합니다.")
-    @PostMapping("/event/create")
+    @PostMapping("/event")
     public CommonResponse<String> createEvent(@RequestBody @Valid RequestEvent requestEvent,
                                               @Parameter(hidden = true) @CurrentUser Long userId) throws BusinessLogicException {
         eventService.createEvent(requestEvent, userId);
@@ -80,7 +81,7 @@ public class AdminController {
         Notice 관련 admin api
      */
     @Operation(summary = "공지 생성", description = "관리자가 공지사항을 등록합니다.")
-    @PostMapping("/notice/create")
+    @PostMapping("/notice")
     public CommonResponse<String> createNotice(@RequestPart(value = "requestNotice") @Valid RequestNotice requestNotice,
                                                @RequestPart(value = "files", required = false) List<MultipartFile> files,
                                                @Parameter(hidden = true) @CurrentUser Long userId) {
@@ -109,11 +110,17 @@ public class AdminController {
         AttendanceEvent 관련 admin api
      */
     @Operation(summary = "출석 일정 생성", description = "관리자가 출석일정을 등록합니다.")
-    @PostMapping("/attendanceEvent/create")
+    @PostMapping("/attendance-event")
     public CommonResponse<String> createAttendanceEvent(@RequestBody @Valid RequestAttendanceEvent requestAttendanceEvent,
                                                         @Parameter(hidden = true) @CurrentUser Long userId) {
         attendanceEventService.createAttendanceEvent(requestAttendanceEvent, userId);
         return CommonResponse.createSuccess(ATTENDANCE_EVENT_CREATED_SUCCESS.getMessage());
+    }
+
+    @Operation(summary = "출석 일정 조회", description = "관리자가 출석일정을 조회합니다.")
+    @GetMapping("/attendance-event")
+    public CommonResponse<List<ResponseAttendanceEvent>> getAttendanceEvents() {
+        return CommonResponse.createSuccess(attendanceEventService.getAttendanceEvents());
     }
 
     @Operation(summary = "주차 생성")
@@ -123,54 +130,6 @@ public class AdminController {
         return CommonResponse.createSuccess();
     }
 
-    @Operation(summary = "가입 신청 승인", description = "관리자의 회원 가입 승인")
-    @PatchMapping("/users")
-    public CommonResponse<Void> accept(@RequestParam Long userId) {
-        userService.accept(userId);
-        return CommonResponse.createSuccess();
-    }
-
-    @Operation(summary = "유저 추방")
-    @DeleteMapping("/users")
-    public CommonResponse<Void> ban(@RequestParam Long userId) {
-        userService.ban(userId);
-        return CommonResponse.createSuccess();
-    }
-
-    @Operation(summary = "관리자로 승격/강등", description = "role=ADMIN, USER")
-    @PatchMapping("/users/{role}")
-    public CommonResponse<Void> updateRole(@RequestParam Long userId, @PathVariable String role) {
-        userService.update(userId, role);
-        return CommonResponse.createSuccess();
-    }
-
-    @Operation(summary = "다음 기수도 이어서 진행")
-    @PostMapping("/users/apply/{cardinal}")
-    public CommonResponse<String> applyOB(@RequestParam Long userId, @PathVariable Integer cardinal) {
-        userService.applyOB(userId, cardinal);
-        return CommonResponse.createSuccess();
-    }
-
-    @Operation(summary = "회비 총 금액 기입", description = "돈 걷어서 총 금액만큼의 장부 생성")
-    @PostMapping("/account")
-    public CommonResponse<Void> initAccount(@RequestBody @Valid AccountDTO.Save dto) {
-        accountService.init(dto);
-        return CommonResponse.createSuccess();
-    }
-
-    @Operation(summary = "회비 사용 내역 기입")
-    @PostMapping("/account/{cardinal}")
-    public CommonResponse<Void> spend(@RequestPart @Valid ReceiptDTO.Spend dto, @PathVariable Integer cardinal, @RequestPart(value = "files", required = false) List<MultipartFile> files) {
-        receiptService.spend(dto, cardinal, files);
-        return CommonResponse.createSuccess();
-    }
-
-    @Operation(summary = "회비 사용 내역 취소")
-    @DeleteMapping("/account/{receiptId}")
-    public CommonResponse<Void> cancel(@PathVariable Long receiptId) {
-        receiptService.cancel(receiptId);
-        return CommonResponse.createSuccess();
-    }
     /*
         Attendance 관련 admin api
     */
@@ -201,6 +160,37 @@ public class AdminController {
         return CommonResponse.createSuccess(allPenalties);
     }
 
+    /*
+    유저 관련 admin api
+     */
+    @Operation(summary = "가입 신청 승인", description = "관리자의 회원 가입 승인")
+    @PatchMapping("/users")
+    public CommonResponse<Void> accept(@RequestParam Long userId) {
+        userService.accept(userId);
+        return CommonResponse.createSuccess();
+    }
+
+    @Operation(summary = "유저 추방")
+    @DeleteMapping("/users")
+    public CommonResponse<Void> ban(@RequestParam Long userId) {
+        userService.ban(userId);
+        return CommonResponse.createSuccess();
+    }
+
+    @Operation(summary = "관리자로 승격/강등", description = "role=ADMIN, USER")
+    @PatchMapping("/users/{role}")
+    public CommonResponse<Void> updateRole(@RequestParam Long userId, @PathVariable String role) {
+        userService.update(userId, role);
+        return CommonResponse.createSuccess();
+    }
+
+    @Operation(summary = "다음 기수도 이어서 진행")
+    @PostMapping("/users/apply/{cardinal}")
+    public CommonResponse<String> applyOB(@RequestParam Long userId, @PathVariable Integer cardinal) {
+        userService.applyOB(userId, cardinal);
+        return CommonResponse.createSuccess();
+    }
+
     @Operation(summary = "어드민용 회원 조회")
     @GetMapping("/users/all")
     public CommonResponse<List<UserDTO.AdminResponse>> findAll() {
@@ -211,6 +201,30 @@ public class AdminController {
     @PatchMapping("/users/reset")
     public CommonResponse<Void> resetPassword(@RequestParam Long userId) {
         userService.resetPassword(userId);
+        return CommonResponse.createSuccess();
+    }
+
+    /*
+    회비 관련 admin api
+     */
+    @Operation(summary = "회비 총 금액 기입", description = "돈 걷어서 총 금액만큼의 장부 생성")
+    @PostMapping("/account")
+    public CommonResponse<Void> initAccount(@RequestBody @Valid AccountDTO.Save dto) {
+        accountService.init(dto);
+        return CommonResponse.createSuccess();
+    }
+
+    @Operation(summary = "회비 사용 내역 기입")
+    @PostMapping("/account/{cardinal}")
+    public CommonResponse<Void> spend(@RequestPart @Valid ReceiptDTO.Spend dto, @PathVariable Integer cardinal, @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+        receiptService.spend(dto, cardinal, files);
+        return CommonResponse.createSuccess();
+    }
+
+    @Operation(summary = "회비 사용 내역 취소")
+    @DeleteMapping("/account/{receiptId}")
+    public CommonResponse<Void> cancel(@PathVariable Long receiptId) {
+        receiptService.cancel(receiptId);
         return CommonResponse.createSuccess();
     }
 }

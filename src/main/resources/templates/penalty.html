@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="/js/auth.js"></script>
+    <title>Penalty Management</title>
+    <style>
+        .penalty-item {
+            margin-bottom: 1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .penalty-details {
+            flex-grow: 1;
+        }
+        .penalty-actions {
+            margin-left: 1em;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div th:replace="~{fragments/bodyHeader :: bodyHeader}"></div>
+    <h1>패널티 관리</h1>
+    <div>
+        <table class="table mt-3">
+            <thead>
+            <tr>
+                <th>User ID</th>
+                <th>User Name</th>
+                <th>Penalty ID</th>
+                <th>Description</th>
+                <th>Time</th>
+                <th>Count</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="penaltyList"></tbody>
+        </table>
+        <div id="apiMessage" class="alert mt-3" style="display: none;"></div>
+    </div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="/js/auth.js"></script>
+<script src="/js/penalty.js"></script>
+</body>
+</html>

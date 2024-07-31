@@ -2,6 +2,7 @@ package leets.weeth.domain.event.repository;
 
 import leets.weeth.domain.event.entity.Event;
 import leets.weeth.domain.event.entity.enums.Type;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,8 +14,8 @@ import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     // 기간 내의 모든 일정 반환
-    @Query("SELECT e FROM Event e JOIN FETCH e.user WHERE e.startDateTime BETWEEN :startDate AND :endDate OR e.endDateTime BETWEEN :startDate AND :endDate")
-    List<Event> findByStartDateTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
+    @Query("SELECT e FROM Event e LEFT JOIN FETCH e.user u WHERE e.startDateTime <= :end AND e.endDateTime >= :start")
+    List<Event> findByStartDateTimeLessThanEqualAndEndDateTimeGreaterThanEqual(@Param("end") LocalDateTime end, @Param("start") LocalDateTime start);
 
     // type 맞는 일정 모두 반환
     @Query("SELECT e FROM Event e JOIN FETCH e.user WHERE e.type = :type")
@@ -24,4 +25,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Optional<Event> findByTypeAndStartDateTimeIsBeforeAndEndDateTimeIsAfter(Type type, LocalDateTime start, LocalDateTime end);
 
     List<Event> findAllByTypeAndCardinal(Type type, Integer cardinal);
+
+    @Query("SELECT MAX(e.id) FROM Event e WHERE e.type = :type")
+    Long findMaxNoticeId(@Param("type") Type type);
+
+    @Query("SELECT e FROM Event e WHERE e.id < :lastNoticeId AND e.type = :type ORDER BY e.id DESC")
+    List<Event> findRecentNoticesBytype(@Param("lastNoticeId") Long lastNoticeId, @Param("type") Type type, Pageable pageable);
 }

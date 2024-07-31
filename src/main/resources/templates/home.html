@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+<div class="container">
+    <div th:replace="~{fragments/bodyHeader :: bodyHeader}"></div>
+    <h1>관리자 페이지</h1>
+    <div class="mt-4">
+        <button id="manageMembers" class="btn btn-primary">멤버 관리</button>
+        <button id="managePenalty" class="btn btn-primary">패널티 관리</button>
+        <button id="manageAttendance" class="btn btn-primary">출석 관리</button>
+        <button id="manageFees" class="btn btn-primary">회비 관리</button>
+    </div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    document.getElementById('manageMembers').addEventListener('click', function() {
+        window.location.href = '/adminpage/members';
+    });
+
+    document.getElementById('managePenalty').addEventListener('click', function() {
+        window.location.href = '/adminpage/penalty';
+    });
+
+    document.getElementById('manageAttendance').addEventListener('click', function() {
+        window.location.href = '/adminpage/attendance';
+    });
+
+    document.getElementById('manageFees').addEventListener('click', function() {
+        window.location.href = '/adminpage/account';
+    });
+</script>
+</body>
+</html>

@@ -1,8 +1,8 @@
 package leets.weeth.domain.post.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import leets.weeth.domain.post.dto.RequestPostDTO;
 import leets.weeth.domain.post.dto.ResponsePostDTO;
+import leets.weeth.domain.post.dto.RequestPostDTO;
 import leets.weeth.domain.post.service.PostService;
 import leets.weeth.global.auth.annotation.CurrentUser;
 import leets.weeth.global.common.error.exception.custom.InvalidAccessException;
@@ -38,6 +38,14 @@ public class PostController {
     }
 
     @Operation(summary = "본인의 게시글 조회")
+    @GetMapping("/load")
+    public CommonResponse<List<ResponsePostDTO>> loadPosts(@RequestParam(required = false) Long lastPostId) throws InvalidAccessException {
+        List<ResponsePostDTO> postsLoaded = postService.loadPosts(lastPostId);
+        return CommonResponse.createSuccess(postsLoaded);
+    }
+
+
+
     @GetMapping("/myPosts")
     public CommonResponse<List<ResponsePostDTO>> showMyPost(@CurrentUser Long userId){
         List<ResponsePostDTO> myPost = postService.myPosts(userId);

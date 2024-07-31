@@ -64,8 +64,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorize ->
                                 authorize
-                                        .requestMatchers("/users/apply").permitAll()
+                                        .requestMatchers("/users/apply", "/users/duplication/**").permitAll()
                                         .requestMatchers("/health-check").permitAll()
+                                        .requestMatchers("/adminpage/login","/adminpage/home","/adminpage/account", "/adminpage/attendance", "/adminpage/members","/adminpage/penalty", "/css/**", "/js/**").permitAll()
                                         // 스웨거 경로
                                         .requestMatchers("/v3/api-docs", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/swagger/**").permitAll()
                                         .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -82,9 +83,10 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://weeth.site"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://weeth.site", "https://api.weeth.site"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization, Authorization-refresh"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

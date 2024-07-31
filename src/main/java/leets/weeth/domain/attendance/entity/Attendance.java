@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 
 @Getter
@@ -34,8 +36,8 @@ public class Attendance extends BaseEntity {
 
     private LocalDateTime attendanceDateTime;
 
-    public void attend(boolean isAttend) {
-        this.isAttend = isAttend;
-        this.attendanceDateTime = LocalDateTime.now(); //출석시간은 현재 시간을 반환하도록 설정
+    public void attend() {
+        this.isAttend = true;
+        this.attendanceDateTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime(); //한국 시간을 반환하도록 설정
     }
 }

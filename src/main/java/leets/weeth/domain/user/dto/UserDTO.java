@@ -20,7 +20,7 @@ public class UserDTO {
         @NotBlank        String studentId,
         @NotBlank        String tel,
         @NotNull         Position position,
-        @NotNull         String department,
+        @NotNull         Department department,
         @NotNull         Integer cardinal
     ) {}
 
@@ -41,7 +41,8 @@ public class UserDTO {
             String tel,
             String department,
             List<Integer> cardinals,
-            Position position
+            Position position,
+            Role role
     ) {}
 
     public record AdminResponse (

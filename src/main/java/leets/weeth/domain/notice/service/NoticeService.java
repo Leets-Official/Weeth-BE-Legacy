@@ -12,6 +12,8 @@ import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
 import leets.weeth.global.common.error.exception.custom.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,5 +101,22 @@ public class NoticeService {
         if (!notice.getUser().getId().equals(userId)) {
             throw new UserNotMatchException();
         }
+    }
+
+    public List<ResponseNotice> loadNotices(Long lastNoticeId) throws InvalidAccessException {
+        Long maxNoticeId = eventRepository.findMaxNoticeId(Type.NOTICE);
+
+        if(lastNoticeId==null){   // 첫번째 요청인 경우
+            lastNoticeId = maxNoticeId + 1;
+        }
+        if(lastNoticeId <= 1 || lastNoticeId > maxNoticeId + 1){
+            throw new InvalidAccessException(); // lastNoticeId가 1 이하이거나 최대값보다 클경우
+        }
+
+        Pageable pageable = PageRequest.of(0, 15); // 첫 페이지, 페이지당 15개 게시글
+        List<Event> recentNotices = eventRepository.findRecentNoticesBytype(lastNoticeId, Type.NOTICE, pageable);
+        return recentNotices.stream()
+                .map(noticeMapper::toNoticeDto)
+                .toList();
     }
 }

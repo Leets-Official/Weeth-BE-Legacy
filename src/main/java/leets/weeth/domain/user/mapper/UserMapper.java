@@ -14,8 +14,7 @@ public interface UserMapper {
 
     @Mappings({
             @Mapping(target = "cardinals", expression = "java( java.util.List.of(dto.cardinal()) )"),
-            @Mapping(target = "password", expression = "java( passwordEncoder.encode(dto.password()) )"),
-            @Mapping(target = "department", expression = "java( toEnum(dto.department()) )")
+            @Mapping(target = "password", expression = "java( passwordEncoder.encode(dto.password()) )")
     })
     User from(UserDTO.SignUp dto, @Context PasswordEncoder passwordEncoder);
 
@@ -23,19 +22,18 @@ public interface UserMapper {
 
     @Mappings({
             @Mapping(target = "absenceCount", expression = "java( user.getAbsenceCount() )"),
-            @Mapping(target = "department", expression = "java( toString(user.getDepartment()) )")
     })
     UserDTO.AdminResponse toAdminResponse(User user);
-
-    default Department toEnum(String before) {
-        return Arrays.stream(Department.values())
-                .filter(department -> department.getValue().equals(before))
-                .findAny()
-                .orElseThrow(DepartmentNotFoundException::new);
-    }
-
-    default String toString(Department department) {
-        return department.getValue();
-    }
+//
+//    default Department toEnum(String before) {
+//        return Arrays.stream(Department.values())
+//                .filter(department -> department.getValue().equals(before))
+//                .findAny()
+//                .orElseThrow(DepartmentNotFoundException::new);
+//    }
+//
+//    default String toString(Department department) {
+//        return department.getValue();
+//    }
 }
 

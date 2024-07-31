@@ -33,6 +33,7 @@ public class Post extends BaseEntity {
     private String title;
 
     @NotEmpty
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @OneToMany(orphanRemoval = true)

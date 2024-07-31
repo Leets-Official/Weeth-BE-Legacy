@@ -146,6 +146,12 @@ CREATE TABLE IF NOT EXISTS week (
                                     PRIMARY KEY (week_id)
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS receipt_images (
+                                              receipt_receipt_id BIGINT NOT NULL,
+                                              images_file_id BIGINT NOT NULL,
+                                              PRIMARY KEY (receipt_receipt_id, images_file_id)
+    ) ENGINE=InnoDB;
+
 -- Foreign Key Constraints
 ALTER TABLE attendance
     ADD CONSTRAINT FKjcaqd29v2qy723owsdah2t8vx FOREIGN KEY (user_id) REFERENCES users (user_id);
@@ -194,3 +200,12 @@ ALTER TABLE post_parent_comments
 
 ALTER TABLE receipt
     ADD CONSTRAINT FK7jbjwo4ybdl7qtjwkp4kitbh0 FOREIGN KEY (account_id) REFERENCES account (account_id);
+
+ALTER TABLE receipt_images
+    ADD CONSTRAINT UKhnd2vlybsr4ncw3r5ej75tcet UNIQUE (images_file_id);
+
+ALTER TABLE receipt_images
+    ADD CONSTRAINT FKrf6n56lhhudutieg866watbwn FOREIGN KEY (images_file_id) REFERENCES file (file_id);
+
+ALTER TABLE receipt_images
+    ADD CONSTRAINT FKp9c9dpxjpms5m7fxl4eojhsui FOREIGN KEY (receipt_receipt_id) REFERENCES receipt (receipt_id);

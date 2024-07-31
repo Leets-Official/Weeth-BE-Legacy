@@ -28,7 +28,7 @@ public interface NoticeMapper {
             @Mapping(target = "requiredItems", expression = "java(null)"),
             @Mapping(target = "memberNumber", expression = "java(null)"),
             @Mapping(target = "startDateTime", expression = "java( java.time.LocalDateTime.now())"),
-            @Mapping(target = "endDateTime", expression = "java( java.time.LocalDateTime.now())"),
+            @Mapping(target = "endDateTime", expression = "java( java.time.LocalDateTime.now().plusHours(1))"),
             @Mapping(target = "type", expression = "java( leets.weeth.domain.event.entity.enums.Type.NOTICE)"),
             @Mapping(target = "id", ignore = true)
     })

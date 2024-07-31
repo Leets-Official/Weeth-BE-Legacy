@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="/js/auth.js"></script>
+    <title>Account Management</title>
+    <style>
+        .form-container {
+            width: 50%;
+            margin: 0 auto; /* Center the form container */
+        }
+        .account-info {
+            margin-top: 20px;
+        }
+        .d-inline-block {
+            display: inline-block;
+        }
+        .w-auto {
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div th:replace="~{fragments/bodyHeader :: bodyHeader}"></div>
+    <div class="container">
+        <h1>회비 관리</h1>
+        <div class="row">
+            <div class="col-md-8">
+                <div>
+                    <label for="checkCardinal">Cardinal</label>
+                    <input type="number" class="form-control d-inline-block w-auto" id="checkCardinal" placeholder="Enter cardinal" required>
+                    <button id="checkAccountButton" class="btn btn-secondary mt-3">회비 조회</button>
+                </div>
+                <div id="accountInfo" class="account-info" style="display:none;"></div>
+            </div>
+            <div class="col-md-4">
+                <div>
+                    <button id="totalAccountButton" class="btn btn-secondary mt-3">총 회비 등록</button>
+                    <div id="totalAccountForm" class="form-container mt-3" style="display:none;">
+                        <div class="form-group">
+                            <label for="totalCardinal">Cardinal</label>
+                            <input type="number" class="form-control" id="totalCardinal" placeholder="Enter cardinal" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="totalDescription">Description</label>
+                            <input type="text" class="form-control" id="totalDescription" placeholder="Enter description" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="totalAmount">Total Amount</label>
+                            <input type="number" class="form-control" id="totalAmount" placeholder="Enter total amount" required>
+                        </div>
+                        <button id="submitTotalAccountButton" class="btn btn-success mt-2">Submit</button>
+                        <button id="closeTotalAccountFormButton" class="btn btn-secondary mt-2">Close</button>
+                    </div>
+                </div>
+                <hr>
+                <div>
+                    <button id="manageAccountButton" class="btn btn-primary">회비 정보 입력</button>
+                    <div id="manageAccountForm" class="form-container mt-3" style="display:none;">
+                        <div class="form-group">
+                            <label for="cardinal">Cardinal</label>
+                            <input type="number" class="form-control" id="cardinal" placeholder="Enter cardinal" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">Amount</label>
+                            <input type="number" class="form-control" id="amount" placeholder="Enter amount" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <input type="text" class="form-control" id="description" placeholder="Enter description" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" class="form-control" id="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="file">File</label>
+                            <input type="file" class="form-control" id="file" multiple>
+                        </div>
+                        <button id="submitAccountButton" class="btn btn-success mt-2">Submit</button>
+                        <button id="closeAccountFormButton" class="btn btn-secondary mt-2">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+<script src="/js/auth.js"></script>
+<script src="/js/account.js"></script>
+</body>
+</html>
