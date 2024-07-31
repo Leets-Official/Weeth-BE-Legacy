@@ -3,14 +3,13 @@ package leets.weeth.domain.event.entity;
 import jakarta.persistence.*;
 import leets.weeth.domain.event.dto.RequestEvent;
 import leets.weeth.domain.event.entity.enums.Type;
-import leets.weeth.domain.file.entity.File;
+import leets.weeth.domain.file.converter.FileListConverter;
 import leets.weeth.domain.notice.dto.RequestNotice;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.global.common.entity.BaseEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,8 +47,8 @@ public class Event extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<File> fileUrls = new ArrayList<>();
+    @Convert(converter = FileListConverter.class)
+    private List<String> files;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -67,12 +66,9 @@ public class Event extends BaseEntity {
     }
 
     // 공지 수정을 위한 메소드
-    public void updateFromNoticeDto(RequestNotice dto, List<File> fileUrlList) {
+    public void updateFromNoticeDto(RequestNotice dto, List<String> files) {
         Optional.ofNullable(dto.title()).ifPresent(title -> this.title = title);
         Optional.ofNullable(dto.content()).ifPresent(content -> this.content = content);
-        Optional.ofNullable(fileUrlList).ifPresent(files -> {
-            this.fileUrls.clear();
-            this.fileUrls.addAll(files);
-        });
+        this.files = files;
     }
 }

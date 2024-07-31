@@ -1,7 +1,6 @@
 package leets.weeth.domain.post.service;
 
 import jakarta.transaction.Transactional;
-import leets.weeth.domain.file.entity.File;
 import leets.weeth.domain.file.service.FileService;
 import leets.weeth.domain.post.dto.RequestPostDTO;
 import leets.weeth.domain.post.dto.ResponsePostDTO;
@@ -19,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -63,7 +63,7 @@ public class PostService {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         //
-        List<File> fileUrls;
+        List<String> fileUrls;
         Post newPost;
         if(postId!=null){
             Post targetPost = postRepository.findById(postId).orElse(null);

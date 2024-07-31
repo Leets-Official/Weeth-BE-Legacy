@@ -6,7 +6,6 @@ import leets.weeth.domain.account.entity.Receipt;
 import leets.weeth.domain.account.mapper.ReceiptMapper;
 import leets.weeth.domain.account.repository.AccountRepository;
 import leets.weeth.domain.account.repository.ReceiptRepository;
-import leets.weeth.domain.file.entity.File;
 import leets.weeth.domain.file.service.FileService;
 import leets.weeth.global.common.error.exception.custom.AccountNotFoundException;
 import leets.weeth.global.common.error.exception.custom.ReceiptNotFoundException;
@@ -31,7 +30,7 @@ public class ReceiptService {
         Account account = accountRepository.findByCardinal(cardinal)
                 .orElseThrow(AccountNotFoundException::new);
 
-        List<File> images = fileService.uploadFiles(files);
+        List<String> images = fileService.uploadFiles(files);
 
         Receipt receipt = mapper.from(dto, account, images);
         receiptRepository.save(receipt);

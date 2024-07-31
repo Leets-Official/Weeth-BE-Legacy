@@ -1,7 +1,7 @@
 package leets.weeth.domain.account.entity;
 
 import jakarta.persistence.*;
-import leets.weeth.domain.file.entity.File;
+import leets.weeth.domain.file.converter.FileListConverter;
 import leets.weeth.global.common.entity.BaseEntity;
 import lombok.*;
 
@@ -24,8 +24,8 @@ public class Receipt extends BaseEntity {
 
     private String description;
 
-    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<File> images;
+    @Convert(converter = FileListConverter.class)
+    private List<String> images;
 
     private LocalDate date;
 

@@ -13,8 +13,8 @@ spring:
       ddl-auto: update
   servlet:
     multipart:
-      max-file-size: 5MB
-      max-request-size: 10MB
+      max-file-size: 30MB
+      max-request-size: 30MB
       resolve-lazily: true
 
 # MySQL 유저 생성 및 스키마 생성 터미널 명령어

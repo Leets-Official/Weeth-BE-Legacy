@@ -3,7 +3,6 @@ package leets.weeth.domain.notice.service;
 import leets.weeth.domain.event.entity.Event;
 import leets.weeth.domain.event.entity.enums.Type;
 import leets.weeth.domain.event.repository.EventRepository;
-import leets.weeth.domain.file.entity.File;
 import leets.weeth.domain.file.service.FileService;
 import leets.weeth.domain.notice.dto.RequestNotice;
 import leets.weeth.domain.notice.dto.ResponseNotice;
@@ -40,7 +39,7 @@ public class NoticeService {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        List<File> fileUrls = fileService.uploadFiles(files);
+        List<String> fileUrls = fileService.uploadFiles(files);
         eventRepository.save(noticeMapper.fromNoticeDto(requestNotice, fileUrls, user));
     }
 
@@ -76,9 +75,9 @@ public class NoticeService {
                 .orElseThrow(NoticeNotFoundException::new);
 
         validateNoticeOwner(oldNotice, userId);
-        List<File> fileUrls = fileService.uploadFiles(files);
+        List<String> urls = fileService.uploadFiles(files);
 
-        oldNotice.updateFromNoticeDto(requestNotice, fileUrls);
+        oldNotice.updateFromNoticeDto(requestNotice, urls);
     }
 
     // 공지 삭제
