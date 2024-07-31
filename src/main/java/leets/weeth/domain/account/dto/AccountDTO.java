@@ -9,14 +9,15 @@ public class AccountDTO {
     public record Response(
             Long id,
             String description,
-            Integer total,
+            Integer totalAmount,
+            Integer currentAmount,
             Integer cardinal,
             List<ReceiptDTO.Response> receipts
     ) {}
 
     public record Save(
             String description,
-            @NotNull Integer total,
+            @NotNull Integer totalAmount,
             @NotNull Integer cardinal
     ) {}
 }

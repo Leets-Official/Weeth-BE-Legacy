@@ -13,6 +13,7 @@ public interface AccountMapper {
     @Mapping(target = "receipts", expression = "java( mapToReceiptDTO(account, receiptMapper) )")
     AccountDTO.Response to(Account account, @Context ReceiptMapper receiptMapper);
 
+    @Mapping(target = "currentAmount", source = "totalAmount")
     Account from(AccountDTO.Save dto);
 
     @Named("mapToReceiptDTO")

@@ -1,7 +1,6 @@
 package leets.weeth.domain.account.entity;
 
 import jakarta.persistence.*;
-import leets.weeth.domain.account.dto.ReceiptDTO;
 import leets.weeth.global.common.entity.BaseEntity;
 import lombok.*;
 
@@ -22,7 +21,9 @@ public class Account extends BaseEntity {
 
     private String description;
 
-    private Integer total;
+    private Integer totalAmount;
+
+    private Integer currentAmount;
 
     private Integer cardinal;
 
@@ -30,12 +31,12 @@ public class Account extends BaseEntity {
     private List<Receipt> receipts = new ArrayList<>();
 
     public void spend(Receipt receipt) {
-        this.total -= receipt.getAmount();
+        this.currentAmount -= receipt.getAmount();
         this.receipts.add(receipt);
     }
 
     public void cancel(Receipt receipt) {
-        this.total += receipt.getAmount();
+        this.currentAmount += receipt.getAmount();
         this.receipts.remove(receipt);
     }
 }
