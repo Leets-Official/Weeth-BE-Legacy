@@ -12,8 +12,8 @@ public record ResponseNotice(
         String title,
         String content,
         LocalDateTime createdAt,
-        LocalDateTime modifiedAt,
-        String userName,
+        LocalDateTime time,
+        String name,
         Type type,
         List<String> fileUrls
 ) {
