@@ -11,11 +11,11 @@ function submitTotalAccount() {
 
     const cardinal = document.getElementById('totalCardinal').value;
     const description = document.getElementById('totalDescription').value;
-    const total = document.getElementById('totalAmount').value;
+    const totalAmount = document.getElementById('totalAmount').value;
 
     const data = {
         description: description,
-        total: parseInt(total),
+        totalAmount: parseInt(totalAmount),
         cardinal: parseInt(cardinal)
     };
 
@@ -56,7 +56,8 @@ function displayAccountInfo(account) {
             <div class="card-body">
                 <h3 class="card-title">총 회비</h3>
                 <p class="card-text"><strong>설명:</strong> ${account.description}</p>
-                <p class="card-text"><strong>Total:</strong> ${account.total}</p>
+                <p class="card-text"><strong>Total:</strong> ${account.totalAmount}</p>
+                <p class="card-text"><strong>Curent:</strong> ${account.currentAmount}</p>
                 <p class="card-text"><strong>기수:</strong> ${account.cardinal}</p>
             </div>
         </div>
@@ -171,7 +172,7 @@ function setModalContent(type) {
                     </div>
                     <div class="form-group">
                         <label for="totalAmount">총 금액</label>
-                        <input type="number" class="form-control" id="totalAmount" placeholder="총 금액 입력" required>
+                        <input type="text" class="form-control" id="totalAmount" placeholder="총 금액 입력" required>
                     </div>
                 </form>
             `;

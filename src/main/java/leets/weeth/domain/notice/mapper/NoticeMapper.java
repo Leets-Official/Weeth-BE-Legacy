@@ -11,9 +11,9 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface NoticeMapper {
     @Mappings({
-            @Mapping(source = "user.name", target = "userName"),
+            @Mapping(source = "user.name", target = "name"),
             @Mapping(source = "createdAt", target = "createdAt"),
-            @Mapping(source = "modifiedAt", target = "modifiedAt"),
+            @Mapping(source = "modifiedAt", target = "time"),
     })
     ResponseNotice toNoticeDto(Event event);
 

@@ -64,5 +64,5 @@ jobs:
             fi
             
             sudo docker pull ${{ secrets.DOCKER_USER_NAME }}/weeth
-            sudo docker run --name spring -d -p 8080:8080 --env-file ./weeth.env ${{ secrets.DOCKER_USER_NAME }}/weeth
+            sudo docker run --name spring -d -p 8080:8080 --env-file ./weeth.env -e TZ=Asia/Seoul ${{ secrets.DOCKER_USER_NAME }}/weeth
             sudo docker image prune -a -f
