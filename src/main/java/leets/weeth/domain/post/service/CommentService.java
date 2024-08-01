@@ -8,9 +8,13 @@ import leets.weeth.domain.post.repository.CommentRepository;
 import leets.weeth.domain.post.repository.PostRepository;
 import leets.weeth.domain.user.entity.User;
 import leets.weeth.domain.user.repository.UserRepository;
-import leets.weeth.global.common.error.exception.custom.*;
+import leets.weeth.global.common.error.exception.custom.CommentNotFoundException;
+import leets.weeth.global.common.error.exception.custom.PostNotFoundException;
+import leets.weeth.global.common.error.exception.custom.UserMismatchException;
+import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -20,30 +24,25 @@ public class CommentService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
+    @Transactional
     public void createComment(Long userId, Long postId, RequestCommentDTO requestCommentDTO) {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
-        // 해당 유저가 없는 경우
-        Post currentPost = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
-        // 해당 게시물이 없는 경우
-        
-        Comment newComment = Comment.createComment(requestCommentDTO, currentPost, user);
-        Comment parentComment;
-        commentRepository.save(newComment);
-        // 댓글이 child인 경우(부모가 있는 경우)
-        if(requestCommentDTO.getParentCommentId()!=null){
-            parentComment = commentRepository.findById(requestCommentDTO.getParentCommentId())
-                    .orElseThrow(CommentNotFoundException::new);
-            parentComment.addChild(newComment);
-            // 자식 추가
-            commentRepository.save(parentComment);
-        }
-        else{
-            // 댓글이 부모인 경우
-            currentPost.addComment(newComment);
-            postRepository.save(currentPost);
-        }
-        postRepository.save(currentPost);
+
+        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+
+        Comment parent = null;
+        if(requestCommentDTO.getParentCommentId() != null)
+            parent = commentRepository.findById(requestCommentDTO.getParentCommentId())
+                .orElseThrow(CommentNotFoundException::new);
+
+        Comment comment = Comment.createComment(requestCommentDTO, post, user, parent);
+        commentRepository.save(comment);
+
+        if(parent == null)
+            post.addComment(comment);
+        else
+            parent.addChild(comment);
     }
 
     @Transactional

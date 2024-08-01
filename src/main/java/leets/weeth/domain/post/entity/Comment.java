@@ -41,17 +41,22 @@ public class Comment extends BaseEntity {
     @Column(nullable = false)
     private Boolean isDeleted;
 
-    @OneToMany(orphanRemoval = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Comment parent;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Comment> children = new ArrayList<>();
 
     LocalDateTime time;
 
-    public static Comment createComment(RequestCommentDTO dto, Post post, User user){
+    public static Comment createComment(RequestCommentDTO dto, Post post, User user, Comment parent){
         return Comment.builder()
                 .post(post)
                 .user(user)
                 .content(dto.getContent())
                 .isDeleted(false)
+                .parent(parent)
                 .build();
     }
 
