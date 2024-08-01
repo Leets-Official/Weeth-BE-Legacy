@@ -39,9 +39,13 @@ public class FileService {
                     s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
                     fileObj.delete();
 
-                    return s3Client.getUrl(bucketName, fileName).getPath();
+                    return extractUrl(fileName);
                 })
                 .toList();
+    }
+
+    private String extractUrl(String fileName) {
+        return "https://" + s3Client.getUrl(bucketName, fileName).getHost() + s3Client.getUrl(bucketName, fileName).getFile();
     }
 
     private java.io.File convertMultiPartFileToFile(MultipartFile file) {
