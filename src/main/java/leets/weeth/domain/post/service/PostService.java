@@ -1,6 +1,6 @@
 package leets.weeth.domain.post.service;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import leets.weeth.domain.file.service.FileService;
 import leets.weeth.domain.post.dto.RequestPostDTO;
 import leets.weeth.domain.post.dto.ResponsePostDTO;
@@ -57,7 +57,7 @@ public class PostService {
                 .toList();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void create(Long userId, RequestPostDTO requestPostDTO, List<MultipartFile> files, Long postId) throws InvalidAccessException {
         // 사용자가 존재하지 않는 경우
         User user = userRepository.findById(userId)
@@ -90,7 +90,7 @@ public class PostService {
         postRepository.save(newPost);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long postId, Long userId) throws InvalidAccessException {
         // 대상 게시물이 존재하지 않는 경우
         Post deleted = postRepository.findById(postId)
