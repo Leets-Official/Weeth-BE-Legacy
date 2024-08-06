@@ -1,6 +1,5 @@
 package leets.weeth.domain.penalty.service;
 
-import jakarta.transaction.Transactional;
 import leets.weeth.domain.penalty.dto.RequestPenalty;
 import leets.weeth.domain.penalty.dto.ResponsePenalty;
 import leets.weeth.domain.penalty.entity.Penalty;
@@ -12,6 +11,7 @@ import leets.weeth.global.common.error.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.List;
 public class PenaltyService {
     private final PenaltyRepository penaltyRepository;
     private final UserRepository userRepository;
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void assignPenalty(RequestPenalty requestPenalty){
         User userToBan = userRepository.findById(requestPenalty.getUserId()).orElseThrow(UserNotFoundException::new);
         Penalty penalty = penaltyRepository.save(Penalty.toEntity(requestPenalty, userToBan));
@@ -38,6 +38,7 @@ public class PenaltyService {
                 .toList();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void removePenalty(Long penaltyId) {
         Penalty penaltyToRemove = penaltyRepository.findById(penaltyId)
                 .orElseThrow(PenaltyNotFoundException::new);

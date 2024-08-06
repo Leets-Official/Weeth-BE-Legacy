@@ -1,6 +1,6 @@
 package leets.weeth.domain.post.service;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import leets.weeth.domain.post.dto.RequestCommentDTO;
 import leets.weeth.domain.post.entity.Comment;
 import leets.weeth.domain.post.entity.Post;
@@ -24,7 +24,7 @@ public class CommentService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void createComment(Long userId, Long postId, RequestCommentDTO requestCommentDTO) {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
@@ -45,7 +45,7 @@ public class CommentService {
             parent.addChild(comment);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateComment(Long userId, Long postId, Long commentId, RequestCommentDTO requestCommentDTO) throws UserMismatchException {
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
@@ -61,7 +61,7 @@ public class CommentService {
         commentRepository.save(commentToEdit);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteComment(Long userId, Long commentId) throws UserMismatchException {
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
