@@ -204,7 +204,7 @@ Weeth는 가천대학교 IT 학술동아리 Leets를 위한 동아리 관리 서
 ## ERD
 
 <p align="center">  
-<img alt="ER-Diagram" src="https://github.com/user-attachments/assets/ede029ba-f391-45bf-81ac-81d7abee421b" width="400px">
+<img alt="ER-Diagram" src="https://github.com/user-attachments/assets/535f602a-f880-488e-8f0d-e99bb110c200" width="800px">
 </p>
 
 
