@@ -1,7 +1,6 @@
-# Weeth_V1
-해당 레포지토리는 Weeth-BE-v1 레포입니다. 최신 사항은 아래 링크로 이동해주시기 바랍니다. 
+# Weeth_Legacy
+Weeth-BE-Legacy 레포지토리입니다. 최신 사항은 아래 링크로 이동해주시기 바랍니다. 
 <br> https://github.com/Leets-Official/Weeth-BE
-<hr>
 <p align="center">  
 <img src="https://github.com/user-attachments/assets/3c2cdaa0-48b5-4d04-bc84-4d13c3e26ed0" width="800px">
 </p>
@@ -19,7 +18,6 @@ Weeth는 가천대학교 IT 학술동아리 Leets를 위한 동아리 관리 서
 
 
 ## 🤝 BE 팀원 소개
-<hr>
 <table>
 <tr>
 <td align="center" width="150px">
@@ -70,7 +68,6 @@ Weeth는 가천대학교 IT 학술동아리 Leets를 위한 동아리 관리 서
 <br/>
 
 ## 🛠 기술 스택
-<hr>
 
 <table>
 <thead>
@@ -120,7 +117,6 @@ Weeth는 가천대학교 IT 학술동아리 Leets를 위한 동아리 관리 서
 <br />
 
 ## ⚙️ 개발환경
-<hr>
 
 - JAVA: 17
 - SpringBoot: 3.3.1
@@ -130,7 +126,6 @@ Weeth는 가천대학교 IT 학술동아리 Leets를 위한 동아리 관리 서
 - AWS: EC2, RDS, S3, Route53
 
 ## 💻 화면 구성
-<hr>
 
 ### 로그인, 홈
 
